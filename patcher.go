@@ -59,6 +59,31 @@ func main() {
     }
 
 
+    if _, err := os.Stat(exe_dir + "/core/distribution"); err != nil {
+        err := os.Mkdir(exe_dir + "/core/distribution", 0777)
+        if err != nil {
+            panic(err)
+        }
+    }
+
+    src, err = os.Open(exe_dir + "/config/policies.json")
+    if err != nil {
+        panic(err)
+    }
+    defer src.Close()
+
+    dst, err = os.Create(exe_dir + "/core/distribution/policies.json")
+    if err != nil {
+        panic(err)
+    }
+    defer dst.Close()
+
+    _, err = io.Copy(dst, src)
+    if  err != nil {
+        panic(err)
+    }
+
+
     os.Remove(exe_dir + "/core/updater.exe")
     os.Remove(exe_dir + "/core/default-browser-agent.exe")
     os.RemoveAll(exe_dir + "/core/uninstall")
