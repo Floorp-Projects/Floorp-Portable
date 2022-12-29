@@ -27,10 +27,6 @@ func main() {
             if err != nil {
                 panic(err)
             }
-            err = os.Rename(exe_dir + "/update_tmp/floorp.exe", exe_dir + "/floorp.exe_new")
-            if err != nil {
-                panic(err)
-            }
             err = os.RemoveAll(exe_dir + "/core_old")
             if err != nil {
                 panic(err)
