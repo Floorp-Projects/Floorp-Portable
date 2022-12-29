@@ -16,7 +16,7 @@ func main() {
     }
     exe_dir := filepath.Dir(exe)
 
-    if _, err := os.Stat(exe_dir + "/update_tmp/UPDATE_READY"); err == nil {
+    if _, err := os.Stat(exe_dir + "/update_tmp/CORE_UPDATE_READY"); err == nil {
         fmt.Println("Updates found.")
         if err := os.Rename(exe_dir + "/core", exe_dir + "/core_old"); err == nil {
             err := os.Remove(exe_dir + "/update_tmp/CORE_UPDATE_READY")
