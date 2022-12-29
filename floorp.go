@@ -19,7 +19,7 @@ func main() {
     if _, err := os.Stat(exe_dir + "/update_tmp/UPDATE_READY"); err == nil {
         fmt.Println("Updates found.")
         if err := os.Rename(exe_dir + "/core", exe_dir + "/core_old"); err == nil {
-            err := os.Remove(exe_dir + "/update_tmp/UPDATE_READY")
+            err := os.Remove(exe_dir + "/update_tmp/CORE_UPDATE_READY")
             if err != nil {
                 panic(err)
             }
@@ -35,10 +35,11 @@ func main() {
             if err != nil {
                 panic(err)
             }
-            err = os.RemoveAll(exe_dir + "/update_tmp")
+            file, err := os.Create(exe_dir + "/update_tmp/REDIRECTOR_UPDATE_READY")
             if err != nil {
                 panic(err)
             }
+            file.Close()
         } else {
             fmt.Println("Floorp is running.")
         }
