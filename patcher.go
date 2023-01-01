@@ -73,7 +73,16 @@ func main() {
 	src.Close()
 	dst.Close()
 
-	os.Remove(exe_dir + "/core/updater.exe")
-	os.Remove(exe_dir + "/core/default-browser-agent.exe")
-	os.RemoveAll(exe_dir + "/core/uninstall")
+	err = os.Remove(exe_dir + "/core/updater.exe")
+	if  err != nil {
+		panic(err)
+	}
+	err = os.Remove(exe_dir + "/core/default-browser-agent.exe")
+	if  err != nil {
+		panic(err)
+	}
+	err = os.RemoveAll(exe_dir + "/core/uninstall")
+	if  err != nil {
+		panic(err)
+	}
 }
