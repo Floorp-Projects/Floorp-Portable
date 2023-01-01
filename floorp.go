@@ -32,22 +32,22 @@ func main() {
 		if err := os.Rename(exe_dir + "/core", exe_dir + "/core_old"); err == nil {
 			err := os.Remove(exe_dir + "/update_tmp/CORE_UPDATE_READY")
 			if err != nil {
-				showFatalError("Update failed.")
+				showFatalError("Update failed.\nFailed to prepare to start update.")
 				panic(err)
 			}
 			err = os.Rename(exe_dir + "/update_tmp/core", exe_dir + "/core")
 			if err != nil {
-				showFatalError("Update failed.")
+				showFatalError("Update failed.\nFailed to replace with new file.")
 				panic(err)
 			}
 			err = os.RemoveAll(exe_dir + "/core_old")
 			if err != nil {
-				showFatalError("Update failed.")
+				showFatalError("Update failed.\nFailed to delete old file.")
 				panic(err)
 			}
 			file, err := os.Create(exe_dir + "/update_tmp/REDIRECTOR_UPDATE_READY")
 			if err != nil {
-				showFatalError("Update failed.")
+				showFatalError("Update failed.\nFailed to prepare for redirector update.")
 				panic(err)
 			}
 			file.Close()
@@ -58,7 +58,7 @@ func main() {
 
 	err = exec.Command(exe_dir + "/core/floorp", args...).Run()
 	if err != nil {
-		showFatalError("Failed to start Floorp")
+		showFatalError("Failed to start Floorp.")
 		panic(err)
 	}
 }
