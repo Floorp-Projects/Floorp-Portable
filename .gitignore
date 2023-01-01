@@ -1,2 +1,4 @@
 *.exe
 !/utils/*.exe
+/core
+/Profiles
