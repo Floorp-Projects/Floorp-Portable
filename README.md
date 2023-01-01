@@ -2,6 +2,8 @@
 
 **Note: Currently only Windows is supported.**
 
+**Warning: This is currently a beta version. Unexpected problems may occur.**
+
 ## How to build
 ### 1. Install Floorp
 Create a directory named "core" and place Floorp files in it.
