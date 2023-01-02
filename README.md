@@ -4,6 +4,8 @@
 
 **Warning: This is currently a beta version. Unexpected problems may occur.**
 
+The portable runtime uses [libportable](https://github.com/adonais/libportable).
+
 ## How to build
 ### 1. Install Floorp
 Create a directory named "core" and place Floorp files in it.

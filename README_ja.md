@@ -4,6 +4,8 @@
 
 **警告: これは現在ベータ版です。予期せぬトラブルが発生する可能性があります。**
 
+ポータブルランタイムには[libportable](https://github.com/adonais/libportable)を使用しています。
+
 ## 構築方法
 ### 1. Floorpを設置する。
 coreディレクトリを作成して、中にFloorpのファイルを設置してください。
