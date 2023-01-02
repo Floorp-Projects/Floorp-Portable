@@ -17,13 +17,14 @@ jobs:
         go-version: '1.19.4'
     - name: Build
       run: |
+        echo "::add-mask::${{ secrets.GITHUB_TOKEN }}"
         go build -ldflags="-H windowsgui" floorp.go
         go build patcher.go
         cd tools
         go build
         copy autopatcher.exe ..
         cd ..
-        ./autopatcher.exe
+        ./autopatcher.exe -t ${{ secrets.GITHUB_TOKEN }}
         dir
     - uses: actions/upload-artifact@v3
       with:
