@@ -28,7 +28,7 @@ jobs:
         dir
         cd core
         $fver=./floorp.exe  '-version' | more
-        echo "fver=$($fver.Split()[2])" >> $GITHUB_ENV
+        echo "fver=$($fver.Split()[2])" >> $env:GITHUB_ENV
     - uses: actions/upload-artifact@v3
       with:
         name: floorp-${{ env.fver }}-portable
