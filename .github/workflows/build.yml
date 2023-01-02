@@ -25,9 +25,13 @@ jobs:
         cd ..
         ./autopatcher.exe
         dir
+        cd core
+        $fver=./floorp.exe  '-version' | more
+        echo "fver=$($fver.Split()[2])" >> $env:GITHUB_ENV
+        cd ..
     - uses: actions/upload-artifact@v3
       with:
-        name: detail
+        name: floorp-${{ env.fver }}-portable
         path: |
             core/
             floorp.exe
