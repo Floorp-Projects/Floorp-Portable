@@ -10,12 +10,9 @@ The portable runtime uses [libportable](https://github.com/adonais/libportable).
 ### 1. Install Floorp
 Create a directory named "core" and place Floorp files in it.
 
-### 2. Build each `.go`
+### 2. Build
 ```
-go build -ldflags="-H windowsgui" floorp.go
-```
-```
-go build patcher.go
+.\build.bat
 ```
 
 ### 3. Apply the patch

@@ -10,12 +10,9 @@
 ### 1. Floorpを設置する。
 coreディレクトリを作成して、中にFloorpのファイルを設置してください。
 
-### 2. 各`.go`をビルドする
+### 2. ビルドする
 ```
-go build -ldflags="-H windowsgui" floorp.go
-```
-```
-go build patcher.go
+.\build.bat
 ```
 
 ### 3. パッチを適用する

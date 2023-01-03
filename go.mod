@@ -1,4 +1,4 @@
-module github.com/Floorp-Projects/Floorp-Portable
+module floorp
 
 go 1.19
 
