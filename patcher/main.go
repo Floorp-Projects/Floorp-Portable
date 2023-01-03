@@ -73,6 +73,21 @@ func main() {
 	src.Close()
 	dst.Close()
 
+	src, err = os.Open(exe_dir + "/config/portable-prefs.js")
+	if err != nil {
+		panic(err)
+	}
+	dst, err = os.Create(exe_dir + "/core/defaults/pref/portable-prefs.js")
+	if err != nil {
+		panic(err)
+	}
+	_, err = io.Copy(dst, src)
+	if  err != nil {
+		panic(err)
+	}
+	src.Close()
+	dst.Close()
+
 	err = os.Remove(exe_dir + "/core/updater.exe")
 	if  err != nil {
 		panic(err)
