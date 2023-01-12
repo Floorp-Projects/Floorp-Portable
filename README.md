@@ -1,6 +1,6 @@
 # Floorp Portable
 
-**Note: Currently only Windows is supported. Also, the automatic update feature is not yet available at this time.**
+**Note: Currently only Windows is supported. Also, the automatic update feature is not available for versions below 10.8.0.**
 
 **Warning: This is currently a beta version. Unexpected problems may occur.**
 
