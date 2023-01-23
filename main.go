@@ -6,23 +6,20 @@ import (
 	"os/exec"
 	"path/filepath"
 	"syscall"
-	"github.com/lxn/win"
+	"unsafe"
 )
 
-func UTF16PtrFromString(s string) *uint16 {
-	result, err := syscall.UTF16PtrFromString(s)
-	if err != nil {
-		panic(err)
-	}
-	return result
-}
-
 func showFatalError(title string, message string) {
-	win.MessageBox(
-		win.HWND(0),
-		UTF16PtrFromString(message),
-		UTF16PtrFromString(title),
-		win.MB_OK + win.MB_ICONERROR,
+	const (
+		NULL = 0x00000000
+		MB_OK = 0x00000000
+		MB_ICONERROR = 0x00000010
+	)
+	syscall.NewLazyDLL("user32.dll").NewProc("MessageBoxW").Call(
+		NULL,
+		uintptr(unsafe.Pointer(syscall.StringToUTF16Ptr(message))),
+		uintptr(unsafe.Pointer(syscall.StringToUTF16Ptr(title))),
+		MB_OK + MB_ICONERROR,
 	)
 }
 
