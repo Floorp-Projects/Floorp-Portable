@@ -10,7 +10,10 @@ import (
 )
 
 func UTF16PtrFromString(s string) *uint16 {
-	result, _ := syscall.UTF16PtrFromString(s)
+	result, err := syscall.UTF16PtrFromString(s)
+	if err != nil {
+		panic(err)
+	}
 	return result
 }
 
