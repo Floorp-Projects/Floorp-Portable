@@ -18,7 +18,12 @@ func UTF16PtrFromString(s string) *uint16 {
 }
 
 func showFatalError(title string, message string) {
-	win.MessageBox(win.HWND(0), UTF16PtrFromString(message), UTF16PtrFromString(title), win.MB_OK + win.MB_ICONERROR)
+	win.MessageBox(
+		win.HWND(0),
+		UTF16PtrFromString(message),
+		UTF16PtrFromString(title),
+		win.MB_OK + win.MB_ICONERROR,
+	)
 }
 
 func main() {
