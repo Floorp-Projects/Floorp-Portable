@@ -1,6 +1,7 @@
 name: Build
 
 on:
+  push:
   workflow_dispatch:
     inputs:
       choice:
@@ -38,7 +39,7 @@ jobs:
         cd ..
     - name: Artifact
       uses: actions/upload-artifact@v3
-      if: github.event.inputs.choice == 'Artifact'
+      if: github.event_name != 'workflow_dispatch' || github.event.inputs.choice == 'Artifact'
       with:
         name: floorp-${{ env.fver }}-portable
         path: |
@@ -46,7 +47,7 @@ jobs:
             floorp.exe
     - name: Release
       uses: thedoctor0/zip-release@main
-      if: github.event.inputs.choice == 'Release'
+      if: github.event_name == 'workflow_dispatch' && github.event.inputs.choice == 'Release'
       with:
         type: 'zip'
         filename: 'floorp-${{ env.fver }}-portable.zip'
@@ -54,7 +55,7 @@ jobs:
           core/
           floorp.exe
     - uses: marvinpinto/action-automatic-releases@latest
-      if: github.event.inputs.choice == 'Release'
+      if: github.event_name == 'workflow_dispatch' && github.event.inputs.choice == 'Release'
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
         automatic_release_tag: "${{ env.fver }}-portable"
