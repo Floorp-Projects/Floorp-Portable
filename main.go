@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 )
 
 func main() {
@@ -45,7 +46,17 @@ func main() {
 		}
 	}
 
-	err = exec.Command(exe_dir + "/core/floorp", args...).Run()
+	if runtime.GOOS == "windows" {
+		err = exec.Command(exe_dir + "/core/floorp", args...).Run()
+	} else if runtime.GOOS == "linux" {
+		os.Mkdir(exe_dir + "/Profile", 0777);
+		args_linux := []string{}
+		args_linux = append(args_linux, "-profile", exe_dir + "/Profile")
+		args_linux = append(args_linux, args...)
+		err = exec.Command(exe_dir + "/core/floorp", args_linux...).Run()
+	} else {
+		panic("Not supported!!!")
+	}
 	if err != nil {
 		showFatalError("core is broken!!!", "Failed to start Floorp.")
 		panic(err)
