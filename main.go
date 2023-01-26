@@ -50,8 +50,7 @@ func main() {
 		err = exec.Command(exe_dir + "/core/floorp", args...).Run()
 	} else if runtime.GOOS == "linux" {
 		os.Mkdir(exe_dir + "/Profile", 0777);
-		args_linux := []string{}
-		args_linux = append(args_linux, "-profile", exe_dir + "/Profile")
+		args_linux := []string{"-profile", exe_dir + "/Profile"}
 		args_linux = append(args_linux, args...)
 		err = exec.Command(exe_dir + "/core/floorp", args_linux...).Run()
 	} else {
