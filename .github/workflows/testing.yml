@@ -1,0 +1,44 @@
+name: Tasting 🍴
+
+on: push
+
+jobs:
+  tasting-on-windows:
+    runs-on: windows-latest
+
+    name: Tasting on Windows 🍴
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - uses: actions/checkout@v3
+      with:
+        repository: Floorp-Projects/Floorp-AutoPatcher
+        path: tools
+
+    - uses: actions/setup-go@v3
+      with:
+        go-version: '1.19.4'
+
+    - name: Tasting
+      run: |
+        .\build.bat
+        cd tools
+        go build
+        copy autopatcher.exe ..
+        cd ..
+        ./autopatcher.exe
+        dir
+        cd core
+        $fver=./floorp.exe  '-version' | more
+        echo "Floorp Version: $($fver.Split()[2])"
+        cd ..
+
+    - name: Great taste!
+      uses: actions/upload-artifact@v3
+      with:
+        name: windows-test
+        path: |
+            floorp.exe
+            patcher.exe
+            autopatcher.exe
