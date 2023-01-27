@@ -19,8 +19,23 @@ func main() {
 
 	if _, err := os.Stat(exe_dir + "/update_tmp/CORE_UPDATE_READY"); err == nil {
 		fmt.Println("Updates found.")
-		if err := os.Rename(exe_dir + "/core", exe_dir + "/core_old"); err == nil {
-			err := os.Remove(exe_dir + "/update_tmp/CORE_UPDATE_READY")
+
+		var used bool
+		if runtime.GOOS == "windows" {
+			used = fileInUse(exe_dir + "/core")
+		} else if runtime.GOOS == "linux" {
+			used = fileInUse(exe_dir + "/core/floorp")
+		} else {
+			panic("Not supported!!!")
+		}
+
+		if !used {
+			err := os.Rename(exe_dir + "/core", exe_dir + "/core_old")
+			if err != nil {
+				showFatalError("Update failed.", "Failed to prepare to start update.")
+				panic(err)
+			}
+			err = os.Remove(exe_dir + "/update_tmp/CORE_UPDATE_READY")
 			if err != nil {
 				showFatalError("Update failed.", "Failed to prepare to start update.")
 				panic(err)
