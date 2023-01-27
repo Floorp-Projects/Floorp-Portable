@@ -8,10 +8,22 @@ import (
 )
 
 func showFatalError(title string, message string) {
-	err := exec.Command("zenity", "--error", "--title", title, "--text", message).Run()
-	if err == nil {
-		return
+	// zenity or its fallback
+	zenity_command := ""
+	for _, command := range []string{"zenity", "matedialog", "qarma"} {
+		if _, err := exec.LookPath(command); err != nil {
+			log.Println("[ERROR]", err)
+		} else {
+			zenity_command = command
+			break
+		}
 	}
-	log.Println("[ERROR]", err)
+	if zenity_command != "" {
+		err := exec.Command(zenity_command, "--error", "--title", title, "--text", message).Run()
+		if err == nil {
+			return
+		}
+		log.Println("[ERROR]", err)
+	}
 	// Substitution methods are needed.
 }
