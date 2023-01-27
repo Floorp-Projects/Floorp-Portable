@@ -42,3 +42,28 @@ jobs:
             floorp.exe
             patcher.exe
             autopatcher.exe
+
+  tasting-on-linux:
+    runs-on: ubuntu-22.04
+
+    name: Tasting on Linux 🐧
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - uses: actions/setup-go@v3
+      with:
+        go-version: '1.19.4'
+
+    - name: Tasting
+      run: |
+        chmod +x ./build.sh
+        ./build.sh
+
+    - name: Great taste!
+      uses: actions/upload-artifact@v3
+      with:
+        name: linux-test
+        path: |
+            floorp
+            patcher
