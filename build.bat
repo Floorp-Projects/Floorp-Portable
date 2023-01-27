@@ -7,7 +7,7 @@ if %errorlevel% neq 0 (
 )
 
 echo Building patcher...
-cd patcher
+cd patcher_src
 go build -ldflags="-s -w"
 if %errorlevel% neq 0 (
     exit /b 1
