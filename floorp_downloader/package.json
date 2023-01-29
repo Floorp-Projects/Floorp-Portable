@@ -1,0 +1,14 @@
+{
+  "name": "floorp_downloader",
+  "version": "1.0.0",
+  "description": "",
+  "main": "floorp_downloader.mjs",
+  "scripts": {
+    "start": "node floorp_downloader.mjs"
+  },
+  "author": "",
+  "license": "MPL2.0",
+  "dependencies": {
+    "node-fetch": "^3.3.0"
+  }
+}
