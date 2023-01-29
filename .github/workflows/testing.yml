@@ -62,13 +62,16 @@ jobs:
 
     - name: Tasting
       run: |
+        mkdir core
         chmod +x ./build.sh
         ./build.sh
-        cd tools
-        go build
-        cp autopatcher ..
+        cd floorp_downloader
+        npm install
+        npm run start linux x86_64
+        tar -xvf floorp-package.tar.bz2
+        mv floorp/* ../core/
         cd ..
-        ./autopatcher
+        ./patcher
         ls
         cd core
         fver=`./floorp -version | awk '{ print $3 }'`
