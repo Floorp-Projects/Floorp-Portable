@@ -1,5 +1,9 @@
-*.exe
-!/utils/*.exe
+/floorp
+/floorp.exe
+/patcher_src/patcher
+/patcher_src/patcher.exe
+/patcher
+/patcher.exe
 /core
 /Profiles
 /Profile
