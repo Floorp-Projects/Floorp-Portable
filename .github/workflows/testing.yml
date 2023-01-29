@@ -51,11 +51,6 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - uses: actions/checkout@v3
-      with:
-        repository: Floorp-Projects/Floorp-AutoPatcher
-        path: tools
-
     - uses: actions/setup-go@v3
       with:
         go-version: '1.19.4'
@@ -72,10 +67,12 @@ jobs:
         mv floorp/* ../core/
         cd ..
         ./patcher
-        ls
+        ls -l
         cd core
         fver=`./floorp -version | awk '{ print $3 }'`
         echo "Floorp Version: $fver"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Great taste!
       uses: actions/upload-artifact@v3
