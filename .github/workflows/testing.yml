@@ -18,7 +18,8 @@ jobs:
 
     - uses: actions/setup-go@v3
       with:
-        go-version: '1.19.4'
+        go-version: '1.19'
+        check-latest: true
 
     - name: Tasting
       run: |
@@ -53,7 +54,8 @@ jobs:
 
     - uses: actions/setup-go@v3
       with:
-        go-version: '1.19.4'
+        go-version: '1.19'
+        check-latest: true
 
     - name: Tasting
       run: |
