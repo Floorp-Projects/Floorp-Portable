@@ -44,10 +44,10 @@ jobs:
             patcher.exe
             autopatcher.exe
 
-  tasting-on-linux:
+  tasting-on-linux-x86_64:
     runs-on: ubuntu-22.04
 
-    name: Tasting on Linux 🐧
+    name: Tasting on Linux x86_64 🐧
 
     steps:
     - uses: actions/checkout@v3
@@ -79,7 +79,49 @@ jobs:
     - name: Great taste!
       uses: actions/upload-artifact@v3
       with:
-        name: linux-test
+        name: linux-x86-64-test
+        path: |
+            floorp
+            patcher
+
+  testing-on-linux-aarch64:
+    runs-on: ubuntu-22.04
+    
+    name: Tasting on Linux aarch64 🥧
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - uses: uraimo/run-on-arch-action@v2
+      name: Tasting
+      with:
+        arch: aarch64
+        distro: archarm_latest
+        setup: |
+          ls -l ${PWD}
+        dockerRunArgs: |
+          --volume "${PWD}:/workspace"
+        shell: /bin/bash
+        install: |
+          pacman --noconfirm -Sy go tar nodejs npm glibc gcc-libs openssl
+        run: |
+          cd /workspace
+          mkdir core
+          chmod +x ./build.sh
+          ./build.sh
+          cd floorp_downloader
+          npm install
+          npm run start linux aarch64
+          tar -xvf floorp-package.tar.bz2
+          mv floorp/* ../core/
+          cd ..
+          ./patcher
+          ls -l
+
+    - name: Great taste!
+      uses: actions/upload-artifact@v3
+      with:
+        name: linux-aarch64-test
         path: |
             floorp
             patcher
