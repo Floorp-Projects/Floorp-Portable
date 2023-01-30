@@ -65,7 +65,7 @@ func main() {
 		err = exec.Command(exe_dir + "/core/floorp", args...).Run()
 	} else if runtime.GOOS == "linux" {
 		if !fileInUse(exe_dir + "/core/floorp") {
-			textcontent := "// DO NOT REMOVE THIS FILE\n" + stringPrefCodeGen("browser.cache.disk.parent_directory", exe_dir + "/cache") + "\n";
+			textcontent := "// DO NOT REMOVE THIS FILE\n" + stringPrefCodeGen("browser.cache.disk.parent_directory", exe_dir + "/cache/") + "\n";
 			file, err := os.Create(exe_dir + "/core/defaults/pref/portable-cache-prefs.js")
 			if err != nil {
 				showFatalError("core is broken!!!", "Failed to write settings.")
