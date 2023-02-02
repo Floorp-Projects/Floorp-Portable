@@ -11,8 +11,13 @@ The portable runtime uses [libportable](https://github.com/adonais/libportable).
 Create a directory named "core" and place Floorp files in it.
 
 ### 2. Build
+Windows
 ```
 .\build.bat
+```
+Linux
+```
+./build.sh
 ```
 
 ### 3. Apply the patch
