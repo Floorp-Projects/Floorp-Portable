@@ -17,40 +17,40 @@ func main() {
 	}
 	exe_dir := filepath.Dir(exe)
 
-	if _, err := os.Stat(exe_dir + "/update_tmp/CORE_UPDATE_READY"); err == nil {
+	if _, err := os.Stat(pathJoin(exe_dir, "update_tmp", "CORE_UPDATE_READY")); err == nil {
 		fmt.Println("Updates found.")
 
 		var used bool
 		if runtime.GOOS == "windows" {
-			used = fileInUse(exe_dir + "/core")
+			used = fileInUse(pathJoin(exe_dir, "core"))
 		} else if runtime.GOOS == "linux" {
-			used = fileInUse(exe_dir + "/core/floorp")
+			used = fileInUse(pathJoin(exe_dir, "core", "floorp"))
 		} else {
 			panic("Not supported!!!")
 		}
 
 		if !used {
-			err := os.Rename(exe_dir + "/core", exe_dir + "/core_old")
+			err := os.Rename(pathJoin(exe_dir, "core"), pathJoin(exe_dir, "core_old"))
 			if err != nil {
 				showFatalError("Update failed.", "Failed to prepare to start update.")
 				panic(err)
 			}
-			err = os.Remove(exe_dir + "/update_tmp/CORE_UPDATE_READY")
+			err = os.Remove(pathJoin(exe_dir, "update_tmp", "CORE_UPDATE_READY"))
 			if err != nil {
 				showFatalError("Update failed.", "Failed to prepare to start update.")
 				panic(err)
 			}
-			err = os.Rename(exe_dir + "/update_tmp/core", exe_dir + "/core")
+			err = os.Rename(pathJoin(exe_dir, "update_tmp", "core"), pathJoin(exe_dir, "core"))
 			if err != nil {
 				showFatalError("Update failed.", "Failed to replace with new file.")
 				panic(err)
 			}
-			err = os.RemoveAll(exe_dir + "/core_old")
+			err = os.RemoveAll(pathJoin(exe_dir, "core_old"))
 			if err != nil {
 				showFatalError("Update failed.", "Failed to delete old file.")
 				panic(err)
 			}
-			file, err := os.Create(exe_dir + "/update_tmp/REDIRECTOR_UPDATE_READY")
+			file, err := os.Create(pathJoin(exe_dir, "update_tmp", "REDIRECTOR_UPDATE_READY"))
 			if err != nil {
 				showFatalError("Update failed.", "Failed to prepare for redirector update.")
 				panic(err)
@@ -62,11 +62,11 @@ func main() {
 	}
 
 	if runtime.GOOS == "windows" {
-		err = exec.Command(exe_dir + "/core/floorp", args...).Run()
+		err = exec.Command(pathJoin(exe_dir, "core", "floorp"), args...).Run()
 	} else if runtime.GOOS == "linux" {
-		if !fileInUse(exe_dir + "/core/floorp") {
-			textcontent := "// DO NOT REMOVE THIS FILE\n" + stringPrefCodeGen("browser.cache.disk.parent_directory", exe_dir + "/cache/") + "\n";
-			file, err := os.Create(exe_dir + "/core/defaults/pref/portable-cache-prefs.js")
+		if !fileInUse(pathJoin(exe_dir, "core", "floorp")) {
+			textcontent := "// DO NOT REMOVE THIS FILE\n" + stringPrefCodeGen("browser.cache.disk.parent_directory", pathJoin(exe_dir, "cache/")) + "\n";
+			file, err := os.Create(pathJoin(exe_dir, "core", "defaults", "pref", "portable-cache-prefs.js"))
 			if err != nil {
 				showFatalError("core is broken!!!", "Failed to write settings.")
 				panic(err)
@@ -77,10 +77,10 @@ func main() {
 				panic(err)
 			}
 		}
-		os.Mkdir(exe_dir + "/Profile", 0777);
-		args_linux := []string{"-profile", exe_dir + "/Profile"}
+		os.Mkdir(pathJoin(exe_dir, "Profile"), 0777);
+		args_linux := []string{"-profile", pathJoin(exe_dir, "Profile")}
 		args_linux = append(args_linux, args...)
-		err = exec.Command(exe_dir + "/core/floorp", args_linux...).Run()
+		err = exec.Command(pathJoin(exe_dir, "core", "floorp"), args_linux...).Run()
 	} else {
 		panic("Not supported!!!")
 	}
