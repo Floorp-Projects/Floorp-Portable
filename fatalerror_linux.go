@@ -14,7 +14,8 @@ func showFatalError(title string, message string) {
 		if err == nil {
 			return
 		}
-		log.Println("[ERROR]", err)
+		log.Println("[INFO]", err)
 	}
 	// Substitution methods are needed.
+	log.Println("[FATAL]", title, message)
 }
