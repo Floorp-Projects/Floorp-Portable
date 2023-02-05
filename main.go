@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -18,7 +18,7 @@ func main() {
 	exe_dir := filepath.Dir(exe)
 
 	if _, err := os.Stat(pathJoin(exe_dir, "update_tmp", "CORE_UPDATE_READY")); err == nil {
-		fmt.Println("Updates found.")
+		log.Println("[INFO]", "Updates found.")
 
 		var used bool
 		if runtime.GOOS == "windows" {
@@ -56,8 +56,9 @@ func main() {
 				panic(err)
 			}
 			file.Close()
+			log.Println("[INFO]", "Update succeeded.")
 		} else {
-			fmt.Println("Floorp is running.")
+			log.Println("[INFO]", "Floorp is running.")
 		}
 	}
 
