@@ -19,6 +19,7 @@ func randomString(length int) string {
 	for i := range buf {
 		r, err := rand.Int(rand.Reader, max)
 		if err != nil {
+			showFatalError("An unexpected error occurred", "Generation of random numbers failed.")
 			panic(err)
 		}
 		buf[i] = letters[r.Int64()]
@@ -41,6 +42,7 @@ func fileInUse(path string) bool {
 	}
 	err = os.Rename(tmppath, path)
 	if err != nil {
+		showFatalError("An unexpected error occurred", "An unexpected error occurred while renaming the file.")
 		panic(err)
 	}
 	return false
