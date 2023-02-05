@@ -19,14 +19,12 @@ func pathJoin(args ...string) string {
 		arg_replaced = strings.Replace(arg_replaced, "/", separate, -1)
 		if join == "" {
 			join = arg_replaced
+		} else if join[len(join) - 1:] == separate && arg_replaced[0:1] == separate {
+			join = join + arg_replaced[1:]
+		} else if join[len(join) - 1:] == separate || arg_replaced[0:1] == separate {
+			join = join + arg_replaced
 		} else {
-			if join[len(join) - 1:] == separate && arg_replaced[0:1] == separate {
-				join = join + arg_replaced[1:]
-			} else if join[len(join) - 1:] == separate || arg_replaced[0:1] == separate {
-				join = join + arg_replaced
-			} else {
-				join = join + separate + arg_replaced
-			}
+			join = join + separate + arg_replaced
 		}
 	}
 	return join
