@@ -7,13 +7,13 @@ import (
 
 func pathJoin(args ...string) string {
 	var separate string
+	var join string
 	if runtime.GOOS == "windows" {
 		separate = "\\"
 	} else {
 		separate = "/"
 	}
 
-	join := ""
 	for _, arg := range args {
 		arg_replaced := strings.Replace(arg, "\\", separate, -1)
 		arg_replaced = strings.Replace(arg_replaced, "/", separate, -1)
