@@ -65,11 +65,15 @@ func main() {
 	}
 	exe_dir := filepath.Dir(exe)
 
-	if err = exec.Command(exe_dir+"/7zr.exe", "x", exename, "-x!setup.exe").Run(); err != nil {
+	outputcl, err := exec.Command(exe_dir + "/7zr.exe", "x", exename, "-x!setup.exe").CombinedOutput()
+	fmt.Println(string(outputcl))
+	if err != nil {
 		panic(err)
 	}
 
-	if err = exec.Command(exe_dir + "/patcher.exe").Run(); err != nil {
+	outputcl, err = exec.Command(exe_dir + "/patcher.exe").CombinedOutput()
+	fmt.Println(string(outputcl))
+	if err != nil {
 		panic(err)
 	}
 }
