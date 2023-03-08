@@ -9,6 +9,9 @@ jobs:
     name: Tasting on Windows 🍴
 
     steps:
+    - name: Prepare git
+      run: git config --global core.autocrlf false
+
     - uses: actions/checkout@v3
 
     - uses: actions/setup-go@v3
