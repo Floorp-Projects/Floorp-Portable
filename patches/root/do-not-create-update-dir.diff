@@ -1,0 +1,38 @@
+diff --git a/modules/UpdateUtils.sys.mjs b/modules/UpdateUtils.sys.mjs
+index b7f8244..1630ac9 100644
+--- a/modules/UpdateUtils.sys.mjs
++++ b/modules/UpdateUtils.sys.mjs
+@@ -552,15 +552,7 @@ UpdateUtils.PER_INSTALLATION_PREFS = {
+     migrate: true,
+     observerTopic: "auto-update-config-change",
+     policyFn: () => {
+-      if (!Services.policies.isAllowed("app-auto-updates-off")) {
+-        // We aren't allowed to turn off auto-update - it is forced on.
+-        return true;
+-      }
+-      if (!Services.policies.isAllowed("app-auto-updates-on")) {
+-        // We aren't allowed to turn on auto-update - it is forced off.
+-        return false;
+-      }
+-      return null;
++      return false;
+     },
+   },
+   "app.update.background.enabled": {
+@@ -568,15 +560,7 @@ UpdateUtils.PER_INSTALLATION_PREFS = {
+     defaultValue: true,
+     observerTopic: "background-update-config-change",
+     policyFn: () => {
+-      if (!Services.policies.isAllowed("app-background-update-off")) {
+-        // We aren't allowed to turn off background update - it is forced on.
+-        return true;
+-      }
+-      if (!Services.policies.isAllowed("app-background-update-on")) {
+-        // We aren't allowed to turn on background update - it is forced off.
+-        return false;
+-      }
+-      return null;
++      return false;
+     },
+   },
+ };

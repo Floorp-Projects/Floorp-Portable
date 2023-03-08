@@ -1,0 +1,12 @@
+diff --git a/modules/BrowserGlue.sys.mjs b/modules/BrowserGlue.sys.mjs
+index 42da408..a508106 100644
+--- a/modules/BrowserGlue.sys.mjs
++++ b/modules/BrowserGlue.sys.mjs
+@@ -2505,6 +2505,7 @@ BrowserGlue.prototype = {
+             false
+           ),
+         task: async () => {
++          return;
+           let shellService = Cc[
+             "@mozilla.org/browser/shell-service;1"
+           ].getService(Ci.nsIWindowsShellService);
