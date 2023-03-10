@@ -1,6 +1,6 @@
 name: Tasting 🍴
 
-on: push
+on: workflow_dispatch
 
 jobs:
   tasting-on-windows:
