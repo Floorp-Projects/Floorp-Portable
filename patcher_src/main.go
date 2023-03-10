@@ -20,7 +20,7 @@ func unzip(src string, dest string) {
 		panic(err)
 	}
 
-	if err := os.MkdirAll(dest, os.ModeDir); err != nil {
+	if err := os.MkdirAll(dest, 0777); err != nil {
 		panic(err)
 	}
 
@@ -32,7 +32,7 @@ func unzip(src string, dest string) {
 			}
 			continue
 		}
-		if err := os.MkdirAll(filepath.Dir(path), fileInZip.Mode()); err != nil {
+		if err := os.MkdirAll(filepath.Dir(path), 0777); err != nil {
 			panic(err)
 		}
 		file, err := fileInZip.Open()
