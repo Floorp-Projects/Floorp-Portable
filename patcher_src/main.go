@@ -122,14 +122,6 @@ func createzip(src string, dest string) {
 }
 
 func main() {
-	/*
-	exe, err := os.Executable()
-	if err != nil {
-		panic(err)
-	}
-	exe_dir := filepath.Dir(exe)
-	*/
-
 	if runtime.GOOS == "windows" {
 		out, err := exec.Command("utils/setdll64.exe", "/d:portable64.dll", "core/mozglue.dll").Output()
 		fmt.Println(string(out))
