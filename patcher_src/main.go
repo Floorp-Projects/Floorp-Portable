@@ -229,9 +229,9 @@ func main() {
 			return nil
 		}
 		var rootDir string
-		if strings.HasPrefix(filepath.ToSlash(path), "patches/root") {
+		if strings.HasPrefix(filepath.ToSlash(path), "patches/root/") {
 			rootDir = "omni_tmp_root"
-		} else if strings.HasPrefix(filepath.ToSlash(path), "patches/browser") {
+		} else if strings.HasPrefix(filepath.ToSlash(path), "patches/browser/") {
 			rootDir = "omni_tmp_browser"
 		} else {
 			return nil
