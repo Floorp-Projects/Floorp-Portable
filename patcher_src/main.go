@@ -27,7 +27,7 @@ func unzip(src string, dest string) {
 	for _, fileInZip := range zipFile.File {
 		path := filepath.Join(dest, fileInZip.Name)
 		if fileInZip.Mode().IsDir() {
-			if err := os.MkdirAll(path, fileInZip.Mode()); err != nil {
+			if err := os.MkdirAll(path, 0777); err != nil {
 				panic(err)
 			}
 			continue
