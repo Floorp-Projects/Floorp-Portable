@@ -215,7 +215,7 @@ func main() {
 
 	log.Println("Unzipping \"core/omni.ja\"")
 	unzip("core/omni.ja", "omni_tmp_root")
-	log.Println("Unzipping \"core/omni.ja\"")
+	log.Println("Unzipping \"core/browser/omni.ja\"")
 	unzip("core/browser/omni.ja", "omni_tmp_browser")
 
 	err = filepath.Walk("patches", func(path string, info os.FileInfo, err error) error {
