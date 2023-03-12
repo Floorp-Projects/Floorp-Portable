@@ -143,12 +143,15 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
-		_, err = io.Copy(dst, src)
-		if  err != nil {
+		if _, err = io.Copy(dst, src); err != nil {
 			panic(err)
 		}
-		src.Close()
-		dst.Close()
+		if err := src.Close(); err != nil {
+			panic(err)
+		}
+		if err := dst.Close(); err != nil {
+			panic(err)
+		}
 
 		src, err = os.Open("config/portable.ini")
 		if err != nil {
@@ -158,12 +161,15 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
-		_, err = io.Copy(dst, src)
-		if  err != nil {
+		if _, err = io.Copy(dst, src); err != nil {
 			panic(err)
 		}
-		src.Close()
-		dst.Close()
+		if err := src.Close(); err != nil {
+			panic(err)
+		}
+		if err := dst.Close(); err != nil {
+			panic(err)
+		}
 	}
 
 	if _, err := os.Stat("core/distribution"); err != nil {
@@ -181,12 +187,15 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	_, err = io.Copy(dst, src)
-	if  err != nil {
+	if _, err = io.Copy(dst, src); err != nil {
 		panic(err)
 	}
-	src.Close()
-	dst.Close()
+	if err := src.Close(); err != nil {
+		panic(err)
+	}
+	if err := dst.Close(); err != nil {
+		panic(err)
+	}
 
 	src, err = os.Open("config/portable-prefs.js")
 	if err != nil {
@@ -196,24 +205,27 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	_, err = io.Copy(dst, src)
-	if  err != nil {
+	if _, err = io.Copy(dst, src); err != nil {
 		panic(err)
 	}
-	src.Close()
-	dst.Close()
+	if err := src.Close(); err != nil {
+		panic(err)
+	}
+	if err := dst.Close(); err != nil {
+		panic(err)
+	}
 
 	if runtime.GOOS == "windows" {
 		err := os.Remove("core/updater.exe")
-		if  err != nil {
+		if err != nil {
 			panic(err)
 		}
 		err = os.Remove("core/default-browser-agent.exe")
-		if  err != nil {
+		if err != nil {
 			panic(err)
 		}
 		err = os.RemoveAll("core/uninstall")
-		if  err != nil {
+		if err != nil {
 			panic(err)
 		}
 	}
