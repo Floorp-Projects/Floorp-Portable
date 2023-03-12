@@ -8,11 +8,17 @@ import (
 	"path/filepath"
 	"runtime"
 	"bytes"
+	"encoding/json"
 	"log"
-	"strings"
 	"archive/zip"
 	"github.com/bluekeyes/go-gitdiff/gitdiff"
 )
+
+type PatchesInfo []struct {
+	Filename string `json:"filename"`
+	Type     string `json:"type"`
+	Platforms []string `json:"platforms"`
+}
 
 func unzip(src string, dest string) {
 	zipFile, err := zip.OpenReader(src)
@@ -218,17 +224,35 @@ func main() {
 	log.Println("Unzipping \"core/browser/omni.ja\"")
 	unzip("core/browser/omni.ja", "omni_tmp_browser")
 
-	err = filepath.Walk("patches", func(path string, info os.FileInfo, err error) error {
-		if info.IsDir() {
-			return nil
+	jsonfile, err := os.ReadFile("patches.json")
+    if err != nil {
+        panic(err)
+    }
+	var patchesInfo PatchesInfo
+	if err := json.Unmarshal(jsonfile, &patchesInfo); err != nil {
+		panic(err)
+	}
+
+	for _, patchInfo := range patchesInfo {
+		matchedPlatform := (func(platforms []string) bool {
+			for _, platform := range platforms {
+				if platform == runtime.GOOS {
+					return true
+				}
+			}
+			return false
+		})(patchInfo.Platforms)
+		if !matchedPlatform {
+			continue
 		}
+		path := "patches/" + patchInfo.Filename
 		var rootDir string
-		if strings.HasPrefix(filepath.ToSlash(path), "patches/root/") {
+		if patchInfo.Type == "root" {
 			rootDir = "omni_tmp_root"
-		} else if strings.HasPrefix(filepath.ToSlash(path), "patches/browser/") {
+		} else if patchInfo.Type == "browser" {
 			rootDir = "omni_tmp_browser"
 		} else {
-			return nil
+			continue
 		}
 		log.Println("Applying \"" + path + "\"")
 		patchfile, err := os.Open(path)
@@ -253,13 +277,13 @@ func main() {
 			if err != nil {
 				panic(err)
 			}
-			codefileW.Write(output.Bytes())
-			codefileW.Close()
+			if _, err := codefileW.Write(output.Bytes()); err != nil {
+				panic(err)
+			}
+			if err := codefileW.Close(); err != nil {
+				panic(err)
+			}
 		}
-		return nil
-	})
-	if err != nil {
-		panic(err)
 	}
 
 	log.Println("Zipping \"omni_tmp_root\"")
