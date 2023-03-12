@@ -225,9 +225,9 @@ func main() {
 	unzip("core/browser/omni.ja", "omni_tmp_browser")
 
 	jsonfile, err := os.ReadFile("patches.json")
-    if err != nil {
-        panic(err)
-    }
+	if err != nil {
+		panic(err)
+	}
 	var patchesInfo PatchesInfo
 	if err := json.Unmarshal(jsonfile, &patchesInfo); err != nil {
 		panic(err)
