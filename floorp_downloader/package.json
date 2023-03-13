@@ -9,6 +9,6 @@
   "author": "",
   "license": "MPL2.0",
   "dependencies": {
-    "node-fetch": "^3.3.0"
+    "node-fetch": "^3.3.1"
   }
 }
