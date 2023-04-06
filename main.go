@@ -65,23 +65,20 @@ func main() {
 	if runtime.GOOS == "windows" {
 		err = exec.Command(pathJoin(exe_dir, "core", "floorp"), args...).Run()
 	} else if runtime.GOOS == "linux" {
-		if !fileInUse(pathJoin(exe_dir, "core", "floorp")) {
-			textcontent := "// DO NOT REMOVE THIS FILE\n" + stringPrefCodeGen("browser.cache.disk.parent_directory", pathJoin(exe_dir, "cache/")) + "\n";
-			file, err := os.Create(pathJoin(exe_dir, "core", "defaults", "pref", "portable-cache-prefs.js"))
-			if err != nil {
-				showFatalError("core is broken!!!", "Failed to write settings.")
-				panic(err)
-			}
-			_, err = file.Write([]byte(textcontent))
-			if err != nil {
-				showFatalError("core is broken!!!", "Failed to write settings.")
-				panic(err)
-			}
+		cache_dir := pathJoin(exe_dir, "cache")
+		profiles_dir := pathJoin(exe_dir, "profiles")
+
+		os.Mkdir(cache_dir, 0777);
+		os.Mkdir(profiles_dir, 0777);
+
+		args_linux := []string{
+			"--dev-bind", "/", "/",
+			"--bind", cache_dir, "~/.cache",
+			"--bind", profiles_dir, "~/.floorp",
+			pathJoin(exe_dir, "core", "floorp"),
 		}
-		os.Mkdir(pathJoin(exe_dir, "Profile"), 0777);
-		args_linux := []string{"-profile", pathJoin(exe_dir, "Profile")}
 		args_linux = append(args_linux, args...)
-		err = exec.Command(pathJoin(exe_dir, "core", "floorp"), args_linux...).Run()
+		err = exec.Command("bwrap", args_linux...).Run()
 	} else {
 		panic("Not supported!!!")
 	}
