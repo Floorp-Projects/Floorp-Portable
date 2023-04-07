@@ -63,8 +63,17 @@ func main() {
 	}
 
 	if runtime.GOOS == "windows" {
-		err = exec.Command(pathJoin(exe_dir, "core", "floorp"), args...).Run()
+		err := exec.Command(pathJoin(exe_dir, "core", "floorp"), args...).Run()
+		if err != nil {
+			showFatalError("core is broken!!!", "Failed to start Floorp.")
+			panic(err)
+		}
 	} else if runtime.GOOS == "linux" {
+		homedir, err := os.UserHomeDir()
+		if err != nil {
+			panic(err)
+		}
+
 		cache_dir := pathJoin(exe_dir, "cache")
 		profiles_dir := pathJoin(exe_dir, "profiles")
 
@@ -73,17 +82,18 @@ func main() {
 
 		args_linux := []string{
 			"--dev-bind", "/", "/",
-			"--bind", cache_dir, "~/.cache",
-			"--bind", profiles_dir, "~/.floorp",
+			"--bind", cache_dir, homedir + "/.cache",
+			"--bind", profiles_dir, homedir + "/.floorp",
 			pathJoin(exe_dir, "core", "floorp"),
 		}
 		args_linux = append(args_linux, args...)
-		err = exec.Command("bwrap", args_linux...).Run()
+		out, err := exec.Command("bwrap", args_linux...).CombinedOutput()
+		if err != nil {
+			log.Println(string(out))
+			showFatalError("core is broken!!!", "Failed to start Floorp.")
+			panic(err)
+		}
 	} else {
 		panic("Not supported!!!")
-	}
-	if err != nil {
-		showFatalError("core is broken!!!", "Failed to start Floorp.")
-		panic(err)
 	}
 }
