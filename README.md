@@ -6,6 +6,11 @@
 
 The portable runtime uses [libportable](https://github.com/adonais/libportable).
 
+## Requirements
+* OS: Windows 10, 11 (x86_64) or Linux (x86_64, aarch64)
+* Memory: 4GB+
+* Disk Space: At least 2GB of free disk space.
+
 ## How to build
 ### 1. Install Floorp
 Create a directory named "core" and place Floorp files in it.

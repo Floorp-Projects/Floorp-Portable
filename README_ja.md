@@ -6,6 +6,11 @@
 
 ポータブルランタイムには[libportable](https://github.com/adonais/libportable)を使用しています。
 
+## 要件
+* OS: Windows 10, 11 (x86_64) or Linux (x86_64, aarch64)
+* メモリ: 4GB以上
+* ディスク容量: 2GB以上の空きディスク容量
+
 ## 構築方法
 ### 1. Floorpを設置する。
 coreディレクトリを作成して、中にFloorpのファイルを設置してください。
