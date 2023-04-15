@@ -5,6 +5,11 @@ updates:
     schedule:
       interval: "daily"
 
+  - package-ecosystem: "gomod"
+    directory: "/.github/autopatcher"
+    schedule:
+      interval: "daily"
+
   - package-ecosystem: "npm"
     directory: "/floorp_downloader"
     schedule:
