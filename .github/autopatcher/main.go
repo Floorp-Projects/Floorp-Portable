@@ -21,8 +21,8 @@ import (
 var exename string
 
 func main() {
-	value := "https://f005.backblazeb2.com/file/Floorp/floorp-112.0a1.en-US.win64.installer.exe"
-	exename = strings.Split(value, "/")[5]
+	value := "https://github.com/Floorp-Projects/Floorp/releases/latest/download/floorp-win64.installer.exe"
+	exename = strings.Split(value, "/")[8]
 	fmt.Printf("[found] %s\n", exename)
 	resp, err := http.Get(value)
 	if err != nil {
