@@ -6,9 +6,15 @@
 
 
 ## Requirements
-* OS: Windows 10, 11 (x86_64) or Linux (x86_64, aarch64)
-* Memory: 4GB+
-* Disk Space: At least 2GB of free disk space.
+* Windows
+  * OS: 10, 11 (x86_64)
+  * Memory: 8GB+
+  * Disk Space: At least 2GB of free disk space.
+* Linux
+  * OS: x86_64
+  * Memory: 4GB+
+  * Disk Space: At least 2GB of free disk space.
+  * Packages: bubblewrap, glibc, gtk+, libstdc++, xorg
 
 
 ## How to build
