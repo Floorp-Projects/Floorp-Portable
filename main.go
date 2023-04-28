@@ -80,6 +80,12 @@ func main() {
 		os.Mkdir(cache_dir, 0777);
 		os.Mkdir(profiles_dir, 0777);
 
+		err = exec.Command("bwrap", "--help").Run()
+		if err != nil {
+			showFatalError("Bubblewrap is not installed.", "Bubblewrap must be installed to run.")
+			panic(err)
+		}
+
 		args_linux := []string{
 			"--dev-bind", "/", "/",
 			"--bind", cache_dir, homedir + "/.cache",
