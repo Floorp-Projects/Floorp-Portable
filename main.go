@@ -90,8 +90,18 @@ func main() {
 			"--dev-bind", "/", "/",
 			"--bind", cache_dir, homedir + "/.cache",
 			"--bind", profiles_dir, homedir + "/.floorp",
-			pathJoin(exe_dir, "core", "floorp"),
 		}
+		if os.Getenv("XDG_SESSION_TYPE") == "wayland" {
+			args_linux = append(
+				args_linux,
+				"--setenv", "MOZ_ENABLE_WAYLAND", "1",
+			)
+		}
+		args_linux = append(
+			args_linux,
+			"--",
+			pathJoin(exe_dir, "core", "floorp"),
+		)
 		args_linux = append(args_linux, args...)
 		out, err := exec.Command("bwrap", args_linux...).CombinedOutput()
 		if err != nil {
