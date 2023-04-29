@@ -7,11 +7,9 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
-	"bytes"
 	"encoding/json"
 	"log"
 	"archive/zip"
-	"github.com/bluekeyes/go-gitdiff/gitdiff"
 )
 
 type PatchesInfo []struct {
@@ -257,7 +255,10 @@ func main() {
 		if !matchedPlatform {
 			continue
 		}
-		path := "patches/" + patchInfo.Filename
+		path, err := filepath.Abs("patches/" + patchInfo.Filename)
+		if err != nil {
+			panic(err)
+		}
 		var rootDir string
 		if patchInfo.Type == "root" {
 			rootDir = "omni_tmp_root"
@@ -267,34 +268,12 @@ func main() {
 			continue
 		}
 		log.Println("Applying \"" + path + "\"")
-		patchfile, err := os.Open(path)
+		cmd := exec.Command("git", "--git-dir=", "apply", path)
+		cmd.Dir = rootDir
+		out, err := cmd.CombinedOutput()
 		if err != nil {
+			log.Println(string(out))
 			panic(err)
-		}
-		files, _, err := gitdiff.Parse(patchfile)
-		if err != nil {
-			panic(err)
-		}
-		for _, file := range files {
-			codefileRO, err := os.Open(rootDir + "/" + file.OldName)
-			if err != nil {
-				panic(err)
-			}
-			var output bytes.Buffer
-			if err := gitdiff.Apply(&output, codefileRO, file); err != nil {
-				panic(err)
-			}
-			codefileRO.Close()
-			codefileW, err := os.Create(rootDir + "/" + file.OldName)
-			if err != nil {
-				panic(err)
-			}
-			if _, err := codefileW.Write(output.Bytes()); err != nil {
-				panic(err)
-			}
-			if err := codefileW.Close(); err != nil {
-				panic(err)
-			}
 		}
 	}
 
