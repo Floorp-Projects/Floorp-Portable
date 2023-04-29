@@ -1,6 +1,6 @@
 # Floorp Portable
 
-**Note: It will work with future releases of Floorp 11.**
+**Note: It will only work with the upcoming release of Floorp 11.**
 
 **Warning: This is currently a beta version. Unexpected problems may occur.**
 
