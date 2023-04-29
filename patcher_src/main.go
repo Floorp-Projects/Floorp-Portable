@@ -281,4 +281,13 @@ func main() {
 	createzip("omni_tmp_root", "core/omni.ja")
 	log.Println("Zipping \"omni_tmp_browser\"")
 	createzip("omni_tmp_browser", "core/browser/omni.ja")
+
+	err = os.RemoveAll("omni_tmp_root")
+	if err != nil {
+		panic(err)
+	}
+	err = os.RemoveAll("omni_tmp_browser")
+	if err != nil {
+		panic(err)
+	}
 }
