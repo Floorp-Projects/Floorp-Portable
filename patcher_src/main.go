@@ -125,7 +125,7 @@ func createzip(src string, dest string) {
 	}
 }
 
-func main() {
+func apply_patch() {
 	if runtime.GOOS == "windows" {
 		out, err := exec.Command("utils/setdll64.exe", "/d:portable64.dll", "core/mozglue.dll").Output()
 		fmt.Println(string(out))
@@ -289,5 +289,72 @@ func main() {
 	err = os.RemoveAll("omni_tmp_browser")
 	if err != nil {
 		panic(err)
+	}
+}
+
+func create_patch() {
+	log.Println("Unzipping \"core/omni.ja\"")
+	unzip("core/omni.ja", "omni_tmp_root")
+	log.Println("Unzipping \"core/browser/omni.ja\"")
+	unzip("core/browser/omni.ja", "omni_tmp_browser")
+
+	log.Println("Setup git workspace... (omni_tmp_root)")
+	cmd := exec.Command("git", "init")
+	cmd.Dir = "omni_tmp_root"
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		log.Println(string(out))
+		panic(err)
+	}
+	log.Println("Staging files... (omni_tmp_root)")
+	cmd = exec.Command("git", "add", ".")
+	cmd.Dir = "omni_tmp_root"
+	out, err = cmd.CombinedOutput()
+	if err != nil {
+		log.Println(string(out))
+		panic(err)
+	}
+	log.Println("Committing... (omni_tmp_root)")
+	cmd = exec.Command("git", "commit", "-m", "init")
+	cmd.Dir = "omni_tmp_root"
+	out, err = cmd.CombinedOutput()
+	if err != nil {
+		log.Println(string(out))
+		panic(err)
+	}
+
+	log.Println("Setup git workspace... (omni_tmp_browser)")
+	cmd = exec.Command("git", "init")
+	cmd.Dir = "omni_tmp_browser"
+	out, err = cmd.CombinedOutput()
+	if err != nil {
+		log.Println(string(out))
+		panic(err)
+	}
+	log.Println("Staging files... (omni_tmp_browser)")
+	cmd = exec.Command("git", "add", ".")
+	cmd.Dir = "omni_tmp_browser"
+	out, err = cmd.CombinedOutput()
+	if err != nil {
+		log.Println(string(out))
+		panic(err)
+	}
+	log.Println("Committing... (omni_tmp_browser)")
+	cmd = exec.Command("git", "commit", "-m", "init")
+	cmd.Dir = "omni_tmp_browser"
+	out, err = cmd.CombinedOutput()
+	if err != nil {
+		log.Println(string(out))
+		panic(err)
+	}
+}
+
+func main() {
+	if len(os.Args) < 2 {
+		apply_patch()
+	} else if os.Args[1] == "apply_patch" {
+		apply_patch()
+	} else if os.Args[1] == "create_patch" {
+		create_patch()
 	}
 }
