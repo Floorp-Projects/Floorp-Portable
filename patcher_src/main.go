@@ -240,6 +240,13 @@ func apply_patch() {
 				panic(err)
 			}
 		}
+	} else if runtime.GOOS == "linux" {
+		if _, err := os.Stat("core/updater"); err == nil {
+			err := os.Remove("core/updater")
+			if err != nil {
+				panic(err)
+			}
+		}
 	}
 
 
