@@ -222,17 +222,23 @@ func apply_patch() {
 	}
 
 	if runtime.GOOS == "windows" {
-		err := os.Remove("core/updater.exe")
-		if err != nil {
-			panic(err)
+		if _, err := os.Stat("core/updater.exe"); err == nil {
+			err := os.Remove("core/updater.exe")
+			if err != nil {
+				panic(err)
+			}
 		}
-		err = os.Remove("core/default-browser-agent.exe")
-		if err != nil {
-			panic(err)
+		if _, err := os.Stat("core/default-browser-agent.exe"); err == nil {
+			err = os.Remove("core/default-browser-agent.exe")
+			if err != nil {
+				panic(err)
+			}
 		}
-		err = os.RemoveAll("core/uninstall")
-		if err != nil {
-			panic(err)
+		if _, err := os.Stat("core/uninstall"); err == nil {
+			err = os.RemoveAll("core/uninstall")
+			if err != nil {
+				panic(err)
+			}
 		}
 	}
 
