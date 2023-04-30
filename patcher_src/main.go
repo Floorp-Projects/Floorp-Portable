@@ -54,8 +54,12 @@ func unzip(src string, dest string) {
 		if _, err := io.Copy(destFile, file); err != nil {
 			panic(err)
 		}
-		file.Close()
-		destFile.Close()
+		if err := file.Close(); err != nil {
+			panic(err)
+		}
+		if err := destFile.Close(); err != nil {
+			panic(err)
+		}
 	}
 
 	if err := zipFile.Close(); err != nil {
