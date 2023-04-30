@@ -9,6 +9,10 @@ import (
 )
 
 func main() {
+	if runtime.GOOS != "windows" && runtime.GOOS != "linux" {
+		panic("Your platform is not supported.")
+	}
+
 	args := os.Args[1:]
 
 	exe, err := os.Executable()
@@ -25,8 +29,6 @@ func main() {
 			used = fileInUse(pathJoin(exe_dir, "core"))
 		} else if runtime.GOOS == "linux" {
 			used = fileInUse(pathJoin(exe_dir, "core", "floorp"))
-		} else {
-			panic("Not supported!!!")
 		}
 
 		if !used {
@@ -109,7 +111,5 @@ func main() {
 			showFatalError("core is broken!!!", "Failed to start Floorp.")
 			panic(err)
 		}
-	} else {
-		panic("Not supported!!!")
 	}
 }

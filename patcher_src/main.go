@@ -371,6 +371,10 @@ func create_patch() {
 }
 
 func main() {
+	if runtime.GOOS != "windows" && runtime.GOOS != "linux" {
+		panic("Your platform is not supported.")
+	}
+
 	if len(os.Args) < 2 {
 		apply_patch()
 	} else if os.Args[1] == "apply_patch" {
