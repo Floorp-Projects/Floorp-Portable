@@ -10,6 +10,7 @@ import (
 	"encoding/json"
 	"log"
 	"archive/zip"
+	"strings"
 )
 
 type PatchesInfo []struct {
@@ -30,6 +31,9 @@ func unzip(src string, dest string) {
 
 	for _, fileInZip := range zipFile.File {
 		path := filepath.Join(dest, fileInZip.Name)
+		if !strings.HasPrefix(path, filepath.Clean(dest) + string(os.PathSeparator)) {
+			panic("!!! Zip Slip detected !!!")
+		}
 		if fileInZip.Mode().IsDir() {
 			if err := os.MkdirAll(path, 0777); err != nil {
 				panic(err)
