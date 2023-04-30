@@ -178,11 +178,9 @@ func apply_patch() {
 		}
 	}
 
-	if _, err := os.Stat("core/distribution"); err != nil {
-		err := os.Mkdir("core/distribution", 0777)
-		if err != nil {
-			panic(err)
-		}
+	err := os.Mkdir("core/distribution", 0777)
+	if err != nil && !os.IsExist(err) {
+		panic(err)
 	}
 
 	src, err := os.Open("config/policies.json")
@@ -222,30 +220,22 @@ func apply_patch() {
 	}
 
 	if runtime.GOOS == "windows" {
-		if _, err := os.Stat("core/updater.exe"); err == nil {
-			err := os.Remove("core/updater.exe")
-			if err != nil {
-				panic(err)
-			}
+		err := os.Remove("core/updater.exe")
+		if err != nil && !os.IsNotExist(err) {
+			panic(err)
 		}
-		if _, err := os.Stat("core/default-browser-agent.exe"); err == nil {
-			err = os.Remove("core/default-browser-agent.exe")
-			if err != nil {
-				panic(err)
-			}
+		err = os.Remove("core/default-browser-agent.exe")
+		if err != nil && !os.IsNotExist(err) {
+			panic(err)
 		}
-		if _, err := os.Stat("core/uninstall"); err == nil {
-			err = os.RemoveAll("core/uninstall")
-			if err != nil {
-				panic(err)
-			}
+		err = os.RemoveAll("core/uninstall")
+		if err != nil && !os.IsNotExist(err) {
+			panic(err)
 		}
 	} else if runtime.GOOS == "linux" {
-		if _, err := os.Stat("core/updater"); err == nil {
-			err := os.Remove("core/updater")
-			if err != nil {
-				panic(err)
-			}
+		err := os.Remove("core/updater")
+		if err != nil && !os.IsNotExist(err) {
+			panic(err)
 		}
 	}
 
