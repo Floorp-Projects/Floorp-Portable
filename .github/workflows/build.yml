@@ -17,24 +17,42 @@ jobs:
     steps:
     - name: Prepare git
       run: git config --global core.autocrlf false
+
     - uses: actions/checkout@v3
+
     - uses: actions/setup-go@v3
       with:
         go-version: '1.20'
         check-latest: true
+
     - name: Build
       run: |
         .\build.bat
-        cd .github/autopatcher
-        go build
-        copy autopatcher.exe ../..
+
+        # cd .github/autopatcher
+        # go build
+        # copy autopatcher.exe ../..
+        # cd ../..
+        # ./autopatcher.exe
+
+        cd floorp_downloader
+        node floorp_downloader_nightly.mjs windows x86_64
+        mkdir tmp
+        Expand-Archive -Path ./floorp-package.zip -DestinationPath ./tmp
+        cd tmp
+        $items = Get-ChildItem ./*.zip -File
+        Expand-Archive -Path $items[0] -DestinationPath .
         cd ../..
-        ./autopatcher.exe
+        Copy-Item -Recurse ./floorp_downloader/tmp/floorp ./core
+
+        ./patcher
+
         dir
         cd core
         $fver=./floorp.exe  '-version' | more
         echo "fver=$($fver.Split()[2])" >> $env:GITHUB_ENV
         cd ..
+
     - name: Artifact
       uses: actions/upload-artifact@v3
       if: github.event.inputs.choice == 'Artifact'
@@ -43,6 +61,7 @@ jobs:
         path: |
             core/
             floorp.exe
+
     - name: Release
       uses: thedoctor0/zip-release@main
       if: github.event.inputs.choice == 'Release'
@@ -52,6 +71,7 @@ jobs:
         path: |
           core/
           floorp.exe
+
     - uses: marvinpinto/action-automatic-releases@latest
       if: github.event.inputs.choice == 'Release'
       with:
