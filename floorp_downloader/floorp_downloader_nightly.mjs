@@ -18,6 +18,7 @@ let valid_workflow_run;
 for (let workflow_run of result_obj["workflow_runs"]) {
     if (workflow_run["path"] == ".github/workflows/daily-build.yml" && workflow_run["conclusion"] == "success") {
         valid_workflow_run = workflow_run;
+        break;
     }
 }
 if (!valid_workflow_run) throw "Not found";
