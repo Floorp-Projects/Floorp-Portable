@@ -60,7 +60,7 @@ jobs:
 
     - name: Artifact
       uses: actions/upload-artifact@v3
-      if: github.event.inputs.choice == 'Artifact'
+      if: github.event_name == 'schedule' || github.event.inputs.choice == 'Artifact'
       with:
         name: floorp-${{ env.fver }}-portable
         path: |
