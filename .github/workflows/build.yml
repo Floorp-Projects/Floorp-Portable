@@ -36,6 +36,7 @@ jobs:
         # ./autopatcher.exe
 
         cd floorp_downloader
+        npm install
         node floorp_downloader_nightly.mjs windows x86_64
         mkdir tmp
         Expand-Archive -Path ./floorp-package.zip -DestinationPath ./tmp
