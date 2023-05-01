@@ -52,6 +52,8 @@ jobs:
         $fver=./floorp.exe  '-version' | more
         echo "fver=$($fver.Split()[2])" >> $env:GITHUB_ENV
         cd ..
+      env:
+        PAT: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 
     - name: Artifact
       uses: actions/upload-artifact@v3
