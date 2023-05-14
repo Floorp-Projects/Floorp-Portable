@@ -6,6 +6,8 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"io"
+	"net/http"
 )
 
 func main() {
@@ -82,10 +84,59 @@ func main() {
 		os.Mkdir(cache_dir, 0777);
 		os.Mkdir(profiles_dir, 0777);
 
+		var bwrap_path string
 		err = exec.Command("bwrap", "--help").Run()
-		if err != nil {
-			showFatalError("Bubblewrap is not installed.", "Bubblewrap must be installed to run.")
-			panic(err)
+		err2 := exec.Command(pathJoin(exe_dir, "bwrap"), "--help").Run()
+		if err == nil {
+			bwrap_path = "bwrap"
+		} else if err2 == nil {
+			bwrap_path = pathJoin(exe_dir, "bwrap")
+		} else {
+			bwrap_path = pathJoin(exe_dir, "bwrap")
+
+			result := showConfirmDialog("Bubblewrap is not installed.", "Bubblewrap must be installed to run.\nDo you want to download binaries from a developer-controlled repository?")
+			if !result {
+				showFatalError("Bubblewrap is not installed.", "Bubblewrap must be installed to run.")
+				panic(err)
+			}
+			bwrap_url_x86_64  := "https://github.com/typeling1578/bubblewrap/releases/latest/download/bwrap-x86_64"
+			bwrap_url_aarch64 := "https://github.com/typeling1578/bubblewrap/releases/latest/download/bwrap-aarch64"
+			var bwrap_url string
+			if runtime.GOARCH == "amd64" {
+				bwrap_url = bwrap_url_x86_64
+			} else if runtime.GOARCH == "arm64" {
+				bwrap_url = bwrap_url_aarch64
+			}
+			resp, err := http.Get(bwrap_url)
+			if err != nil {
+				showFatalError("Failed to download", "Failed to download Bubblewrap.")
+				panic(err)
+			}
+			out, err := os.Create(bwrap_path)
+			if err != nil {
+				showFatalError("Failed to download", "Failed to download Bubblewrap.")
+				panic(err)
+			}
+			_, err = io.Copy(out, resp.Body)
+			if err != nil {
+				showFatalError("Failed to download", "Failed to download Bubblewrap.")
+				panic(err)
+			}
+			err = resp.Body.Close()
+			if err != nil {
+				showFatalError("Failed to download", "Failed to download Bubblewrap.")
+				panic(err)
+			}
+			err = out.Close()
+			if err != nil {
+				showFatalError("Failed to download", "Failed to download Bubblewrap.")
+				panic(err)
+			}
+			err = exec.Command("chmod", "+x", bwrap_path).Run()
+			if err != nil {
+				showFatalError("Failed to download", "Failed to download Bubblewrap.")
+				panic(err)
+			}
 		}
 
 		args_linux := []string{
@@ -105,7 +156,7 @@ func main() {
 			pathJoin(exe_dir, "core", "floorp"),
 		)
 		args_linux = append(args_linux, args...)
-		out, err := exec.Command("bwrap", args_linux...).CombinedOutput()
+		out, err := exec.Command(bwrap_path, args_linux...).CombinedOutput()
 		if err != nil {
 			log.Println(string(out))
 			showFatalError("core is broken!!!", "Failed to start Floorp.")
