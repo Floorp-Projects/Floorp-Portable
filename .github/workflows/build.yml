@@ -9,8 +9,8 @@ on:
         options:
           - "Artifact"
           - "Release"
-  schedule:
-    - cron: '0 6 * * *'
+#  schedule:
+#    - cron: '0 6 * * *'
 
 jobs:
   build:
@@ -39,7 +39,7 @@ jobs:
 
         cd floorp_downloader
         npm install
-        node floorp_downloader_nightly.mjs windows x86_64
+        node floorp_downloader.mjs windows x86_64
         mkdir tmp
         Expand-Archive -Path ./floorp-package.zip -DestinationPath ./tmp
         cd tmp
