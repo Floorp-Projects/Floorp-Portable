@@ -1,5 +1,11 @@
 @echo off
 
+echo Generating resource.syso ...
+go generate
+if %errorlevel% neq 0 (
+    exit /b 1
+)
+
 echo Building redirector...
 go build -ldflags="-H windowsgui -s -w"
 if %errorlevel% neq 0 (
