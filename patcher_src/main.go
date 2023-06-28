@@ -176,6 +176,24 @@ func apply_patch() {
 		if err := dst.Close(); err != nil {
 			panic(err)
 		}
+
+		src, err = os.Open("utils/libportable_LICENSE")
+		if err != nil {
+			panic(err)
+		}
+		dst, err = os.Create("core/libportable_LICENSE")
+		if err != nil {
+			panic(err)
+		}
+		if _, err = io.Copy(dst, src); err != nil {
+			panic(err)
+		}
+		if err := src.Close(); err != nil {
+			panic(err)
+		}
+		if err := dst.Close(); err != nil {
+			panic(err)
+		}
 	}
 
 	err := os.Mkdir("core/distribution", 0777)
