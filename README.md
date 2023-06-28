@@ -11,7 +11,7 @@
   * Memory: 8GB+
   * Disk Space: At least 2GB of free disk space.
 * Linux
-  * OS: x86_64
+  * CPU Architecture: x86_64, aarch64
   * Memory: 8GB+
   * Disk Space: At least 2GB of free disk space.
   * Packages: bubblewrap, glibc, gtk+, libstdc++, xorg
