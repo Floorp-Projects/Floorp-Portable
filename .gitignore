@@ -15,3 +15,4 @@ node_modules
 *.zip
 *.tar.bz2
 floorp-package.exe
+resource.syso
