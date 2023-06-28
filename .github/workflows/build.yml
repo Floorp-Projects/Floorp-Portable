@@ -83,7 +83,7 @@ jobs:
         node floorp_downloader.mjs linux x86_64
         mkdir tmp
         tar -xvf floorp-package.tar.bz2 -C tmp
-        cd ../..
+        cd ..
         cp -r ./floorp_downloader/tmp/floorp ./core
 
         ./patcher
