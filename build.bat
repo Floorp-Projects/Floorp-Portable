@@ -1,5 +1,11 @@
 @echo off
 
+echo Installing goversioninfo...
+go install github.com/josephspurrier/goversioninfo/cmd/goversioninfo
+if %errorlevel% neq 0 (
+    exit /b 1
+)
+
 echo Generating resource.syso ...
 go generate
 if %errorlevel% neq 0 (
