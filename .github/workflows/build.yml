@@ -51,38 +51,103 @@ jobs:
         ./patcher
 
         dir
-        cd core
-        $fver=./floorp.exe  '-version' | more
-        echo "fver=$($fver.Split()[2])" >> $env:GITHUB_ENV
-        cd ..
       env:
-        PAT: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 
     - name: Artifact
       uses: actions/upload-artifact@v3
-      if: github.event_name == 'schedule' || github.event.inputs.choice == 'Artifact'
       with:
-        name: floorp-${{ env.fver }}-portable
+        name: floorp-portable-windows-x86_64
         path: |
             core/
             floorp.exe
 
-    - name: Release
-      uses: thedoctor0/zip-release@main
-      if: github.event.inputs.choice == 'Release'
+  build-linux-x86-64:
+    runs-on: ubuntu-22.04
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - uses: actions/setup-go@v3
       with:
-        type: 'zip'
-        filename: 'floorp-${{ env.fver }}-portable.zip'
+        go-version: '1.20'
+        check-latest: true
+
+    - name: Build
+      run: |
+        ./build.sh
+
+        cd floorp_downloader
+        npm install
+        node floorp_downloader.mjs linux x86_64
+        mkdir tmp
+        tar -xvf floorp-package.tar.bz2 -C tmp
+        cd ../..
+        cp -r ./floorp_downloader/tmp/floorp ./core
+
+        ./patcher
+
+        ls
+      env:
+        GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+
+    - name: Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: floorp-portable-linux-x86_64
         path: |
-          core/
-          floorp.exe
+            core/
+            floorp
+
+  release:
+    runs-on: ubuntu-22.04
+    if: github.event.inputs.choice == 'Release'
+
+    steps:
+    - uses: actions/download-artifact@v3
+      name: Download Windows x86_64 artifact 📥
+      with:
+        name: floorp-portable-windows-x86_64
+        path: windows-x86_64-artifact
+
+    - uses: actions/download-artifact@v3
+      name: Download Linux x86_64 artifact 📥
+      with:
+        name: floorp-portable-linux-x86_64
+        path: linux-x86_64-artifact
+
+    # - uses: actions/download-artifact@v3
+    #   name: Download Linux aarch64 artifact 📥
+    #   with:
+    #     name: floorp-portable-linux-aarch64
+    #     path: linux-aarch64-artifact
+
+    - name: Get display version
+      run: |
+        DISPLAY_VERSION=`./linux-x86_64-artifact/floorp -version | awk '{ print $3 }'`
+        echo "DISPLAY_VERSION=$DISPLAY_VERSION" >> $GITHUB_ENV
+
+    - name: Packaging
+      run: |
+        cd windows-x86_64-artifact
+        zip ../floorp-${{ env.DISPLAY_VERSION }}-portable-windows-x86_64.zip -r core floorp.exe
+        cd ..
+
+        cd linux-x86_64-artifact
+        tar --zstd -cf ../floorp-${{ env.DISPLAY_VERSION }}-portable-linux-x86_64.tar.zst core floorp
+        cd ..
+
+        # cd linux-aarch64-artifact
+        # tar --zstd -cf ../floorp-${{ env.DISPLAY_VERSION }}-portable-linux-aarch64.tar.zst core floorp
+        # cd ..
 
     - uses: marvinpinto/action-automatic-releases@latest
-      if: github.event.inputs.choice == 'Release'
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
-        automatic_release_tag: "${{ env.fver }}-portable"
-        title: ${{ env.fver }}
+        automatic_release_tag: "${{ env.DISPLAY_VERSION }}-portable"
+        title: ${{ env.DISPLAY_VERSION }}
         prerelease: false
         files: |
-          floorp-${{ env.fver }}-portable.zip
+          floorp-${{ env.DISPLAY_VERSION }}-portable-windows-x86_64.zip
+          floorp-${{ env.DISPLAY_VERSION }}-portable-linux-x86_64.tar.zst
+          # floorp-${{ env.DISPLAY_VERSION }}-portable-linux-aarch64.tar.zst
