@@ -75,6 +75,7 @@ jobs:
 
     - name: Build
       run: |
+        chmod +x ./build.sh
         ./build.sh
 
         cd floorp_downloader
