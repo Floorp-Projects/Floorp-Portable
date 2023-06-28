@@ -31,24 +31,11 @@ jobs:
       run: |
         .\build.bat
 
-        # cd .github/autopatcher
-        # go build
-        # copy autopatcher.exe ../..
-        # cd ../..
-        # ./autopatcher.exe
-
-        cd floorp_downloader
-        npm install
-        npm run start windows x86_64
-        mkdir tmp
-        Expand-Archive -Path ./floorp-package.zip -DestinationPath ./tmp
-        cd tmp
-        $items = Get-ChildItem ./*.zip -File
-        Expand-Archive -Path $items[0] -DestinationPath .
+        cd .github/autopatcher
+        go build
+        copy autopatcher.exe ../..
         cd ../..
-        Copy-Item -Recurse ./floorp_downloader/tmp/floorp ./core
-
-        ./patcher
+        ./autopatcher.exe
 
         dir
       env:
