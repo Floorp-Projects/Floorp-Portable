@@ -12,7 +12,7 @@
   * Disk Space: At least 2GB of free disk space.
 * Linux
   * OS: x86_64
-  * Memory: 4GB+
+  * Memory: 8GB+
   * Disk Space: At least 2GB of free disk space.
   * Packages: bubblewrap, glibc, gtk+, libstdc++, xorg
 

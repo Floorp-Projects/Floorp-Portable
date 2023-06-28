@@ -12,7 +12,7 @@
   * ストレージ: 2GB以上の空き容量
 * Linux
   * OS: x86_64
-  * メモリ: 4GB以上
+  * メモリ: 8GB以上
   * ストレージ: At least 2GB of free disk space.
   * パッケージ: bubblewrap, glibc, gtk+, libstdc++, xorg
 
