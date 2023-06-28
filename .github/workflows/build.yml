@@ -159,7 +159,7 @@ jobs:
 
     - name: Get display version
       run: |
-        DISPLAY_VERSION=`./linux-x86_64-artifact/floorp -version | awk '{ print $3 }'`
+        DISPLAY_VERSION=`./linux-x86_64-artifact/core/floorp -version | awk '{ print $3 }'`
         echo "DISPLAY_VERSION=$DISPLAY_VERSION" >> $GITHUB_ENV
 
     - name: Packaging
