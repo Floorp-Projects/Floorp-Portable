@@ -39,7 +39,7 @@ jobs:
 
         cd floorp_downloader
         npm install
-        node floorp_downloader.mjs windows x86_64
+        npm run start windows x86_64
         mkdir tmp
         Expand-Archive -Path ./floorp-package.zip -DestinationPath ./tmp
         cd tmp
@@ -80,7 +80,7 @@ jobs:
 
         cd floorp_downloader
         npm install
-        node floorp_downloader.mjs linux x86_64
+        npm run start linux x86_64
         mkdir tmp
         tar -xvf floorp-package.tar.bz2 -C tmp
         cd ..
@@ -184,9 +184,9 @@ jobs:
         tar --zstd -cf ../floorp-${{ env.DISPLAY_VERSION }}-portable-linux-x86_64.tar.zst core floorp
         cd ..
 
-        # cd linux-aarch64-artifact
-        # tar --zstd -cf ../floorp-${{ env.DISPLAY_VERSION }}-portable-linux-aarch64.tar.zst core floorp
-        # cd ..
+        cd linux-aarch64-artifact
+        tar --zstd -cf ../floorp-${{ env.DISPLAY_VERSION }}-portable-linux-aarch64.tar.zst core floorp
+        cd ..
 
     - uses: marvinpinto/action-automatic-releases@latest
       with:
