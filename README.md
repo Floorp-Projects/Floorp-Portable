@@ -1,5 +1,3 @@
-# ⚠This branch has been archived.⚠
-
 # Floorp Portable
 
 **Note: Currently only Windows is supported. Also, the automatic update feature is not available for versions below 10.8.0.**
