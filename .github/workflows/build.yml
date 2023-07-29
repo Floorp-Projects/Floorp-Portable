@@ -105,12 +105,6 @@ jobs:
         name: floorp-portable-linux-x86_64
         path: linux-x86_64-artifact
 
-    - uses: actions/download-artifact@v3
-      name: Download Linux aarch64 artifact 📥
-      with:
-        name: floorp-portable-linux-aarch64
-        path: linux-aarch64-artifact
-
     - name: Get display version
       run: |
         DISPLAY_VERSION=`./linux-x86_64-artifact/core/floorp -version | awk '{ print $3 }'`
@@ -124,10 +118,6 @@ jobs:
 
         cd linux-x86_64-artifact
         tar --zstd -cf ../floorp-${{ env.DISPLAY_VERSION }}-portable-linux-x86_64.tar.zst core floorp
-        cd ..
-
-        cd linux-aarch64-artifact
-        tar --zstd -cf ../floorp-${{ env.DISPLAY_VERSION }}-portable-linux-aarch64.tar.zst core floorp
         cd ..
 
     - uses: marvinpinto/action-automatic-releases@latest
