@@ -9,6 +9,10 @@ on:
         options:
           - "Artifact"
           - "Release"
+      version:
+        type: string
+        required: false 
+
 #  schedule:
 #    - cron: '0 6 * * *'
 
@@ -113,19 +117,19 @@ jobs:
     - name: Packaging
       run: |
         cd windows-x86_64-artifact
-        zip ../floorp-${{ env.DISPLAY_VERSION }}-portable-windows-x86_64.zip -r core floorp.exe
+        zip ../floorp-${{ inputs.version }}-portable-windows-x86_64.zip -r core floorp.exe
         cd ..
 
         cd linux-x86_64-artifact
-        tar --zstd -cf ../floorp-${{ env.DISPLAY_VERSION }}-portable-linux-x86_64.tar.zst core floorp
+        tar --zstd -cf ../floorp-${{ inputs.version }}-portable-linux-x86_64.tar.zst core floorp
         cd ..
 
     - uses: marvinpinto/action-automatic-releases@latest
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
-        automatic_release_tag: "${{ env.DISPLAY_VERSION }}-portable"
-        title: ${{ env.DISPLAY_VERSION }}
+        automatic_release_tag: "${{ inputs.version }}-portable"
+        title: ${{ inputs.version }}
         prerelease: false
         files: |
-          floorp-${{ env.DISPLAY_VERSION }}-portable-windows-x86_64.zip
-          floorp-${{ env.DISPLAY_VERSION }}-portable-linux-x86_64.tar.zst
+          floorp-${{ inputs.version }}-portable-windows-x86_64.zip
+          floorp-${{ inputs.version }}-portable-linux-x86_64.tar.zst
