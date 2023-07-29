@@ -87,56 +87,10 @@ jobs:
             core/
             floorp
 
-  build-linux-aarch64:
-    runs-on: ubuntu-22.04
-
-    steps:
-    - uses: actions/checkout@v3
-
-    - uses: uraimo/run-on-arch-action@v2
-      name: Build
-      with:
-        arch: aarch64
-        distro: archarm_latest
-        setup: |
-          ls -l ${PWD}
-        dockerRunArgs: |
-          --volume "${PWD}:/workspace"
-        env: |
-          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-        shell: /bin/bash
-        install: |
-          pacman --noconfirm -Sy go tar nodejs npm glibc gcc-libs openssl
-        run: |
-          cd /workspace
-
-          chmod +x ./build.sh
-          ./build.sh
-
-          cd floorp_downloader
-          npm install
-          npm run start linux aarch64
-          mkdir tmp
-          tar -xvf floorp-package.tar.bz2 -C tmp
-          cd ..
-          cp -r ./floorp_downloader/tmp/floorp ./core
-
-          ./patcher
-
-          ls
-
-    - name: Artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: floorp-portable-linux-aarch64
-        path: |
-            core/
-            floorp
-
   release:
     runs-on: ubuntu-22.04
     if: github.event.inputs.choice == 'Release'
-    needs: [build-windows-x86-64, build-linux-x86-64, build-linux-aarch64]
+    needs: [build-windows-x86-64, build-linux-x86-64]
 
     steps:
     - uses: actions/download-artifact@v3
@@ -185,4 +139,3 @@ jobs:
         files: |
           floorp-${{ env.DISPLAY_VERSION }}-portable-windows-x86_64.zip
           floorp-${{ env.DISPLAY_VERSION }}-portable-linux-x86_64.tar.zst
-          floorp-${{ env.DISPLAY_VERSION }}-portable-linux-aarch64.tar.zst
