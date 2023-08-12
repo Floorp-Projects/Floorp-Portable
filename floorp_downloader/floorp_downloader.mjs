@@ -4,47 +4,48 @@ import fs from "fs";
 let headers = {};
 if (process.env.GITHUB_TOKEN) {
     console.log("Using `GITHUB_TOKEN`");
-    headers["Authorization"] = `Bearer ${process.env.GITHUB_TOKEN}`;
+    headers.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`;
 }
-let result_obj = await got(
-    {
-        url: "https://api.github.com/repos/Floorp-Projects/Floorp/releases/latest",
-        headers: headers
-    }
-).json();
-let valid_asset;
-for (let asset of result_obj["assets"]) {
-    if (process.argv[2] === "windows" && process.argv[3] === "x86_64") {
-        if (asset["name"].includes("win64") && !asset["name"].includes("stub")) {
-            valid_asset = asset;
-            break;
-        }
-    } else if (process.argv[2] === "linux" && process.argv[3] === "x86_64") {
-        if (asset["name"].includes("linux") && asset["name"].includes("x86_64")) {
-            valid_asset = asset;
-            break;
-        }
-    } else if (process.argv[2] === "linux" && process.argv[3] === "aarch64") {
-        if (asset["name"].includes("linux") && asset["name"].includes("aarch64")) {
-            valid_asset = asset;
-            break;
-        }
+
+const resultObj = await got({
+    url: "https://api.github.com/repos/Floorp-Projects/Floorp/releases/latest",
+    headers
+}).json();
+
+let validAsset;
+const [os, arch] = process.argv.slice(2);
+for (const asset of resultObj.assets) {
+    const { name } = asset;
+    if (os === "windows" && arch === "x86_64" && name.includes("win64") && !name.includes("stub")) {
+        validAsset = asset;
+        break;
+    } else if (os === "linux" && arch === "x86_64" && name.includes("linux") && name.includes("x86_64")) {
+        validAsset = asset;
+        break;
+    } else if (os === "linux" && arch === "aarch64" && name.includes("linux") && name.includes("aarch64")) {
+        validAsset = asset;
+        break;
     }
 }
-if (!valid_asset) throw "Not found";
-let binary = await got(
-    {
-        url: valid_asset["browser_download_url"]
-    }
-).buffer();
-let output_filename;
-if (valid_asset["name"].endsWith(".tar.bz2")) {
-    output_filename = "floorp-package.tar.bz2";
-} else if (valid_asset["name"].endsWith(".zip")) {
-    output_filename = "floorp-package.zip";
-} else if (valid_asset["name"].endsWith(".exe")) {
-    output_filename = "floorp-package.exe";
+
+if (!validAsset) {
+    throw new Error("Asset not found");
+}
+
+const binary = await got({
+    url: validAsset.browser_download_url
+}).buffer();
+
+let outputFilename;
+const { name } = validAsset;
+if (name.endsWith(".tar.bz2")) {
+    outputFilename = "floorp-package.tar.bz2";
+} else if (name.endsWith(".zip")) {
+    outputFilename = "floorp-package.zip";
+} else if (name.endsWith(".exe")) {
+    outputFilename = "floorp-package.exe";
 } else {
-    output_filename = "floorp-package";
+    outputFilename = "floorp-package";
 }
-fs.writeFileSync(output_filename, binary);
+
+fs.writeFileSync(outputFilename, binary);

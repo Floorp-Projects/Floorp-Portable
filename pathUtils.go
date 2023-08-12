@@ -6,26 +6,17 @@ import (
 )
 
 func pathJoin(args ...string) string {
-	var separate string
-	var join string
+	var separator string
 	if runtime.GOOS == "windows" {
-		separate = "\\"
+		separator = "\\"
 	} else {
-		separate = "/"
+		separator = "/"
 	}
 
+	var parts []string
 	for _, arg := range args {
-		arg_replaced := strings.Replace(arg, "\\", separate, -1)
-		arg_replaced = strings.Replace(arg_replaced, "/", separate, -1)
-		if join == "" {
-			join = arg_replaced
-		} else if join[len(join) - 1:] == separate && arg_replaced[0:1] == separate {
-			join += arg_replaced[1:]
-		} else if join[len(join) - 1:] == separate || arg_replaced[0:1] == separate {
-			join += arg_replaced
-		} else {
-			join += (separate + arg_replaced)
-		}
+		parts = append(parts, strings.ReplaceAll(arg, "\\", separator), separator)
 	}
-	return join
+
+	return strings.TrimSuffix(strings.Join(parts, ""), separator)
 }

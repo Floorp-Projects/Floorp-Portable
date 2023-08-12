@@ -3,22 +3,25 @@
 package main
 
 import (
-	"os/exec"
 	"log"
 	"os"
+	"os/exec"
 )
 
 func fileInUse(path string) bool {
 	_, err := os.Stat(path)
 	if err != nil {
-		log.Println("[ERROR]", err)
+		log.Printf("[ERROR] %w\n", err)
 		return false
 	}
-	out, err := exec.Command("lsof", "-w", path).CombinedOutput()
-	if string(out) != "" && err != nil {
-		log.Println("[FATAL]", string(out))
+
+	cmd := exec.Command("lsof", "-w", path)
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		log.Printf("[FATAL] %s\n", out)
 		showFatalError("An unexpected error occurred", "An unexpected error occurred while executing the \"lsof\" command.")
 		panic(err)
 	}
-	return string(out) != ""
+
+	return len(out) > 0
 }

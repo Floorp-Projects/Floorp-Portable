@@ -26,7 +26,7 @@ func showFatalError(title string, message string) {
 			return
 		}
 	}
-	log.Println("[FATAL]", title, message)
+	log.Printf("[FATAL] %s %s\n", title, message)
 }
 
 func showConfirmDialog(title string, message string) bool {
