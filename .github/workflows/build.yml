@@ -159,6 +159,7 @@ jobs:
 
     - name: Get display version
       run: |
+        sudo chmod +x ./linux-x86_64-artifact/core/floorp
         DISPLAY_VERSION=`./linux-x86_64-artifact/core/floorp -version | awk '{ print $3 }'`
         echo "DISPLAY_VERSION=$DISPLAY_VERSION" >> $GITHUB_ENV
 
