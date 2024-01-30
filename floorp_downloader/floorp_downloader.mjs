@@ -7,10 +7,12 @@ if (process.env.GITHUB_TOKEN) {
     headers.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`;
 }
 
-const resultObj = await got({
-    url: "https://api.github.com/repos/Floorp-Projects/Floorp/releases/latest",
-    headers
-}).json();
+const resultObj = await got(
+    "https://api.github.com/repos/Floorp-Projects/Floorp/releases/latest",
+    {
+        headers
+    }
+).json();
 
 let validAsset;
 const [os, arch] = process.argv.slice(2);
