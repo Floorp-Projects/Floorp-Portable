@@ -33,19 +33,21 @@ function unzip_omni () {
 function zip_omni () {
   echo "Zipping omni.ja ($1) ..."
   if [[ "$1" == "root" ]]; then
+    rm ./core/omni.ja
     cd omni_tmp_root
     if [[ "$os_name" == "MINGW64_NT"* ]]; then
-      powershell -c Compress-Archive -Path "./*" -DestinationPath "../core/omni.ja" -CompressionLevel NoCompression
+      ../src/utils/7za.exe a -mx=0 -mtm- -tzip ../core/omni.ja *
     else
-      zip -0DXqr ../core/omni.ja_ *
+      zip -0DXqr ../core/omni.ja *
     fi
     cd ..
   elif [[ "$1" == "browser" ]]; then
+    rm ./core/browser/omni.ja
     cd omni_tmp_browser
     if [[ "$os_name" == "MINGW64_NT"* ]]; then
-      powershell -c Compress-Archive -Path "./*" -DestinationPath "../core/browser/omni.ja" -CompressionLevel NoCompression
+      ../src/utils/7za.exe a -mx=0 -mtm- -tzip ../core/browser/omni.ja *
     else
-      zip -0DXqr ../core/browser/omni.ja_ *
+      zip -0DXqr ../core/browser/omni.ja *
     fi
     cd ..
   else
@@ -55,9 +57,9 @@ function zip_omni () {
 }
 
 function apply_patch () {
-  for i in `seq $(cat ./src/patches.json | jq -r "length")`; do
-    patch_type=$(cat ./src/patches.json | jq -r ".[$(($i - 1))].type")
-    patch_filename=$(cat ./src/patches.json | jq -r ".[$(($i - 1))].filename")
+  for i in `seq $(cat ./src/patches.json | ./src/utils/jq.exe -r "length")`; do
+    patch_type=$(cat ./src/patches.json | ./src/utils/jq.exe -r ".[$(($i - 1))].type")
+    patch_filename=$(cat ./src/patches.json | ./src/utils/jq.exe -r ".[$(($i - 1))].filename")
 
     echo "Applying $patch_filename (type: $patch_type) patch..."
 
@@ -73,6 +75,7 @@ function apply_patch () {
 }
 
 function integration_portable_config () {
+  echo "Copying config files..."
   mkdir -p ./core/distribution
   cp ./src/config/policies.json ./core/distribution
 
@@ -84,8 +87,9 @@ function integration_portable_config () {
 }
 
 function integration_portable_modules () {
+  echo "Integrating portable modules..."
   if [[ "$os_name" == "MINGW64_NT"* ]]; then
-    ./src/utils/setdll64.exe /d:portable64.dll ./core/mozglue.dll
+    ./src/utils/setdll64.exe //d:portable64.dll ./core/mozglue.dll
     cp ./src/utils/portable64.dll ./core/portable64.dll
     cp ./src/utils/libportable_LICENSE ./core/libportable_LICENSE
   elif [[ "$os_name" == "Linux" ]]; then
@@ -103,6 +107,7 @@ function integration_portable_modules () {
 }
 
 function remove_unused_files () {
+  echo "Removing unused files..."
   if [[ "$os_name" == "MINGW64_NT"* ]]; then
     rm ./core/updater.exe
     rm ./core/default-browser-agent.exe
