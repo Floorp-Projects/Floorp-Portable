@@ -85,16 +85,19 @@ jobs:
       name: Build
       with:
         arch: aarch64
-        distro: archarm_latest
-        setup: |
-          ls -l ${PWD}
+        distro: ubuntu_latest
         dockerRunArgs: |
           --volume "${PWD}:/workspace"
         env: |
           GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         shell: /bin/bash
         run: |
-          pacman --noconfirm -Syyu git tar nodejs npm glibc gcc-libs openssl curl go jq unzip zip
+          apt update -y
+          apt upgrade -y
+          apt install -y git tar nodejs npm openssl curl jq unzip zip software-properties-common
+          add-apt-repository ppa:longsleep/golang-backports
+          apt install golang-go
+
           cd /workspace
 
           mkdir core
