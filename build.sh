@@ -57,9 +57,15 @@ function zip_omni () {
 }
 
 function apply_patch () {
-  for i in `seq $(cat ./src/patches.json | ./src/utils/jq.exe -r "length")`; do
-    patch_type=$(cat ./src/patches.json | ./src/utils/jq.exe -r ".[$(($i - 1))].type")
-    patch_filename=$(cat ./src/patches.json | ./src/utils/jq.exe -r ".[$(($i - 1))].filename")
+  if [[ "$os_name" == "MINGW64_NT"* ]]; then
+    jq_path="./src/utils/jq.exe"
+  else
+    jq_path="jq"
+  fi
+
+  for i in `seq $(cat ./src/patches.json | $jq_path -r "length")`; do
+    patch_type=$(cat ./src/patches.json | $jq_path -r ".[$(($i - 1))].type")
+    patch_filename=$(cat ./src/patches.json | $jq_path -r ".[$(($i - 1))].filename")
 
     echo "Applying $patch_filename (type: $patch_type) patch..."
 
