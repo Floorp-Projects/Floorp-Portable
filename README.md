@@ -5,16 +5,30 @@
 **Warning: This is currently a beta version. Unexpected problems may occur.**
 
 
-## Requirements ([Pre-built binaries](https://github.com/Floorp-Projects/Floorp-Portable/releases))
-* Windows
-  * OS: 10, 11 (x86_64)
-  * Memory: 8GB+
-  * Disk Space: At least 2GB of free disk space.
-* Linux
-  * CPU Architecture: x86_64, aarch64
-  * Memory: 8GB+
-  * Disk Space: At least 2GB of free disk space.
-  * Packages: bubblewrap, glibc, gtk+, libstdc++, xorg
+## Requirements
+* [Pre-built binaries](https://github.com/Floorp-Projects/Floorp-Portable/releases)
+  * Windows
+    * OS: 10, 11
+    * Architecture: x86_64
+    * Memory: 8GB+
+    * Disk Space: At least 2GB of free disk space.
+  * Linux
+    * Architecture: x86_64, aarch64
+    * Memory: 8GB+
+    * Disk Space: At least 2GB of free disk space.
+    * Packages: bubblewrap, glibc, gtk+, libstdc++, xorg
+* Build from source
+  * Windows
+    * OS Version: 10, 11
+    * Architecture: x86_64
+    * Memory: 8GB+
+    * Disk Space: At least 2GB of free disk space.
+    * Softwares: Git, Git Bash
+  * Linux
+    * Architecture: x86_64, aarch64
+    * Memory: 8GB+
+    * Disk Space: At least 2GB of free disk space.
+    * Packages: bubblewrap, glibc, gtk+, libstdc++, xorg, unzip, zip, jq, golang 1.20+
 
 
 ## How to build
