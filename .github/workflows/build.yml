@@ -20,7 +20,7 @@ jobs:
     - name: Prepare git
       run: git config --global core.autocrlf false
 
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - uses: actions/setup-go@v3
       with:
@@ -53,7 +53,7 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - uses: actions/setup-go@v3
       with:
@@ -91,7 +91,7 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - uses: uraimo/run-on-arch-action@v2
       name: Build
