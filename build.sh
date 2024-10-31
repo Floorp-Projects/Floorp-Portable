@@ -9,6 +9,8 @@ function build_portable_runtime () {
     go build -ldflags="-s -w"
     cp ./floorp ../../floorp
   elif [[ "$os_name" == "MINGW64_NT"* ]]; then
+    go install github.com/josephspurrier/goversioninfo/cmd/goversioninfo
+    go generate
     go build -ldflags="-H windowsgui -s -w"
     cp ./floorp.exe ../../floorp.exe
   else
