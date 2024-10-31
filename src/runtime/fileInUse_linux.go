@@ -9,13 +9,18 @@ import (
 )
 
 func fileInUse(path string) bool {
-	_, err := os.Stat(path)
+	info, err := os.Stat(path)
 	if err != nil {
 		log.Printf("[ERROR] %w\n", err)
 		return false
 	}
 
-	cmd := exec.Command("lsof", "-w", path)
+	var cmd *exec.Cmd
+	if info.IsDir() {
+		cmd = exec.Command("lsof", "-w", "+D", path)
+	} else {
+		cmd = exec.Command("lsof", "-w", path)
+	}
 	out, err := cmd.CombinedOutput()
 	if err != nil {
 		log.Printf("[FATAL] %s\n", out)

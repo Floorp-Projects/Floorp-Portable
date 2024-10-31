@@ -3,13 +3,13 @@
 package main
 
 import (
+	"io"
 	"log"
+	"net/http"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"runtime"
-	"io"
-	"net/http"
 )
 
 func main() {
@@ -28,14 +28,7 @@ func main() {
 	if _, err := os.Stat(pathJoin(exe_dir, "update_tmp", "CORE_UPDATE_READY")); err == nil {
 		log.Println("[INFO]", "Updates found.")
 
-		var used bool
-		if runtime.GOOS == "windows" {
-			used = fileInUse(pathJoin(exe_dir, "core"))
-		} else if runtime.GOOS == "linux" {
-			used = fileInUse(pathJoin(exe_dir, "core", "floorp"))
-		}
-
-		if !used {
+		if !fileInUse(pathJoin(exe_dir, "core")) {
 			err := os.Rename(pathJoin(exe_dir, "core"), pathJoin(exe_dir, "core_old"))
 			if err != nil {
 				showFatalError("Update failed.", "Failed to prepare to start update.")
@@ -83,8 +76,8 @@ func main() {
 		cache_dir := pathJoin(exe_dir, "cache")
 		profiles_dir := pathJoin(exe_dir, "profiles")
 
-		os.Mkdir(cache_dir, 0777);
-		os.Mkdir(profiles_dir, 0777);
+		os.Mkdir(cache_dir, 0777)
+		os.Mkdir(profiles_dir, 0777)
 
 		var bwrap_path string
 		err = exec.Command("bwrap", "--help").Run()
@@ -101,7 +94,7 @@ func main() {
 				showFatalError("Bubblewrap is not installed.", "Bubblewrap must be installed to run.")
 				panic(err)
 			}
-			bwrap_url_x86_64  := "https://github.com/typeling1578/bubblewrap/releases/latest/download/bwrap-x86_64"
+			bwrap_url_x86_64 := "https://github.com/typeling1578/bubblewrap/releases/latest/download/bwrap-x86_64"
 			bwrap_url_aarch64 := "https://github.com/typeling1578/bubblewrap/releases/latest/download/bwrap-aarch64"
 			var bwrap_url string
 			if runtime.GOARCH == "amd64" {
