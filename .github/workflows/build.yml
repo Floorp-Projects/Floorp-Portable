@@ -24,22 +24,15 @@ jobs:
 
     - uses: actions/setup-go@v3
       with:
-        go-version: '1.20'
+        go-version: '1.22'
         check-latest: true
 
     - name: Build
       run: |
-        .\build.bat
+        curl.exe -L "https://github.com/Floorp-Projects/Floorp/releases/latest/download/floorp-win64.installer.exe" -o floorp-win64.installer.exe
+        ./src/utils/7za.exe x floorp-win64.installer.exe -ir!core
 
-        cd .github/autopatcher
-        go build
-        copy autopatcher.exe ../..
-        cd ../..
-        ./autopatcher.exe
-
-        dir
-      env:
-        GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+        ./build.bat
 
     - name: Artifact
       uses: actions/upload-artifact@v3
@@ -57,27 +50,20 @@ jobs:
 
     - uses: actions/setup-go@v3
       with:
-        go-version: '1.20'
+        go-version: '1.22'
         check-latest: true
 
     - name: Build
       run: |
-        chmod +x ./build.sh
-        ./build.sh
-
-        cd floorp_downloader
+        mkdir core
+        cd ./src/floorp_downloader
         npm install
         npm run start linux x86_64
-        mkdir tmp
-        tar -xvf floorp-package.tar.bz2 -C tmp
-        cd ..
-        cp -r ./floorp_downloader/tmp/floorp ./core
+        tar -xvf floorp-package.tar.bz2 -C ../../core --strip-components 1
+        cd ../..
 
-        ./patcher
-
-        ls
-      env:
-        GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+        chmod +x ./build.sh
+        ./build.sh
 
     - name: Artifact
       uses: actions/upload-artifact@v3
@@ -106,26 +92,18 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         shell: /bin/bash
         run: |
-          pacman --noconfirm -Syyu git tar nodejs npm glibc gcc-libs openssl curl
-          curl -LO https://go.dev/dl/go1.20.linux-arm64.tar.gz
-          rm -rf /usr/local/go && tar -C /usr/local -xzf go1.20.linux-arm64.tar.gz
-          export PATH=$PATH:/usr/local/go/bin
+          pacman --noconfirm -Syyu git tar nodejs npm glibc gcc-libs openssl curl go jq unzip zip
           cd /workspace
+
+          mkdir core
+          cd ./src/floorp_downloader
+          npm install
+          npm run start linux aarch64
+          tar -xvf floorp-package.tar.bz2 -C ../../core --strip-components 1
+          cd ../..
 
           chmod +x ./build.sh
           ./build.sh
-
-          cd floorp_downloader
-          npm install
-          npm run start linux aarch64
-          mkdir tmp
-          tar -xvf floorp-package.tar.bz2 -C tmp
-          cd ..
-          cp -r ./floorp_downloader/tmp/floorp ./core
-
-          ./patcher
-
-          ls
 
     - name: Artifact
       uses: actions/upload-artifact@v3
