@@ -1,3 +1,5 @@
+## ⚠ This branch is end-of-life. ⚠
+
 # Floorp Portable
 
 **Note: It will only work with the upcoming release of Floorp 11.**
