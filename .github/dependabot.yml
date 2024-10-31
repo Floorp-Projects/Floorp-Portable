@@ -1,7 +1,7 @@
 version: 2
 updates:
   - package-ecosystem: "gomod"
-    directory: "/"
+    directory: "/src/runtime"
     schedule:
       interval: "daily"
 
@@ -11,11 +11,6 @@ updates:
       interval: "daily"
 
   - package-ecosystem: "npm"
-    directory: "/floorp_downloader"
-    schedule:
-      interval: "daily"
-
-  - package-ecosystem: "gomod"
-    directory: "/patcher_src"
+    directory: "/src/floorp_downloader"
     schedule:
       interval: "daily"

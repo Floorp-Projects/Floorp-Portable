@@ -1,11 +1,9 @@
 /floorp
 /floorp.exe
+/src/runtime/floorp
+/src/runtime/floorp.exe
 /omni_tmp_root
 /omni_tmp_browser
-/patcher_src/patcher
-/patcher_src/patcher.exe
-/patcher
-/patcher.exe
 /core
 /Profiles
 /profiles
@@ -14,5 +12,5 @@
 node_modules
 *.zip
 *.tar.bz2
-floorp-package.exe
+*.tar.zst
 resource.syso
