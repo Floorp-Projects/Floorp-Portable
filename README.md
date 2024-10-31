@@ -1,6 +1,6 @@
 # Floorp Portable
 
-**Note: It will only work with the upcoming release of Floorp 11.**
+**Note: It will only work with the upcoming release of Floorp 12.**
 
 **Warning: This is currently a beta version. Unexpected problems may occur.**
 
@@ -29,8 +29,7 @@ Create a directory named "core" and place Floorp files in it.
 Windows
 ```
 curl.exe -L "https://github.com/Floorp-Projects/Floorp/releases/latest/download/floorp-win64.installer.exe" -o floorp-win64.installer.exe
-curl.exe -L "https://www.7-zip.org/a/7zr.exe" -o 7zr.exe
-.\7zr.exe x floorp-win64.installer.exe -ir!core
+.\src\utils\7za.exe x floorp-win64.installer.exe -ir!core
 ```
 Linux
 ```
@@ -50,19 +49,7 @@ Linux
 ./build.sh
 ```
 
-### 4. Apply the patch
-Run the built `patcher (patcher.exe)` to apply the patch.
-
-Windows
-```
-.\patcher.exe
-```
-Linux
-```
-./patcher
-```
-
-### 5. Now it is done
+### 4. Now it is done
 The files and directories required to run the portable version are `core` and `floorp (floorp.exe)`.
 
 
