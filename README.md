@@ -28,7 +28,7 @@
     * Architecture: x86_64, aarch64
     * Memory: 8GB+
     * Disk Space: At least 2GB of free disk space.
-    * Packages: bubblewrap, glibc, gtk+, libstdc++, xorg, unzip, zip, jq, golang 1.20+
+    * Packages: bubblewrap, glibc, gtk+, libstdc++, xorg, git, unzip, zip, jq, golang 1.20+
 
 
 ## How to build
