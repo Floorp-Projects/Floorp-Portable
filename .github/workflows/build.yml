@@ -81,34 +81,25 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - uses: uraimo/run-on-arch-action@v2
-      name: Build
+    - uses: actions/setup-go@v3
       with:
-        arch: aarch64
-        distro: ubuntu_latest
-        dockerRunArgs: |
-          --volume "${PWD}:/workspace"
-        env: |
-          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-        shell: /bin/bash
-        run: |
-          apt update -y
-          apt upgrade -y
-          apt install -y git tar nodejs npm openssl curl jq unzip zip software-properties-common
-          add-apt-repository ppa:longsleep/golang-backports
-          apt install golang-go
+        go-version: '1.22'
+        check-latest: true
 
-          cd /workspace
+    - name: Build
+      run: |
+        mkdir core
+        cd ./src/floorp_downloader
+        npm install
+        npm run start linux aarch64
+        tar -xvf floorp-package.tar.bz2 -C ../../core --strip-components 1
+        cd ../..
 
-          mkdir core
-          cd ./src/floorp_downloader
-          npm install
-          npm run start linux aarch64
-          tar -xvf floorp-package.tar.bz2 -C ../../core --strip-components 1
-          cd ../..
-
-          chmod +x ./build.sh
-          ./build.sh
+        chmod +x ./build.sh
+        ./build.sh
+      env:
+        GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+        GOARCH: arm64
 
     - name: Artifact
       uses: actions/upload-artifact@v3
