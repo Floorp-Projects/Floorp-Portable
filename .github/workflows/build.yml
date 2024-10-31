@@ -29,8 +29,6 @@ jobs:
 
     - name: Build
       run: |
-        go mod tidy
-        
         .\build.bat
 
         cd .github/autopatcher
