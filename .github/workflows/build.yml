@@ -40,8 +40,7 @@ jobs:
       with:
         name: floorp-portable-windows-x86_64
         path: |
-            core/
-            floorp.exe
+          ./dist
 
   build-linux-x86-64:
     runs-on: ubuntu-22.04
@@ -74,8 +73,7 @@ jobs:
       with:
         name: floorp-portable-linux-x86_64
         path: |
-            core/
-            floorp
+          ./dist
 
   build-linux-aarch64:
     runs-on: ubuntu-22.04
@@ -109,8 +107,7 @@ jobs:
       with:
         name: floorp-portable-linux-aarch64
         path: |
-            core/
-            floorp
+          ./dist
 
   release:
     runs-on: ubuntu-22.04
@@ -145,16 +142,16 @@ jobs:
 
     - name: Packaging
       run: |
-        cd windows-x86_64-artifact
-        zip ../floorp-${{ env.DISPLAY_VERSION }}-portable-windows-x86_64.zip -r core floorp.exe
+        cd ./windows-x86_64-artifact/dist
+        zip ../../floorp-${{ env.DISPLAY_VERSION }}-portable-windows-x86_64.zip -r core floorp.exe
         cd ..
 
-        cd linux-x86_64-artifact
-        tar --zstd -cf ../floorp-${{ env.DISPLAY_VERSION }}-portable-linux-x86_64.tar.zst core floorp
+        cd ./linux-x86_64-artifact/dist
+        tar --zstd -cf ../../floorp-${{ env.DISPLAY_VERSION }}-portable-linux-x86_64.tar.zst core floorp
         cd ..
 
-        cd linux-aarch64-artifact
-        tar --zstd -cf ../floorp-${{ env.DISPLAY_VERSION }}-portable-linux-aarch64.tar.zst core floorp
+        cd ./linux-aarch64-artifact/dist
+        tar --zstd -cf ../../floorp-${{ env.DISPLAY_VERSION }}-portable-linux-aarch64.tar.zst core floorp
         cd ..
 
     - uses: marvinpinto/action-automatic-releases@latest
