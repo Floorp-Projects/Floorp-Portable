@@ -2,17 +2,22 @@
 
 os_name=$(uname)
 
+function copy_to_dist () {
+  mkdir dist
+  cp -r ./core ./dist/
+}
+
 function build_portable_runtime () {
   echo "Building portable runtime..."
   cd src/runtime
   if [[ "$os_name" == "Linux" ]]; then
     go build -ldflags="-s -w"
-    cp ./floorp ../../floorp
+    cp ./floorp ../../dist/floorp
   elif [[ "$os_name" == "MINGW64_NT"* ]]; then
     go install github.com/josephspurrier/goversioninfo/cmd/goversioninfo
     go generate
     go build -ldflags="-H windowsgui -s -w"
-    cp ./floorp.exe ../../floorp.exe
+    cp ./floorp.exe ../../dist/floorp.exe
   else
     echo "Unsupported OS: $os_name"
     false
@@ -23,9 +28,11 @@ function build_portable_runtime () {
 function unzip_omni () {
   echo "Unzipping omni.ja ($1) ..."
   if [[ "$1" == "root" ]]; then
-    /bin/bash -c 'unzip -q ./core/omni.ja -d ./omni_tmp_root; exit_code=$?; if [ "$exit_code" -ne 0 ] && [ "$exit_code" -ne 2 ]; then exit $exit_code; fi'
+    rm -rf ./omni_tmp_root
+    /bin/bash -c 'unzip -q ./dist/core/omni.ja -d ./omni_tmp_root; exit_code=$?; if [ "$exit_code" -ne 0 ] && [ "$exit_code" -ne 2 ]; then exit $exit_code; fi'
   elif [[ "$1" == "browser" ]]; then
-    /bin/bash -c 'unzip -q ./core/browser/omni.ja -d ./omni_tmp_browser; exit_code=$?; if [ "$exit_code" -ne 0 ] && [ "$exit_code" -ne 2 ]; then exit $exit_code; fi'
+    rm -rf ./omni_tmp_browser
+    /bin/bash -c 'unzip -q ./dist/core/browser/omni.ja -d ./omni_tmp_browser; exit_code=$?; if [ "$exit_code" -ne 0 ] && [ "$exit_code" -ne 2 ]; then exit $exit_code; fi'
   else
     echo "Unsupported omni type: $1"
     false
@@ -35,21 +42,21 @@ function unzip_omni () {
 function zip_omni () {
   echo "Zipping omni.ja ($1) ..."
   if [[ "$1" == "root" ]]; then
-    rm ./core/omni.ja
+    rm ./dist/core/omni.ja
     cd omni_tmp_root
     if [[ "$os_name" == "MINGW64_NT"* ]]; then
-      ../src/utils/7za.exe a -mx=0 -mtm- -tzip ../core/omni.ja *
+      ../src/utils/7za.exe a -mx=0 -mtm- -tzip ../dist/core/omni.ja *
     else
-      zip -0DXqr ../core/omni.ja *
+      zip -0DXqr ../dist/core/omni.ja *
     fi
     cd ..
   elif [[ "$1" == "browser" ]]; then
-    rm ./core/browser/omni.ja
+    rm ./dist/core/browser/omni.ja
     cd omni_tmp_browser
     if [[ "$os_name" == "MINGW64_NT"* ]]; then
-      ../src/utils/7za.exe a -mx=0 -mtm- -tzip ../core/browser/omni.ja *
+      ../src/utils/7za.exe a -mx=0 -mtm- -tzip ../dist/core/browser/omni.ja *
     else
-      zip -0DXqr ../core/browser/omni.ja *
+      zip -0DXqr ../dist/core/browser/omni.ja *
     fi
     cd ..
   else
@@ -84,22 +91,22 @@ function apply_patch () {
 
 function integration_portable_config () {
   echo "Copying config files..."
-  mkdir -p ./core/distribution
-  cp ./src/config/policies.json ./core/distribution
+  mkdir -p ./dist/core/distribution
+  cp ./src/config/policies.json ./dist/core/distribution
 
-  cp ./src/config/portable-prefs.js ./core/defaults/pref/portable-prefs.js
+  cp ./src/config/portable-prefs.js ./dist/core/defaults/pref/portable-prefs.js
 
   if [[ "$os_name" == "MINGW64_NT"* ]]; then
-    cp ./src/config/portable.ini ./core/portable.ini
+    cp ./src/config/portable.ini ./dist/core/portable.ini
   fi
 }
 
 function integration_portable_modules () {
   echo "Integrating portable modules..."
   if [[ "$os_name" == "MINGW64_NT"* ]]; then
-    ./src/utils/setdll64.exe //d:portable64.dll ./core/mozglue.dll
-    cp ./src/utils/portable64.dll ./core/portable64.dll
-    cp ./src/utils/libportable_LICENSE ./core/libportable_LICENSE
+    ./src/utils/setdll64.exe //d:portable64.dll ./dist/core/mozglue.dll
+    cp ./src/utils/portable64.dll ./dist/core/portable64.dll
+    cp ./src/utils/libportable_LICENSE ./dist/core/libportable_LICENSE
   elif [[ "$os_name" == "Linux" ]]; then
     # bubblewrap
     echo wip
@@ -117,11 +124,11 @@ function integration_portable_modules () {
 function remove_unused_files () {
   echo "Removing unused files..."
   if [[ "$os_name" == "MINGW64_NT"* ]]; then
-    rm ./core/updater.exe
-    rm ./core/default-browser-agent.exe
-    rm -r ./core/uninstall
+    rm ./dist/core/updater.exe
+    rm ./dist/core/default-browser-agent.exe
+    rm -r ./dist/core/uninstall
   elif [[ "$os_name" == "Linux" ]]; then
-    rm ./core/updater
+    rm ./dist/core/updater
   else
     echo "Unsupported OS: $os_name"
     false
@@ -129,6 +136,7 @@ function remove_unused_files () {
 }
 
 if [[ "$1" == "" ]]; then
+  copy_to_dist
   build_portable_runtime
   unzip_omni root
   unzip_omni browser
