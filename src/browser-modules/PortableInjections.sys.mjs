@@ -1,0 +1,92 @@
+/* -*- indent-tabs-mode: nil; js-indent-level: 2 -*-
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+import { ExtensionCommon } from "resource://gre/modules/ExtensionCommon.sys.mjs";
+
+const seenDocuments = new WeakSet();
+const documentObserver = {
+  observe(doc) {
+    if (
+      ExtensionCommon.instanceOf(doc, "HTMLDocument") &&
+      !seenDocuments.has(doc)
+    ) {
+      seenDocuments.add(doc);
+      const window_ = doc.defaultView;
+      const document_ = window_.document;
+      const uriObj = Services.io.newURI(window_.location.href);
+      const uriWithoutQueryRef = uriObj.prePath + uriObj.filePath;
+      if (uriWithoutQueryRef == "chrome://browser/content/aboutDialog.xhtml") {
+        window_.addEventListener(
+          "pageshow",
+          function() {
+            const button = document_.getElementById("checkForUpdatesButton");
+            if (Services.prefs.getBoolPref("floorp.portable.update.enabled")) {
+              button.addEventListener("command", function() {
+                // TODO:
+              });
+            } else {
+              button.remove();
+            }
+          },
+          { once: true }
+        );
+      } else if (
+        uriWithoutQueryRef == "chrome://floorp/content/preferences/preferences.xhtml" ||
+        uriWithoutQueryRef == "chrome://browser/content/preferences/preferences.xhtml" ||
+        uriWithoutQueryRef == "about:preferences"
+      ) {
+        // Floorp Portable does not support setting nor detection of default browser
+        // https://searchfox.org/mozilla-esr128/source/browser/components/preferences/main.js#1731-1737
+        window_.getShellService = function () {};
+
+        // Hide built-in updater settings
+        const portableCSSElem = document_.createElement("style");
+        portableCSSElem.id = "portableCSS";
+        portableCSSElem.innerText = `
+        #updateDeck {
+          display: none;
+        }
+
+        #showUpdateHistory {
+          display: none;
+        }
+
+        #updateSettingsContainer {
+          display: none;
+        }
+
+        #updateAllowDescription {
+          display: none;
+        }
+        `;
+        document_.head.appendChild(portableCSSElem);
+
+        window_.addEventListener(
+          "pageshow",
+          async () => {
+            await window_.gMainPane.initialized;
+
+            document_.getElementById("defaultBrowserBox").hidden = true;
+
+            const portableUpdatePref = "floorp.portable.update.enabled";
+            const updateApp = document_.getElementById("updateApp");
+            const portableUpdateOption = document_.createXULElement("checkbox");
+            portableUpdateOption.setAttribute("label", "Automatically check for updates to Floorp Portable.");
+            portableUpdateOption.checked = Services.prefs.getBoolPref(portableUpdatePref, false);
+            Services.prefs.addObserver(portableUpdatePref, function () {
+              portableUpdateOption.checked = Services.prefs.getBoolPref(portableUpdatePref, false);
+            });
+            portableUpdateOption.addEventListener("command", function(e) {
+              Services.prefs.setBoolPref(portableUpdatePref, e.currentTarget.checked);
+            });
+            updateApp.appendChild(portableUpdateOption);
+          },
+          { once: true },
+        );
+      }
+    }
+  },
+};
+Services.obs.addObserver(documentObserver, "chrome-document-interactive");
