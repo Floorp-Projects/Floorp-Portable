@@ -23,6 +23,7 @@ function build_portable_runtime () {
     false
   fi
   cd ../..
+  cp ./LICENSE ./dist/LICENSE
 }
 
 function build_bubblewrap () {
@@ -30,6 +31,7 @@ function build_bubblewrap () {
   meson setup _builddir
   meson compile -C _builddir
   cp ./_builddir/bwrap ../../dist/bwrap
+  cp ./COPYING ../../dist/LICENSE_bwrap
   cd ../..
 }
 
