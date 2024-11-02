@@ -99,7 +99,7 @@ jobs:
     - name: Install
       run: |
         sudo apt update
-        sudo apt install -y binutils-aarch64-linux-gnu gcc-aarch64-linux-gnu g++-aarch64-linux-gnu meson pkg-config-aarch64-linux-gnu libcap-dev
+        sudo apt install -y binutils-aarch64-linux-gnu gcc-aarch64-linux-gnu g++-aarch64-linux-gnu meson libcap-dev
 
     - name: Build
       run: |
@@ -122,6 +122,12 @@ jobs:
         strip = 'aarch64-linux-gnu-strip'
 
         [host_machine]
+        system = 'linux'
+        cpu_family = 'aarch64'
+        cpu = 'aarch64'
+        endian = 'little'
+
+        [build_machine]
         system = 'linux'
         cpu_family = 'x86_64'
         cpu = 'x86_64'
