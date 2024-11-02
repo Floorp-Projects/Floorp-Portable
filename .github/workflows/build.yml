@@ -105,7 +105,7 @@ jobs:
       uses: ryankurte/action-apt@v0.4.1
       with:
         arch: arm64
-        packages: "libcap:arm64"
+        packages: "libcap-dev:arm64"
 
     - name: Build
       run: |
