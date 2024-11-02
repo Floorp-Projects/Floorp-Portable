@@ -101,9 +101,11 @@ jobs:
         sudo apt update
         sudo apt install -y binutils-aarch64-linux-gnu gcc-aarch64-linux-gnu g++-aarch64-linux-gnu meson libcap-dev
 
-        sudo dpkg --add-architecture arm64
-        sudo apt update
-        sudo apt install libcap-dev:arm64
+    - name: Install aarch64 packages
+      uses: ryankurte/action-apt@v0.4.1
+      with:
+        arch: arm64
+        packages: "libcap:arm64"
 
     - name: Build
       run: |
