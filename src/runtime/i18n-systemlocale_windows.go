@@ -14,7 +14,7 @@ func getSystemLocale() string {
 	ret, _, err := windows.NewLazySystemDLL("kernel32.dll").
 		NewProc("GetUserDefaultLocaleName").
 		Call(uintptr(unsafe.Pointer(&buf[0])), uintptr(len(buf)))
-	if err != nil {
+	if ret == 0 { {
 		panic(err)
 	}
 	return string(utf16.Decode(buf[:ret]))
