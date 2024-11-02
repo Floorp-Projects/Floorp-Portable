@@ -131,6 +131,7 @@ jobs:
         cpp = 'aarch64-linux-gnu-g++'
         ar = 'aarch64-linux-gnu-ar'
         strip = 'aarch64-linux-gnu-strip'
+        pkgconfig = 'pkg-config'
 
         [host_machine]
         system = 'linux'
