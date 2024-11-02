@@ -28,7 +28,7 @@
     * Architecture: x86_64, aarch64
     * Memory: 8GB+
     * Disk Space: At least 2GB of free disk space.
-    * Packages: bubblewrap, glibc, gtk+, libstdc++, xorg, git, unzip, zip, jq, golang 1.20+
+    * Packages: bubblewrap, glibc, gtk+, libstdc++, xorg, git, unzip, zip, jq, golang 1.20+, pkg-config, gcc, meson, libcap-dev
 
 
 ## How to build
@@ -64,7 +64,7 @@ Linux
 ```
 
 ### 4. Now it is done
-The files and directories required to run the portable version are `core` and `floorp (floorp.exe)`.
+The files or directories required to run are those in the dist directory.
 
 
 ## Container Runtime
