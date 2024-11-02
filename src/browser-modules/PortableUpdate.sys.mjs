@@ -54,7 +54,9 @@ class PortableUpdateUtils {
 
     const current_floorp_version = AppConstants.MOZ_APP_VERSION_DISPLAY;
     const current_portable_version = await PortableEnvironment.getPortableVersion();
-    const isUpdateFound = result.version !== `${current_floorp_version}-${current_portable_version}`;
+    const current_version = `${current_floorp_version}-${current_portable_version}`;
+
+    const isUpdateFound = result.version !== current_version;
 
     return {
       isUpdateFound: isUpdateFound,
