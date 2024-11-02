@@ -41,7 +41,7 @@ const documentObserver = {
         // https://searchfox.org/mozilla-esr128/source/browser/components/preferences/main.js#1731-1737
         window_.getShellService = function () {};
 
-        // Hide built-in updater settings
+        // Hide built-in updater, etc settings
         const portableCSSElem = document_.createElement("style");
         portableCSSElem.id = "portableCSS";
         portableCSSElem.innerText = `
@@ -60,6 +60,10 @@ const documentObserver = {
         #updateAllowDescription {
           display: none;
         }
+
+        #defaultBrowserBox {
+          display: none;
+        }
         `;
         document_.head.appendChild(portableCSSElem);
 
@@ -67,8 +71,6 @@ const documentObserver = {
           "pageshow",
           async () => {
             await window_.gMainPane.initialized;
-
-            document_.getElementById("defaultBrowserBox").hidden = true;
 
             const portableUpdatePref = "floorp.portable.update.enabled";
             const updateApp = document_.getElementById("updateApp");
