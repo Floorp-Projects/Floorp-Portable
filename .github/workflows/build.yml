@@ -57,7 +57,7 @@ jobs:
     - name: Install
       run: |
         sudo apt update
-        sudo apt install -y libcap-dev
+        sudo apt install -y meson libcap-dev
 
     - name: Build
       run: |
@@ -95,7 +95,7 @@ jobs:
     - name: Install
       run: |
         sudo apt update
-        sudo apt install -y binutils-aarch64-linux-gnu gcc-aarch64-linux-gnu g++-aarch64-linux-gnu libcap-dev
+        sudo apt install -y binutils-aarch64-linux-gnu gcc-aarch64-linux-gnu g++-aarch64-linux-gnu meson libcap-dev
 
     - name: Build
       run: |
