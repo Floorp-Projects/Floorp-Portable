@@ -4,7 +4,6 @@ package main
 
 import (
 	"syscall"
-	"unicode/utf16"
 	"unsafe"
 )
 
@@ -19,5 +18,5 @@ func getSystemLocale() string {
 		panic(err)
 	}
 
-	return string(utf16.Decode(buf[:r]))
+	return syscall.UTF16ToString(buf)
 }
