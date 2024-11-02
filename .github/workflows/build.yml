@@ -101,6 +101,10 @@ jobs:
         sudo apt update
         sudo apt install -y binutils-aarch64-linux-gnu gcc-aarch64-linux-gnu g++-aarch64-linux-gnu meson libcap-dev
 
+        sudo dpkg --add-architecture arm64
+        sudo apt update
+        sudo apt install libcap-dev:arm64
+
     - name: Build
       run: |
         mkdir core
@@ -112,7 +116,12 @@ jobs:
 
         chmod +x ./build.sh
         ./build.sh
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GOARCH: arm64
 
+    - name: Cross compile Bubblewrap
+      run: |
         cd ./src/bubblewrap
         cat <<EOF > ./aarch64-linux-gnu.txt
         [binaries]
@@ -137,8 +146,9 @@ jobs:
         meson compile -C _builddircross
         cp ./_builddircross/bwrap ../../dist/bwrap
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        GOARCH: arm64
+        PKG_CONFIG_PATH: "/usr/lib/aarch64-linux-gnu/pkgconfig:/usr/share/pkgconfig"
+        PKG_CONFIG_LIBDIR: "/usr/lib/aarch64-linux-gnu"
+        PKG_CONFIG_SYSROOT_DIR: "/"
 
     - name: Artifact
       uses: actions/upload-artifact@v4
