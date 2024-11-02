@@ -99,6 +99,9 @@ function integration_portable_config () {
   if [[ "$os_name" == "MINGW64_NT"* ]]; then
     cp ./src/config/portable.ini ./dist/core/portable.ini
   fi
+
+  rev_short=$(git rev-parse --short HEAD)
+  echo "${rev_short:-null}" > ./dist/core/portable_version.txt
 }
 
 function integration_portable_modules () {

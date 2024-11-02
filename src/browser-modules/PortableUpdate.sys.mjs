@@ -5,7 +5,8 @@
 
 import { ExtensionParent } from "resource://gre/modules/ExtensionParent.sys.mjs";
 import { AppConstants } from "resource://gre/modules/AppConstants.sys.mjs";
-import ArchiveExtractUtils from "resource:///modules/portable/ArchiveExtractUtils.sys.mjs"
+import ArchiveExtractUtils from "resource:///modules/portable/ArchiveExtractUtils.sys.mjs";
+import PortableEnvironment from "resource:///modules/portable/PortableEnvironment.sys.mjs";
 
 const AlertsService = Cc["@mozilla.org/alerts-service;1"].getService(
   Ci.nsIAlertsService,
@@ -17,7 +18,6 @@ const API_BASE_URL = "https://floorp-update.ablaze.one";
 
 const platformInfo = ExtensionParent.PlatformInfo;
 const isWin = platformInfo.os === "win";
-const displayVersion = AppConstants.MOZ_APP_VERSION_DISPLAY;
 
 const appDirPath = Services.dirsvc.get("XREExeF", Ci.nsIFile).parent.path;
 const appDirParentDirPath = PathUtils.parent(appDirPath);
@@ -52,7 +52,9 @@ class PortableUpdateUtils {
       throw new TypeError("invalid response data");
     }
 
-    const isUpdateFound = result.version !== displayVersion;
+    const current_floorp_version = AppConstants.MOZ_APP_VERSION_DISPLAY;
+    const current_portable_version = await PortableEnvironment.getPortableVersion();
+    const isUpdateFound = result.version !== `${current_floorp_version}-${current_portable_version}`;
 
     return {
       isUpdateFound: isUpdateFound,
