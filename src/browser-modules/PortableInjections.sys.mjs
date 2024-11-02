@@ -24,7 +24,7 @@ const documentObserver = {
             const button = document_.getElementById("checkForUpdatesButton");
             if (Services.prefs.getBoolPref("floorp.portable.update.enabled")) {
               button.addEventListener("command", function() {
-                // TODO:
+                Services.obs.notifyObservers(null, "do-portable-update");
               });
             } else {
               button.remove();
