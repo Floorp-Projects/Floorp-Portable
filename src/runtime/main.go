@@ -49,7 +49,7 @@ func main() {
 				showFatalError("Update failed.", "Failed to delete old file.")
 				panic(err)
 			}
-			file, err := os.Create(pathJoin(exe_dir, "update_tmp", "REDIRECTOR_UPDATE_READY"))
+			file, err := os.Create(pathJoin(exe_dir, "update_tmp", "PORTABLE_RUNTIME_UPDATE_READY"))
 			if err != nil {
 				showFatalError("Update failed.", "Failed to prepare for redirector update.")
 				panic(err)
