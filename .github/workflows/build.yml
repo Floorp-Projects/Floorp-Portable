@@ -54,6 +54,11 @@ jobs:
         check-latest: true
         cache-dependency-path: ./src/runtime
 
+    - name: Install
+      run: |
+        sudo apt update
+        sudo apt install -y libcap-dev
+
     - name: Build
       run: |
         mkdir core
@@ -87,6 +92,11 @@ jobs:
         check-latest: true
         cache-dependency-path: ./src/runtime
 
+    - name: Install
+      run: |
+        sudo apt update
+        sudo apt install -y binutils-aarch64-linux-gnu gcc-aarch64-linux-gnu g++-aarch64-linux-gnu libcap-dev
+
     - name: Build
       run: |
         mkdir core
@@ -98,6 +108,24 @@ jobs:
 
         chmod +x ./build.sh
         ./build.sh
+
+        cd ./src/bubblewrap
+        cat <<EOF > ./aarch64-linux-gnu.txt
+        [binaries]
+        c = 'aarch64-linux-gnu-gcc'
+        cpp = 'aarch64-linux-gnu-g++'
+        ar = 'aarch64-linux-gnu-ar'
+        strip = 'aarch64-linux-gnu-strip'
+
+        [host_machine]
+        system = 'linux'
+        cpu_family = 'x86_64'
+        cpu = 'x86_64'
+        endian = 'little'
+        EOF
+        meson setup --cross-file ./aarch64-linux-gnu.txt _builddircross
+        meson compile -C _builddircross
+        cp ./_builddircross/bwrap ../../dist/bwrap
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GOARCH: arm64

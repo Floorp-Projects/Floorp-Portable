@@ -25,6 +25,14 @@ function build_portable_runtime () {
   cd ../..
 }
 
+function build_bubblewrap () {
+  cd ./src/bubblewrap
+  meson setup _builddir
+  meson compile -C _builddir
+  cp ./_builddir/bwrap ../../dist/bwrap
+  cd ../..
+}
+
 function unzip_omni () {
   echo "Unzipping omni.ja ($1) ..."
   if [[ "$1" == "root" ]]; then
@@ -141,6 +149,9 @@ function remove_unused_files () {
 if [[ "$1" == "" ]]; then
   copy_to_dist
   build_portable_runtime
+  if [[ "$os_name" == "Linux" ]]; then
+    build_bubblewrap
+  fi
   unzip_omni root
   unzip_omni browser
   apply_patch
