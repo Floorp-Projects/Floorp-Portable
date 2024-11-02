@@ -1,0 +1,9 @@
+{
+    "native-runner-failed": "問題が発生しました",
+    "native-runner-failed-description": "Floorpの起動に失敗しました。\n繰り返し問題が発生する場合は、再インストールをお試しください。",
+    "native-updater-failed": "アップデートに失敗しました",
+    "native-updater-failed-to-prepare-to-start-update-description": "アップデート開始準備に失敗しました。",
+    "native-updater-failed-to-replace-with-new-file-description": "新しいファイルへの置き換えに失敗しました。",
+    "native-updater-failed-to-delete-old-file-description": "古いファイルの削除に失敗しました。",
+    "native-updater-failed-to-prepare-for-runtime-update-description": "ランタイムのアップデート準備に失敗しました"
+}

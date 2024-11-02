@@ -11,6 +11,7 @@ function build_portable_runtime () {
   echo "Building portable runtime..."
   cd src/runtime
   if [[ "$os_name" == "Linux" ]]; then
+    go generate
     go build -ldflags="-s -w"
     cp ./floorp ../../dist/floorp
   elif [[ "$os_name" == "MINGW64_NT"* ]]; then

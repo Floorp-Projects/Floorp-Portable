@@ -2,6 +2,7 @@
 /floorp.exe
 /src/runtime/floorp
 /src/runtime/floorp.exe
+/src/runtime/l10n-asset-dir
 /omni_tmp_root
 /omni_tmp_browser
 /core
