@@ -73,7 +73,7 @@ class PortableUpdateUtils {
       url: isUpdateFound ? result.url : null,
     };
   }
-  static async applyRedirectorUpdate() {
+  static async applyRuntimeUpdate() {
     if (!await IOUtils.exists(portableRuntimeUpdateReadyFilePath)) {
       if (!await IOUtils.exists(PathUtils.join(updateTmpDirPath, "REDIRECTOR_UPDATE_READY"))) { // Old version of Floorp Portable
         return false;
@@ -174,7 +174,7 @@ Services.obs.addObserver(async function() {
 
     let result;
     try {
-      result = await PortableUpdateUtils.applyRedirectorUpdate();
+      result = await PortableUpdateUtils.applyRuntimeUpdate();
     } catch (e) {
       console.error(e);
       AlertsService.showAlertNotification(
