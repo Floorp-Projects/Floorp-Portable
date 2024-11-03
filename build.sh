@@ -133,6 +133,8 @@ function integration_portable_modules () {
 
   mkdir -p ./omni_tmp_browser/modules/portable
   cp -r ./src/browser-modules/* ./omni_tmp_browser/modules/portable/
+  mkdir -p ./omni_tmp_browser/modules/portable/l10n
+  cp -r ./l10n/* ./omni_tmp_browser/modules/portable/l10n/
 }
 
 function remove_unused_files () {

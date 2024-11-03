@@ -1,9 +1,19 @@
 {
-    "native-runner-failed": "Something went wrong!",
-    "native-runner-failed-description": "Failed to start Floorp.\nIf the problem occurs repeatedly, try reinstalling.",
-    "native-updater-failed": "Update failed.",
-    "native-updater-failed-to-prepare-to-start-update-description": "Failed to prepare to start update.",
-    "native-updater-failed-to-replace-with-new-file-description": "Failed to replace with new file.",
-    "native-updater-failed-to-delete-old-file-description": "Failed to delete old file.",
-    "native-updater-failed-to-prepare-for-runtime-update-description": "Failed to prepare for runtime update."
+  "native-runner-failed": "Something went wrong!",
+  "native-runner-failed-description": "Failed to start Floorp.\nIf the problem occurs repeatedly, try reinstalling.",
+  "native-updater-failed": "Update failed.",
+  "native-updater-failed-to-prepare-to-start-update-description": "Failed to prepare to start update.",
+  "native-updater-failed-to-replace-with-new-file-description": "Failed to replace with new file.",
+  "native-updater-failed-to-delete-old-file-description": "Failed to delete old file.",
+  "native-updater-failed-to-prepare-for-runtime-update-description": "Failed to prepare for runtime update.",
+  "bm-pref-floorp-portable-update-enabled": "Automatically check for updates to Floorp Portable.",
+  "bm-updater-found-notify-title": "Updates found!",
+  "bm-updater-found-notify-message": "Downloading updates...",
+  "bm-updater-ready-notify-title": "Ready to update!",
+  "bm-updater-ready-notify-message": "Floorp will be updated on the next launch.",
+  "bm-updater-success-notify-title": "Update succeeded!",
+  "bm-updater-success-notify-message": "Hope you enjoy the new version of Floorp!",
+  "bm-updater-failed-notify-title": "Update failed.",
+  "bm-updater-failed-runtime-message": "Restarting your browser may solve this problem.",
+  "bm-updater-failed-prepare-message": "Failed to prepare the update."
 }

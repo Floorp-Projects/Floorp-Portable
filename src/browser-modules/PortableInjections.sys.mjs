@@ -4,6 +4,18 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 import { ExtensionCommon } from "resource://gre/modules/ExtensionCommon.sys.mjs";
+import { PortableI18nL10nLoader, PortableI18nLocalizer } from "resource:///modules/portable/PortableI18nUtils.sys.mjs";
+
+const localizer = (async() => {
+  const locales = await PortableI18nL10nLoader.load();
+  const availableLocales = Object.keys(locales);
+  return new PortableI18nLocalizer(
+    undefined,
+    availableLocales,
+    undefined,
+    locales,
+  );
+})();
 
 const seenDocuments = new WeakSet();
 const documentObserver = {
@@ -75,7 +87,10 @@ const documentObserver = {
             const portableUpdatePref = "floorp.portable.update.enabled";
             const updateApp = document_.getElementById("updateApp");
             const portableUpdateOption = document_.createXULElement("checkbox");
-            portableUpdateOption.setAttribute("label", "Automatically check for updates to Floorp Portable.");
+            portableUpdateOption.setAttribute(
+              "label",
+              (await localizer).mustLocalize("bm-pref-floorp-portable-update-enabled")
+            );
             portableUpdateOption.checked = Services.prefs.getBoolPref(portableUpdatePref, false);
             Services.prefs.addObserver(portableUpdatePref, function () {
               portableUpdateOption.checked = Services.prefs.getBoolPref(portableUpdatePref, false);

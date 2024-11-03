@@ -7,12 +7,11 @@ import { ExtensionParent } from "resource://gre/modules/ExtensionParent.sys.mjs"
 import { AppConstants } from "resource://gre/modules/AppConstants.sys.mjs";
 import ArchiveExtractUtils from "resource:///modules/portable/ArchiveExtractUtils.sys.mjs";
 import PortableEnvironment from "resource:///modules/portable/PortableEnvironment.sys.mjs";
+import { PortableI18nL10nLoader, PortableI18nLocalizer } from "resource:///modules/portable/PortableI18nUtils.sys.mjs";
 
 const AlertsService = Cc["@mozilla.org/alerts-service;1"].getService(
   Ci.nsIAlertsService,
 );
-
-const L10N = new Localization(["browser/floorp.ftl"]);
 
 const API_BASE_URL = "https://floorp-update.ablaze.one";
 
@@ -32,6 +31,17 @@ const portableRuntimeUpdateReadyFilePath = PathUtils.join(
   updateTmpDirPath,
   "PORTABLE_RUNTIME_UPDATE_READY",
 );
+
+const localizer = (async() => {
+  const locales = await PortableI18nL10nLoader.load();
+  const availableLocales = Object.keys(locales);
+  return new PortableI18nLocalizer(
+    undefined,
+    availableLocales,
+    undefined,
+    locales,
+  );
+})();
 
 class PortableUpdateUtils {
   static async #fetchLatestInfo() {
@@ -153,8 +163,8 @@ Services.obs.addObserver(async function() {
     if (await IOUtils.exists(coreUpdateReadyFilePath)) {
       AlertsService.showAlertNotification(
         "chrome://floorp/skin/updater/link-48.png",
-        await L10N.formatValue("update-portable-notification-ready-title"),
-        await L10N.formatValue("update-portable-notification-ready-message"),
+        (await localizer).mustLocalize("bm-updater-ready-notify-title"),
+        (await localizer).mustLocalize("bm-updater-ready-notify-message"),
         true,
         null,
         null,
@@ -169,10 +179,8 @@ Services.obs.addObserver(async function() {
       console.error(e);
       AlertsService.showAlertNotification(
         "chrome://floorp/skin/updater/failed.png",
-        await L10N.formatValue("update-portable-notification-failed-title"),
-        await L10N.formatValue(
-          "update-portable-notification-failed-redirector-message",
-        ),
+        (await localizer).mustLocalize("bm-updater-failed-notify-title"),
+        (await localizer).mustLocalize("bm-updater-failed-runtime-message"),
         true,
         null,
         null,
@@ -182,8 +190,8 @@ Services.obs.addObserver(async function() {
     if (result) {
       AlertsService.showAlertNotification(
         "chrome://floorp/skin/updater/link-48-last.png", // Image URL
-        await L10N.formatValue("update-portable-notification-success-title"), // Title
-        await L10N.formatValue("update-portable-notification-success-message"), // Body
+        (await localizer).mustLocalize("bm-updater-success-notify-title"), // Title
+        (await localizer).mustLocalize("bm-updater-success-notify-message"), // Body
         true, // textClickable
         null, // id
         null, // clickCallback
@@ -199,8 +207,8 @@ Services.obs.addObserver(async function() {
       // do update
       AlertsService.showAlertNotification(
         "chrome://floorp/skin/updater/link-48.png",
-        await L10N.formatValue("update-portable-notification-found-title"),
-        await L10N.formatValue("update-portable-notification-found-message"),
+        (await localizer).mustLocalize("bm-updater-found-notify-title"),
+        (await localizer).mustLocalize("bm-updater-found-notify-message"),
         true,
         null,
         null,
@@ -212,10 +220,8 @@ Services.obs.addObserver(async function() {
         console.error(e);
         AlertsService.showAlertNotification(
           "chrome://floorp/skin/updater/failed.png",
-          await L10N.formatValue("update-portable-notification-failed-title"),
-          await L10N.formatValue(
-            "update-portable-notification-failed-prepare-message",
-          ),
+          (await localizer).mustLocalize("bm-updater-failed-notify-title"),
+          (await localizer).mustLocalize("bm-updater-failed-prepare-message"),
           true,
           null,
           null,
@@ -225,8 +231,8 @@ Services.obs.addObserver(async function() {
 
       AlertsService.showAlertNotification(
         "chrome://floorp/skin/updater/link-48.png",
-        await L10N.formatValue("update-portable-notification-ready-title"),
-        await L10N.formatValue("update-portable-notification-ready-message"),
+        (await localizer).mustLocalize("bm-updater-ready-notify-title"),
+        (await localizer).mustLocalize("bm-updater-ready-notify-message"),
         true,
         null,
         null,
