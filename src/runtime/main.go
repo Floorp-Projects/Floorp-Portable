@@ -95,7 +95,7 @@ func main() {
 		os.Mkdir(cache_dir, 0777)
 		os.Mkdir(profiles_dir, 0777)
 
-		bwrap_path := pathJoin(exe_dir, "bwrap")
+		bwrap_path := pathJoin(exe_dir, "core", "bwrap")
 
 		args_linux := []string{
 			"--dev-bind", "/", "/",

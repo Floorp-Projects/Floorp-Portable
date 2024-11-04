@@ -31,8 +31,8 @@ function build_bubblewrap () {
   cd ./src/bubblewrap
   meson setup _builddir
   meson compile -C _builddir
-  cp ./_builddir/bwrap ../../dist/bwrap
-  cp ./COPYING ../../dist/LICENSE_bwrap
+  cp ./_builddir/bwrap ../../dist/core/bwrap
+  cp ./COPYING ../../dist/core/LICENSE_bwrap
   cd ../..
 }
 
