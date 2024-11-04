@@ -127,6 +127,10 @@ class PortableUpdateUtils {
         0o755
       );
       await IOUtils.setPermissions(
+        PathUtils.join(updateTmpDirPath, "core", "bwrap"),
+        0o755
+      );
+      await IOUtils.setPermissions(
         PathUtils.join(updateTmpDirPath, "core", "floorp"),
         0o755
       );
