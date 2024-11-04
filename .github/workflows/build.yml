@@ -209,13 +209,29 @@ jobs:
         tar --zstd -cf ../floorp-${{ env.FLOORP_PORTABLE_VERSION }}-portable-linux-aarch64.tar.zst core floorp
         cd ..
 
-    - uses: marvinpinto/action-automatic-releases@latest
+    - name: Relaese
+      uses: marvinpinto/action-automatic-releases@latest
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
-        automatic_release_tag: "${{ env.FLOORP_PORTABLE_VERSION }}"
+        automatic_release_tag: "${{ env.FLOORP_PORTABLE_VERSION }}-portable"
         title: ${{ env.FLOORP_PORTABLE_VERSION }}
         prerelease: false
         files: |
           floorp-${{ env.FLOORP_PORTABLE_VERSION }}-portable-windows-x86_64.zip
           floorp-${{ env.FLOORP_PORTABLE_VERSION }}-portable-linux-x86_64.tar.zst
           floorp-${{ env.FLOORP_PORTABLE_VERSION }}-portable-linux-aarch64.tar.zst
+
+    - name: Update latest.json
+      uses: actions/github-script@v7
+      with:
+        github-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+        script: |
+          await github.rest.actions.createWorkflowDispatch({
+            owner: context.repo.owner,
+            repo: "Floorp-Updates",
+            workflow_id: "update-latest-json-portable.yml",
+            ref: "main",
+            inputs: {
+              "display-version": process.env.FLOORP_PORTABLE_VERSION,
+            },
+          });
