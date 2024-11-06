@@ -27,6 +27,12 @@ export const isUpdated = (function () {
 export const isMainBrowser = Services.env.get("MOZ_BROWSER_TOOLBOX_PORT") === "";
 
 if (isMainBrowser) {
+  try {
+    ChromeUtils.importESModule("resource:///modules/portable/PortableAboutPage.sys.mjs");
+  } catch (e) {
+    console.error(e);
+  }
+
   if (Services.prefs.getBoolPref("floorp.portable.enabled", false)) {
     try {
       ChromeUtils.importESModule("resource:///modules/portable/PortableInjections.sys.mjs");
