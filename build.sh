@@ -135,6 +135,7 @@ function integration_portable_modules () {
   cp -r ./src/browser-modules/* ./omni_tmp_browser/modules/portable/
   mkdir -p ./omni_tmp_browser/modules/portable/l10n
   cp -r ./l10n/* ./omni_tmp_browser/modules/portable/l10n/
+  cp ./CREDITS.md ./omni_tmp_browser/modules/portable/CREDITS.md
 }
 
 function remove_unused_files () {
