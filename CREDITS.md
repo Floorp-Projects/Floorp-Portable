@@ -1145,7 +1145,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ---
 ```
 
-## jq
+## jq (https://github.com/jqlang/jq)
 ```
 jq is copyright (C) 2012 Stephen Dolan
 
