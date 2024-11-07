@@ -166,4 +166,19 @@ if [[ "$1" == "" ]]; then
   zip_omni root
   zip_omni browser
   remove_unused_files
+elif [[ "$1" == "create_patch" ]]; then
+  unzip_omni root
+  unzip_omni browser
+
+  cd omni_tmp_root
+  git init
+  git add .
+  git commit -m "initial"
+  cd ..
+
+  cd omni_tmp_browser
+  git init
+  git add .
+  git commit -m "initial"
+  cd ..
 fi
