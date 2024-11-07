@@ -1,5 +1,5 @@
 diff --git a/modules/AppConstants.sys.mjs b/modules/AppConstants.sys.mjs
-index 74cc0a0..7a9a4f5 100644
+index cc85640..e4585b8 100644
 --- a/modules/AppConstants.sys.mjs
 +++ b/modules/AppConstants.sys.mjs
 @@ -55,7 +55,7 @@ export var AppConstants = Object.freeze({
@@ -11,3 +11,12 @@ index 74cc0a0..7a9a4f5 100644
  
    MOZ_SWITCHBOARD:
    false,
+@@ -224,7 +224,7 @@ export var AppConstants = Object.freeze({
+ 
+ 
+   MOZ_SYSTEM_POLICIES:
+-    true,
++    false,
+ 
+   MOZ_SELECTABLE_PROFILES:
+     false,

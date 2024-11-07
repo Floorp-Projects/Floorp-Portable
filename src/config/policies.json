@@ -1,6 +1,8 @@
 {
     "policies": {
         "DisableAppUpdate": true,
+        "AppAutoUpdate": false,
+        "BackgroundAppUpdate": false,
         "DisableDefaultBrowserAgent": true,
         "DontCheckDefaultBrowser": true
     }
