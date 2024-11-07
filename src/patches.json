@@ -1,10 +1,5 @@
 [
     {
-        "filename": "do-not-create-shortcut.diff",
-        "type": "browser",
-        "platforms": ["windows"]
-    },
-    {
         "filename": "disable-updater.diff",
         "type": "root",
         "platforms": ["windows", "linux"]
