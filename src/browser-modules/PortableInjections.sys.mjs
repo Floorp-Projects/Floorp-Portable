@@ -41,6 +41,21 @@ const documentObserver = {
             } else {
               button.remove();
             }
+
+            const licensePortable = new (window_.customElements.get("text-link"))();
+            licensePortable.setAttribute("class", "bottom-link text-link");
+            licensePortable.setAttribute("is", "text-link")
+            licensePortable.setAttribute("useoriginprincipal", "true");
+            licensePortable.setAttribute("href", "about:license-portable");
+            const span1 = document_.createXULElement("span");
+            span1.style.display = "inline";
+            span1.setAttribute("data-l10n-id", "bottomLinks-license");
+            licensePortable.appendChild(span1);
+            const span2 = document_.createXULElement("span");
+            span2.style.display = "inline";
+            span2.innerHTML = " (Portable)";
+            licensePortable.appendChild(span2);
+            document_.querySelector('label[href="about:license"]').insertAdjacentElement("afterend", licensePortable);
           },
           { once: true }
         );
