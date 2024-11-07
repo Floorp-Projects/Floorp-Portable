@@ -8,7 +8,7 @@ const { nsIAboutModule } = Ci;
 export default function AboutLicensePortable() {}
 
 AboutLicensePortable.prototype = {
-  uri: Services.io.newURI("chrome://browser/content/license.html"),
+  uri: Services.io.newURI("resource:///modules/portable/about-pages/license-portable.html"),
   classDescription: "about:license-portable",
   contractID: "@mozilla.org/network/protocol/about;1?what=license-portable",
   classID: Components.ID("{47e74de9-d25e-4eff-8256-0e9ec42c56ae}"),
@@ -17,8 +17,8 @@ AboutLicensePortable.prototype = {
 
   getURIFlags() {
     return (
-      Ci.nsIAboutModule.URI_SAFE_FOR_UNTRUSTED_CONTENT |
-      Ci.nsIAboutModule.IS_SECURE_CHROME_UI
+      Ci.nsIAboutModule.IS_SECURE_CHROME_UI |
+      Ci.nsIAboutModule.ALLOW_SCRIPT
     );
   },
 
