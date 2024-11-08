@@ -31,7 +31,7 @@
 ## How to build
 ### 1. Get Floorp-Portable source code
 ```
-git clone https://github.com/Floorp-Projects/Floorp-Portable
+git clone --recursive https://github.com/Floorp-Projects/Floorp-Portable
 cd Floorp-Portable
 ```
 ### 2. Install Floorp
