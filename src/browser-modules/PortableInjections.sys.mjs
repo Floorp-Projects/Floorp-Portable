@@ -91,6 +91,10 @@ const documentObserver = {
         #defaultBrowserBox {
           display: none;
         }
+
+        #policies-container {
+          display: none;
+        }
         `;
         document_.head.appendChild(portableCSSElem);
 
