@@ -50,6 +50,8 @@ const documentObserver = {
             licensePortable.style.whiteSpace = "pre-wrap";
             licensePortable.innerHTML = (await localizer).mustLocalize("bm-about-dialog-license-portable");
             document_.querySelector('label[href="about:license"]').insertAdjacentElement("afterend", licensePortable);
+
+            window_.sizeToContent();
           },
           { once: true }
         );
