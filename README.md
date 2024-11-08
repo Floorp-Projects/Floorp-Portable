@@ -1,8 +1,5 @@
 # Floorp Portable
-
-**Note: It will only work with the upcoming release of Floorp 12.**
-
-**Warning: This is currently a beta version. Unexpected problems may occur.**
+***Portable version of Floorp***
 
 
 ## Requirements
@@ -34,11 +31,11 @@
 ## How to build
 ### 1. Get Floorp-Portable source code
 ```
-git clone https://github.com/Floorp-Projects/Floorp-Portable
+git clone --recursive https://github.com/Floorp-Projects/Floorp-Portable
 cd Floorp-Portable
 ```
 ### 2. Install Floorp
-Create a directory named "core" and place Floorp files in it.
+Create a directory named `core` and place Floorp files in it.
 
 Windows
 ```
@@ -64,7 +61,7 @@ Linux
 ```
 
 ### 4. Now it is done
-The files or directories required to run are those in the dist directory.
+The files or directories required to run are those in the `dist` directory.
 
 
 ## Container Runtime
