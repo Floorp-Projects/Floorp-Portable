@@ -47,6 +47,7 @@ const documentObserver = {
             licensePortable.setAttribute("is", "text-link")
             licensePortable.setAttribute("useoriginprincipal", "true");
             licensePortable.setAttribute("href", "about:license-portable");
+            licensePortable.style.whiteSpace = "pre-wrap";
             licensePortable.innerHTML = (await localizer).mustLocalize("bm-about-dialog-license-portable");
             document_.querySelector('label[href="about:license"]').insertAdjacentElement("afterend", licensePortable);
           },

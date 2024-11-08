@@ -16,5 +16,5 @@
   "bm-updater-failed-notify-title": "Update failed.",
   "bm-updater-failed-runtime-message": "Restarting your browser may solve this problem.",
   "bm-updater-failed-prepare-message": "Failed to prepare the update.",
-  "bm-about-dialog-license-portable": "Licensing Information (Portable)"
+  "bm-about-dialog-license-portable": "Licensing Information\n(Portable)"
 }
