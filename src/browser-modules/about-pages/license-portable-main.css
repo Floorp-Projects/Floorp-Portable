@@ -11,11 +11,14 @@ body {
 }
 
 body {
+  box-sizing: border-box;
   max-width: 1000px;
   padding-top: 8px;
   padding-bottom: 8px;
   padding-right: 15px;
   padding-left: 15px;
+  margin-top: 0;
+  margin-bottom: 0;
   margin-right: auto;
   margin-left: auto;
 }
