@@ -59,7 +59,11 @@ class PortableUpdateUtils {
   static async checkUpdate() {
     const result = await this.#fetchLatestInfo();
     if (!result || !result.version || !result.url) {
-      throw new TypeError("invalid response data");
+      console.warn("invalid response data or no updates found");
+      return {
+        isUpdateFound: false,
+        url: null,
+      };
     }
 
     const current_floorp_version = AppConstants.MOZ_APP_VERSION_DISPLAY;
