@@ -59,7 +59,11 @@ class PortableUpdateUtils {
   static async checkUpdate() {
     const result = await this.#fetchLatestInfo();
     if (!result || !result.version || !result.url) {
-      throw new TypeError("invalid response data");
+      console.warn("invalid response data or no updates found");
+      return {
+        isUpdateFound: false,
+        url: null,
+      };
     }
 
     const current_floorp_version = AppConstants.MOZ_APP_VERSION_DISPLAY;
@@ -153,11 +157,13 @@ class PortableUpdateUtils {
 }
 
 let isRunning = false;
-Services.obs.addObserver(async function() {
+Services.obs.addObserver(async function(optionsWrapped) {
   if (isRunning) {
     return;
   }
   isRunning = true;
+  
+  const options = Object.assign({}, optionsWrapped?.wrappedJSObject);
 
   try {
     if (!Services.prefs.getBoolPref("floorp.portable.update.enabled", false)) {
@@ -166,7 +172,7 @@ Services.obs.addObserver(async function() {
 
     if (await IOUtils.exists(coreUpdateReadyFilePath)) {
       AlertsService.showAlertNotification(
-        "chrome://floorp/skin/updater/link-48.png",
+        "resource:///modules/portable/icons/download.png",
         (await localizer).mustLocalize("bm-updater-ready-notify-title"),
         (await localizer).mustLocalize("bm-updater-ready-notify-message"),
         true,
@@ -182,7 +188,7 @@ Services.obs.addObserver(async function() {
     } catch (e) {
       console.error(e);
       AlertsService.showAlertNotification(
-        "chrome://floorp/skin/updater/failed.png",
+        "resource:///modules/portable/icons/failed.png",
         (await localizer).mustLocalize("bm-updater-failed-notify-title"),
         (await localizer).mustLocalize("bm-updater-failed-runtime-message"),
         true,
@@ -193,7 +199,7 @@ Services.obs.addObserver(async function() {
     }
     if (result) {
       AlertsService.showAlertNotification(
-        "chrome://floorp/skin/updater/link-48-last.png", // Image URL
+        "resource:///modules/portable/icons/update-with-check.png", // Image URL
         (await localizer).mustLocalize("bm-updater-success-notify-title"), // Title
         (await localizer).mustLocalize("bm-updater-success-notify-message"), // Body
         true, // textClickable
@@ -210,7 +216,7 @@ Services.obs.addObserver(async function() {
     if (updateInfo.isUpdateFound) {
       // do update
       AlertsService.showAlertNotification(
-        "chrome://floorp/skin/updater/link-48.png",
+        "resource:///modules/portable/icons/download.png",
         (await localizer).mustLocalize("bm-updater-found-notify-title"),
         (await localizer).mustLocalize("bm-updater-found-notify-message"),
         true,
@@ -223,7 +229,7 @@ Services.obs.addObserver(async function() {
       } catch (e) {
         console.error(e);
         AlertsService.showAlertNotification(
-          "chrome://floorp/skin/updater/failed.png",
+          "resource:///modules/portable/icons/failed.png",
           (await localizer).mustLocalize("bm-updater-failed-notify-title"),
           (await localizer).mustLocalize("bm-updater-failed-prepare-message"),
           true,
@@ -234,9 +240,18 @@ Services.obs.addObserver(async function() {
       }
 
       AlertsService.showAlertNotification(
-        "chrome://floorp/skin/updater/link-48.png",
+        "resource:///modules/portable/icons/download.png",
         (await localizer).mustLocalize("bm-updater-ready-notify-title"),
         (await localizer).mustLocalize("bm-updater-ready-notify-message"),
+        true,
+        null,
+        null,
+      );
+    } else if (options.latestNotify) {
+      AlertsService.showAlertNotification(
+        "resource:///modules/portable/icons/update-with-check.png",
+        (await localizer).mustLocalize("bm-updater-no-updates-found-notify-title"),
+        (await localizer).mustLocalize("bm-updater-no-updates-found-notify-message"),
         true,
         null,
         null,
@@ -247,4 +262,4 @@ Services.obs.addObserver(async function() {
   }
 }, "do-portable-update");
 
-Services.obs.notifyObservers(null, "do-portable-update");
+Services.obs.notifyObservers({ latestNotify: false }, "do-portable-update");
