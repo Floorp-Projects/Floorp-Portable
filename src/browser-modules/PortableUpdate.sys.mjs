@@ -157,11 +157,13 @@ class PortableUpdateUtils {
 }
 
 let isRunning = false;
-Services.obs.addObserver(async function(options = {}) {
+Services.obs.addObserver(async function(optionsWrapped) {
   if (isRunning) {
     return;
   }
   isRunning = true;
+  
+  const options = Object.assign({}, optionsWrapped?.wrappedJSObject);
 
   try {
     if (!Services.prefs.getBoolPref("floorp.portable.update.enabled", false)) {
@@ -247,7 +249,7 @@ Services.obs.addObserver(async function(options = {}) {
       );
     } else if (options.latestNotify) {
       AlertsService.showAlertNotification(
-        "chrome://floorp/skin/updater/link-48-last.png"
+        "chrome://floorp/skin/updater/link-48-last.png",
         (await localizer).mustLocalize("bm-updater-no-updates-found-notify-title"),
         (await localizer).mustLocalize("bm-updater-no-updates-found-notify-message"),
         true,
