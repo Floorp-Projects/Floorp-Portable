@@ -172,7 +172,7 @@ Services.obs.addObserver(async function(optionsWrapped) {
 
     if (await IOUtils.exists(coreUpdateReadyFilePath)) {
       AlertsService.showAlertNotification(
-        "chrome://floorp/skin/updater/link-48.png",
+        "resource:///modules/portable/icons/download.png",
         (await localizer).mustLocalize("bm-updater-ready-notify-title"),
         (await localizer).mustLocalize("bm-updater-ready-notify-message"),
         true,
@@ -188,7 +188,7 @@ Services.obs.addObserver(async function(optionsWrapped) {
     } catch (e) {
       console.error(e);
       AlertsService.showAlertNotification(
-        "chrome://floorp/skin/updater/failed.png",
+        "resource:///modules/portable/icons/failed.png",
         (await localizer).mustLocalize("bm-updater-failed-notify-title"),
         (await localizer).mustLocalize("bm-updater-failed-runtime-message"),
         true,
@@ -199,7 +199,7 @@ Services.obs.addObserver(async function(optionsWrapped) {
     }
     if (result) {
       AlertsService.showAlertNotification(
-        "chrome://floorp/skin/updater/link-48-last.png", // Image URL
+        "resource:///modules/portable/icons/update-with-check.png", // Image URL
         (await localizer).mustLocalize("bm-updater-success-notify-title"), // Title
         (await localizer).mustLocalize("bm-updater-success-notify-message"), // Body
         true, // textClickable
@@ -216,7 +216,7 @@ Services.obs.addObserver(async function(optionsWrapped) {
     if (updateInfo.isUpdateFound) {
       // do update
       AlertsService.showAlertNotification(
-        "chrome://floorp/skin/updater/link-48.png",
+        "resource:///modules/portable/icons/download.png",
         (await localizer).mustLocalize("bm-updater-found-notify-title"),
         (await localizer).mustLocalize("bm-updater-found-notify-message"),
         true,
@@ -229,7 +229,7 @@ Services.obs.addObserver(async function(optionsWrapped) {
       } catch (e) {
         console.error(e);
         AlertsService.showAlertNotification(
-          "chrome://floorp/skin/updater/failed.png",
+          "resource:///modules/portable/icons/failed.png",
           (await localizer).mustLocalize("bm-updater-failed-notify-title"),
           (await localizer).mustLocalize("bm-updater-failed-prepare-message"),
           true,
@@ -240,7 +240,7 @@ Services.obs.addObserver(async function(optionsWrapped) {
       }
 
       AlertsService.showAlertNotification(
-        "chrome://floorp/skin/updater/link-48.png",
+        "resource:///modules/portable/icons/download.png",
         (await localizer).mustLocalize("bm-updater-ready-notify-title"),
         (await localizer).mustLocalize("bm-updater-ready-notify-message"),
         true,
@@ -249,7 +249,7 @@ Services.obs.addObserver(async function(optionsWrapped) {
       );
     } else if (options.latestNotify) {
       AlertsService.showAlertNotification(
-        "chrome://floorp/skin/updater/link-48-last.png",
+        "resource:///modules/portable/icons/update-with-check.png",
         (await localizer).mustLocalize("bm-updater-no-updates-found-notify-title"),
         (await localizer).mustLocalize("bm-updater-no-updates-found-notify-message"),
         true,
