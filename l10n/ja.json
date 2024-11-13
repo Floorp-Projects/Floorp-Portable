@@ -16,5 +16,7 @@
   "bm-updater-failed-notify-title": "更新に失敗しました。",
   "bm-updater-failed-runtime-message": "ブラウザーを再起動すると、問題が解決する場合があります。",
   "bm-updater-failed-prepare-message": "更新の準備に失敗しました。",
+  "bm-updater-no-updates-found-notify-title": "Floorpは最新バージョンです！",
+  "bm-updater-no-updates-found-notify-message": "引き続きFloorpをお楽しみください。",
   "bm-about-dialog-license-portable": "ライセンス情報\n(ポータブル版)"
 }

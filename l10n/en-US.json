@@ -16,5 +16,7 @@
   "bm-updater-failed-notify-title": "Update failed.",
   "bm-updater-failed-runtime-message": "Restarting your browser may solve this problem.",
   "bm-updater-failed-prepare-message": "Failed to prepare the update.",
+  "bm-updater-no-updates-found-notify-title": "Floorp is up-to-date!",
+  "bm-updater-no-updates-found-notify-message": "Hope you continue to enjoy Floorp.",
   "bm-about-dialog-license-portable": "Licensing Information\n(Portable)"
 }

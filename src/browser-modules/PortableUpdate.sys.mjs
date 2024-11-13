@@ -153,7 +153,7 @@ class PortableUpdateUtils {
 }
 
 let isRunning = false;
-Services.obs.addObserver(async function() {
+Services.obs.addObserver(async function(options = {}) {
   if (isRunning) {
     return;
   }
@@ -241,10 +241,19 @@ Services.obs.addObserver(async function() {
         null,
         null,
       );
+    } else if (options.latestNotify) {
+      AlertsService.showAlertNotification(
+        "chrome://floorp/skin/updater/link-48-last.png"
+        (await localizer).mustLocalize("bm-updater-no-updates-found-notify-title"),
+        (await localizer).mustLocalize("bm-updater-no-updates-found-notify-message"),
+        true,
+        null,
+        null,
+      );
     }
   } finally {
     isRunning = false;
   }
 }, "do-portable-update");
 
-Services.obs.notifyObservers(null, "do-portable-update");
+Services.obs.notifyObservers({ latestNotify: false }, "do-portable-update");
