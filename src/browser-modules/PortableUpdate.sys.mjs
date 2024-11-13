@@ -172,7 +172,7 @@ Services.obs.addObserver(async function(optionsWrapped) {
 
     if (await IOUtils.exists(coreUpdateReadyFilePath)) {
       AlertsService.showAlertNotification(
-        "resource:///modules/portable/icons/download.png",
+        "resource:///modules/portable/icons/update-pending.png",
         (await localizer).mustLocalize("bm-updater-ready-notify-title"),
         (await localizer).mustLocalize("bm-updater-ready-notify-message"),
         true,
@@ -240,7 +240,7 @@ Services.obs.addObserver(async function(optionsWrapped) {
       }
 
       AlertsService.showAlertNotification(
-        "resource:///modules/portable/icons/download.png",
+        "resource:///modules/portable/icons/update-pending.png",
         (await localizer).mustLocalize("bm-updater-ready-notify-title"),
         (await localizer).mustLocalize("bm-updater-ready-notify-message"),
         true,
