@@ -122,8 +122,8 @@ function integration_portable_modules () {
     cp ./src/utils/portable64.dll ./dist/core/portable64.dll
     cp ./src/utils/libportable_LICENSE ./dist/core/libportable_LICENSE
   elif [[ "$os_name" == "Linux" ]]; then
-    # bubblewrap
-    echo wip
+    # Reserved for future use
+    :
   else
     echo "Unsupported OS: $os_name"
     false
