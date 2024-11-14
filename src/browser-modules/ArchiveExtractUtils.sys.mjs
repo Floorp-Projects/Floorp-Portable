@@ -7,6 +7,7 @@ import { FileUtils } from "resource://gre/modules/FileUtils.sys.mjs";
 import { NetUtil } from "resource://gre/modules/NetUtil.sys.mjs";
 import { ExtensionParent } from "resource://gre/modules/ExtensionParent.sys.mjs";
 import { TarReader } from "resource:///modules/portable/tarjs/index.mjs";
+import { TarFileModeParser, TarFileModeCreater } from "resource:///modules/portable/TarFileModeUtils.sys.mjs";
 
 const ZipReader = Components.Constructor(
   "@mozilla.org/libjar/zip-reader;1",
@@ -124,14 +125,25 @@ export default class ArchiveExtractUtils {
       } catch (e) {
         throw new Components.Exception(`Invalid path: ${e.message}`);
       }
+
       const path = PathUtils.joinRelative(target, entryPath);
+
       if (entry.type == "48" /* File */) {
         const data = reader.getFileBlob(entry.name);
         await IOUtils.write(path, new Uint8Array(await data.arrayBuffer()));
       } else if (entry.type == "53" /* Dir*/) {
         await IOUtils.makeDirectory(path);
       }
+
+      // convert to unix permissions
+      const mode_parsed = TarFileModeParser(entry.mode);
+      delete mode_parsed.execution;
+      const mode_raw = TarFileModeCreater(mode_parsed);
+      try {
+        await IOUtils.setPermissions(path, mode_raw);
+      } catch (e) {
+        console.warn(e);
+      }
     }
   }
 }
-

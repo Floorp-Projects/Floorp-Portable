@@ -939,11 +939,12 @@ That's all there is to it!
 ```
 
 
-## @gera2ld/tarjs (https://github.com/gera2ld/tarjs)
+## @gera2ld/tarjs (https://github.com/Floorp-Projects/tarjs)
 ```
 MIT License
 
 Copyright (c) 2023 Gerald &lt;gera2ld@live.com&gt;
+Copyright (c) 2024 typeling1578
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

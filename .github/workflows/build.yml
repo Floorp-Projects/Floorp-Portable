@@ -35,12 +35,17 @@ jobs:
 
         ./build.bat
 
-    - name: Artifact
+    - name: Packaging
+      run: |
+        cd ./dist
+        ../src/utils/7za.exe a ../floorp-portable-windows-x86_64.zip *
+
+    - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
         name: floorp-portable-windows-x86_64
         path: |
-          ./dist
+          ./floorp-portable-windows-x86_64.zip
 
   build-linux-x86-64:
     runs-on: ubuntu-22.04
@@ -75,12 +80,17 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Artifact
+    - name: Packaging
+      run: |
+        cd ./dist
+        tar --zstd -cvf ../floorp-portable-linux-x86_64.tar.zst *
+
+    - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
         name: floorp-portable-linux-x86_64
         path: |
-          ./dist
+          ./floorp-portable-linux-x86_64.tar.zst
 
   build-linux-aarch64:
     runs-on: ubuntu-22.04
@@ -153,12 +163,17 @@ jobs:
         PKG_CONFIG_LIBDIR: "/usr/lib/aarch64-linux-gnu"
         PKG_CONFIG_SYSROOT_DIR: "/"
 
-    - name: Artifact
+    - name: Packaging
+      run: |
+        cd ./dist
+        tar --zstd -cvf ../floorp-portable-linux-aarch64.tar.zst *
+
+    - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
         name: floorp-portable-linux-aarch64
         path: |
-          ./dist
+          ./floorp-portable-linux-aarch64.tar.zst
 
   release:
     runs-on: ubuntu-22.04
@@ -187,27 +202,21 @@ jobs:
 
     - name: Get version
       run: |
-        sudo chmod +x ./linux-x86_64-artifact/core/floorp
-        FLOORP_VERSION=`./linux-x86_64-artifact/core/floorp -version | awk '{ print $3 }'`
+        mkdir ./tmp
+        tar -xvf ./linux-x86_64-artifact/floorp-portable-linux-x86_64.tar.zst -C ./tmp
 
-        PORTABLE_VERSION=`cat ./linux-x86_64-artifact/core/portable_version.txt`
+        FLOORP_VERSION=`./tmp/core/floorp -version | awk '{ print $3 }'`
+
+        PORTABLE_VERSION=`cat ./tmp/core/portable_version.txt`
 
         FLOORP_PORTABLE_VERSION="${FLOORP_VERSION}-${PORTABLE_VERSION}"
         echo "FLOORP_PORTABLE_VERSION=$FLOORP_PORTABLE_VERSION" >> $GITHUB_ENV
 
-    - name: Packaging
+    - name: Rename
       run: |
-        cd ./windows-x86_64-artifact
-        zip ../floorp-${{ env.FLOORP_PORTABLE_VERSION }}-portable-windows-x86_64.zip -r core floorp.exe
-        cd ..
-
-        cd ./linux-x86_64-artifact
-        tar --zstd -cf ../floorp-${{ env.FLOORP_PORTABLE_VERSION }}-portable-linux-x86_64.tar.zst core floorp
-        cd ..
-
-        cd ./linux-aarch64-artifact
-        tar --zstd -cf ../floorp-${{ env.FLOORP_PORTABLE_VERSION }}-portable-linux-aarch64.tar.zst core floorp
-        cd ..
+        mv ./windows-x86_64-artifact/floorp-portable-windows-x86_64.zip ./floorp-${{ env.FLOORP_PORTABLE_VERSION }}-portable-windows-x86_64.zip
+        mv ./linux-x86_64-artifact/floorp-portable-linux-x86_64.tar.zst ./floorp-${{ env.FLOORP_PORTABLE_VERSION }}-portable-linux-x86_64.tar.zst
+        mv ./linux-aarch64-artifact/floorp-portable-linux-aarch64.tar.zst ./floorp-${{ env.FLOORP_PORTABLE_VERSION }}-portable-linux-aarch64.tar.zst
 
     - name: Relaese
       uses: marvinpinto/action-automatic-releases@latest

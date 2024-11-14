@@ -126,30 +126,6 @@ class PortableUpdateUtils {
       await ArchiveExtractUtils.extractZip(updateZipFilePath, updateTmpDirPath);
     } else {
       await ArchiveExtractUtils.extractTarZst(updateTarZstFilePath, updateTmpDirPath);
-      await IOUtils.setPermissions(
-        PathUtils.join(updateTmpDirPath, "floorp"),
-        0o755
-      );
-      await IOUtils.setPermissions(
-        PathUtils.join(updateTmpDirPath, "core", "bwrap"),
-        0o755
-      );
-      await IOUtils.setPermissions(
-        PathUtils.join(updateTmpDirPath, "core", "floorp"),
-        0o755
-      );
-      await IOUtils.setPermissions(
-        PathUtils.join(updateTmpDirPath, "core", "floorp-bin"),
-        0o755
-      );
-      await IOUtils.setPermissions(
-        PathUtils.join(updateTmpDirPath, "core", "glxtest"),
-        0o755
-      );
-      await IOUtils.setPermissions(
-        PathUtils.join(updateTmpDirPath, "core", "vaapitest"),
-        0o755
-      );
     }
 
     await IOUtils.writeUTF8(coreUpdateReadyFilePath, "");
@@ -162,7 +138,7 @@ Services.obs.addObserver(async function(optionsWrapped) {
     return;
   }
   isRunning = true;
-  
+
   const options = Object.assign({}, optionsWrapped?.wrappedJSObject);
 
   try {
@@ -172,7 +148,7 @@ Services.obs.addObserver(async function(optionsWrapped) {
 
     if (await IOUtils.exists(coreUpdateReadyFilePath)) {
       AlertsService.showAlertNotification(
-        "resource:///modules/portable/icons/download.png",
+        "resource:///modules/portable/icons/update-pending.png",
         (await localizer).mustLocalize("bm-updater-ready-notify-title"),
         (await localizer).mustLocalize("bm-updater-ready-notify-message"),
         true,
@@ -240,7 +216,7 @@ Services.obs.addObserver(async function(optionsWrapped) {
       }
 
       AlertsService.showAlertNotification(
-        "resource:///modules/portable/icons/download.png",
+        "resource:///modules/portable/icons/update-pending.png",
         (await localizer).mustLocalize("bm-updater-ready-notify-title"),
         (await localizer).mustLocalize("bm-updater-ready-notify-message"),
         true,
