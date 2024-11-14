@@ -40,10 +40,20 @@ function loadTarFile(buffer) {
     if (!fileName) break;
     const fileType = readFileType(buffer, offset);
     const fileSize = readFileSize(buffer, offset);
+    const fileUid = readFileUid(buffer, offset);
+    const fileGid = readFileGid(buffer, offset);
+    const fileMode = readFileMode(buffer, offset);
+    const fileUname = readFileUname(buffer, offset);
+    const fileGname = readFileGname(buffer, offset);
     fileInfos.push({
       name: fileName,
       type: fileType,
       size: fileSize,
+      uid: fileUid,
+      gid: fileGid,
+      mode: fileMode,
+      user: fileUname,
+      group: fileGname,
       headerOffset: offset
     });
     offset += 512 + 512 * Math.floor((fileSize + 511) / 512);
@@ -70,6 +80,32 @@ function readFileSize(buffer, offset) {
   const view = new Uint8Array(buffer, offset + 124, 12);
   const sizeStr = utf8Decode(view);
   return parseInt(sizeStr, 8);
+}
+function readFileUid(buffer, offset) {
+  // offset = 108, length = 8
+  const view = new Uint8Array(buffer, offset + 108, 8);
+  const uidStr = utf8Decode(view);
+  return parseInt(uidStr, 8);
+}
+function readFileGid(buffer, offset) {
+  // offset = 116, length = 8
+  const view = new Uint8Array(buffer, offset + 116, 8);
+  const gidStr = utf8Decode(view);
+  return parseInt(gidStr, 8);
+}
+function readFileMode(buffer, offset) {
+  // offset = 100, length = 8
+  const view = new Uint8Array(buffer, offset + 100, 8);
+  const modeStr = utf8Decode(view);
+  return parseInt(modeStr);
+}
+function readFileUname(buffer, offset) {
+  // offset = 265, length = 32
+  return readString(buffer, offset + 265, 32);
+}
+function readFileGname(buffer, offset) {
+  // offset = 297, length = 32
+  return readString(buffer, offset + 297, 32);
 }
 function readFileBlob(buffer, offset, size, mimetype) {
   const view = new Uint8Array(buffer, offset, size);
