@@ -38,7 +38,7 @@ jobs:
     - name: Packaging
       run: |
         cd ./dist
-        zip ../floorp-portable-windows-x86_64.zip -r *
+        ../src/utils/7za.exe a ../floorp-portable-windows-x86_64.zip *
 
     - name: Artifact
       uses: actions/upload-artifact@v4
