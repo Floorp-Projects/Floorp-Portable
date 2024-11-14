@@ -126,30 +126,6 @@ class PortableUpdateUtils {
       await ArchiveExtractUtils.extractZip(updateZipFilePath, updateTmpDirPath);
     } else {
       await ArchiveExtractUtils.extractTarZst(updateTarZstFilePath, updateTmpDirPath);
-      await IOUtils.setPermissions(
-        PathUtils.join(updateTmpDirPath, "floorp"),
-        0o755
-      );
-      await IOUtils.setPermissions(
-        PathUtils.join(updateTmpDirPath, "core", "bwrap"),
-        0o755
-      );
-      await IOUtils.setPermissions(
-        PathUtils.join(updateTmpDirPath, "core", "floorp"),
-        0o755
-      );
-      await IOUtils.setPermissions(
-        PathUtils.join(updateTmpDirPath, "core", "floorp-bin"),
-        0o755
-      );
-      await IOUtils.setPermissions(
-        PathUtils.join(updateTmpDirPath, "core", "glxtest"),
-        0o755
-      );
-      await IOUtils.setPermissions(
-        PathUtils.join(updateTmpDirPath, "core", "vaapitest"),
-        0o755
-      );
     }
 
     await IOUtils.writeUTF8(coreUpdateReadyFilePath, "");
@@ -162,7 +138,7 @@ Services.obs.addObserver(async function(optionsWrapped) {
     return;
   }
   isRunning = true;
-  
+
   const options = Object.assign({}, optionsWrapped?.wrappedJSObject);
 
   try {
