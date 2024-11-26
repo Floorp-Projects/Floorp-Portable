@@ -27,12 +27,19 @@ function build_portable_runtime () {
   cp ./LICENSE ./dist/LICENSE
 }
 
-function build_bubblewrap () {
-  cd ./src/bubblewrap
-  meson setup _builddir
-  meson compile -C _builddir
-  cp ./_builddir/bwrap ../../dist/core/bwrap
-  cp ./COPYING ../../dist/core/LICENSE_bwrap
+function build_container_runtime () {
+  echo "Building container runtime"
+  if [[ "$os_name" == "Linux" ]]; then
+    cd src/container-linux
+    go build -ldflags="-s -w"
+    cp ./container-linux ../../dist/core/container-linux
+  elif [[ "$os_name" == "MINGW64_NT"* ]]; then
+    # Reserved for future use
+    :
+  else
+    echo "Unsupported OS: $os_name"
+    false
+  fi
   cd ../..
 }
 
@@ -155,9 +162,7 @@ function remove_unused_files () {
 if [[ "$1" == "" ]]; then
   copy_to_dist
   build_portable_runtime
-  if [[ "$os_name" == "Linux" ]]; then
-    build_bubblewrap
-  fi
+  build_container_runtime
   unzip_omni root
   unzip_omni browser
   apply_patch

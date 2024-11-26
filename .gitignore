@@ -3,6 +3,7 @@
 /src/runtime/floorp
 /src/runtime/floorp.exe
 /src/runtime/l10n-asset-dir
+/src/container-linux/container-linux
 /omni_tmp_root
 /omni_tmp_browser
 /core
