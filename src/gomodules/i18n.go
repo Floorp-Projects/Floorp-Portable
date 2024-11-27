@@ -1,4 +1,4 @@
-package main
+package gomodules
 
 import (
 	"embed"
@@ -31,7 +31,7 @@ func getLocalizer() *i18n.Localizer {
 	return i18n.NewLocalizer(bundle, locale)
 }
 
-func localize(id string) string {
+func Localize(id string) string {
 	if localizer == nil {
 		localizer = getLocalizer()
 	}

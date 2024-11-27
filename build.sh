@@ -7,6 +7,13 @@ function copy_to_dist () {
   cp -r ./core ./dist/
 }
 
+function prepare_gomodules () {
+  echo "Preparing gomodules..."
+  cd src/gomodules
+  go generate
+  cd ../..
+}
+
 function build_portable_runtime () {
   echo "Building portable runtime..."
   cd src/runtime
@@ -27,13 +34,21 @@ function build_portable_runtime () {
   cp ./LICENSE ./dist/LICENSE
 }
 
-function build_bubblewrap () {
-  cd ./src/bubblewrap
-  meson setup _builddir
-  meson compile -C _builddir
-  cp ./_builddir/bwrap ../../dist/core/bwrap
-  cp ./COPYING ../../dist/core/LICENSE_bwrap
-  cd ../..
+function build_container_runtime () {
+  echo "Building container runtime"
+  if [[ "$os_name" == "Linux" ]]; then
+    cd src/container-linux
+    go build -ldflags="-s -w"
+    cp ./container-linux ../../dist/core/container-linux
+    cd ../..
+  elif [[ "$os_name" == "MINGW64_NT"* ]]; then
+    # Reserved for future use
+    :
+  else
+    echo "Unsupported OS: $os_name"
+    false
+  fi
+  # cd ../..
 }
 
 function unzip_omni () {
@@ -154,10 +169,9 @@ function remove_unused_files () {
 
 if [[ "$1" == "" ]]; then
   copy_to_dist
+  prepare_gomodules
   build_portable_runtime
-  if [[ "$os_name" == "Linux" ]]; then
-    build_bubblewrap
-  fi
+  build_container_runtime
   unzip_omni root
   unzip_omni browser
   apply_patch

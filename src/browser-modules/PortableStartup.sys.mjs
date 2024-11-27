@@ -6,27 +6,9 @@
 export const EXPORTED_SYMBOLS = ["isFirstRun", "isUpdated", "isMainBrowser"];
 
 import { AppConstants } from "resource://gre/modules/AppConstants.sys.mjs";
+import PortableEnvironment from "resource:///modules/portable/PortableEnvironment.sys.mjs";
 
-export const isFirstRun = !Services.prefs.getStringPref(
-  "browser.startup.homepage_override.mstone",
-  null,
-);
-
-export const isUpdated = (function () {
-  const nowVersion = AppConstants.MOZ_APP_VERSION_DISPLAY;
-  const oldVersionPref = Services.prefs.getStringPref(
-    "floorp.portable.startup.oldVersion",
-    null,
-  );
-
-  Services.prefs.setStringPref("floorp.portable.startup.oldVersion", nowVersion);
-
-  return oldVersionPref !== nowVersion && !isFirstRun;
-})();
-
-export const isMainBrowser = Services.env.get("MOZ_BROWSER_TOOLBOX_PORT") === "";
-
-if (isMainBrowser) {
+if (PortableEnvironment.isMainBrowser) {
   try {
     ChromeUtils.importESModule("resource:///modules/portable/PortableAboutPage.sys.mjs");
   } catch (e) {

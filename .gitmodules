@@ -1,3 +1,0 @@
-[submodule "src/bubblewrap"]
-	path = src/bubblewrap
-	url = https://github.com/containers/bubblewrap

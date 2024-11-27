@@ -24,9 +24,9 @@ jobs:
 
     - uses: actions/setup-go@v5
       with:
-        go-version: '1.22'
+        go-version: '1.23'
         check-latest: true
-        cache-dependency-path: ./src/runtime
+        cache-dependency-path: "**/*.sum"
 
     - name: Build
       run: |
@@ -57,14 +57,9 @@ jobs:
 
     - uses: actions/setup-go@v5
       with:
-        go-version: '1.22'
+        go-version: '1.23'
         check-latest: true
-        cache-dependency-path: ./src/runtime
-
-    - name: Install
-      run: |
-        sudo apt update
-        sudo apt install -y meson libcap-dev
+        cache-dependency-path: "**/*.sum"
 
     - name: Build
       run: |
@@ -102,20 +97,9 @@ jobs:
 
     - uses: actions/setup-go@v5
       with:
-        go-version: '1.22'
+        go-version: '1.23'
         check-latest: true
-        cache-dependency-path: ./src/runtime
-
-    - name: Install
-      run: |
-        sudo apt update
-        sudo apt install -y binutils-aarch64-linux-gnu gcc-aarch64-linux-gnu g++-aarch64-linux-gnu meson libcap-dev
-
-    - name: Install aarch64 packages
-      uses: ryankurte/action-apt@v0.4.1
-      with:
-        arch: arm64
-        packages: "libcap-dev:arm64"
+        cache-dependency-path: "**/*.sum"
 
     - name: Build
       run: |
@@ -131,37 +115,6 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GOARCH: arm64
-
-    - name: Cross compile Bubblewrap
-      run: |
-        cd ./src/bubblewrap
-        cat <<EOF > ./aarch64-linux-gnu.txt
-        [binaries]
-        c = 'aarch64-linux-gnu-gcc'
-        cpp = 'aarch64-linux-gnu-g++'
-        ar = 'aarch64-linux-gnu-ar'
-        strip = 'aarch64-linux-gnu-strip'
-        pkgconfig = 'pkg-config'
-
-        [host_machine]
-        system = 'linux'
-        cpu_family = 'aarch64'
-        cpu = 'aarch64'
-        endian = 'little'
-
-        [build_machine]
-        system = 'linux'
-        cpu_family = 'x86_64'
-        cpu = 'x86_64'
-        endian = 'little'
-        EOF
-        meson setup --cross-file ./aarch64-linux-gnu.txt _builddircross
-        meson compile -C _builddircross
-        cp ./_builddircross/bwrap ../../dist/bwrap
-      env:
-        PKG_CONFIG_PATH: "/usr/lib/aarch64-linux-gnu/pkgconfig:/usr/share/pkgconfig"
-        PKG_CONFIG_LIBDIR: "/usr/lib/aarch64-linux-gnu"
-        PKG_CONFIG_SYSROOT_DIR: "/"
 
     - name: Packaging
       run: |

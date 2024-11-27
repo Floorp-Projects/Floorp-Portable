@@ -1,6 +1,7 @@
 package main
 
 import (
+	"gomodules"
 	"log"
 	"os"
 	"os/exec"
@@ -21,53 +22,53 @@ func main() {
 	}
 	exe_dir := filepath.Dir(exe)
 
-	if _, err := os.Stat(pathJoin(exe_dir, "update_tmp", "CORE_UPDATE_READY")); err == nil {
+	if _, err := os.Stat(filepath.Join(exe_dir, "update_tmp", "CORE_UPDATE_READY")); err == nil {
 		log.Println("[INFO]", "Updates found.")
 
-		if !fileInUse(pathJoin(exe_dir, "core")) {
-			update_failed_lc := localize("native-updater-failed")
+		if !gomodules.FileInUse(filepath.Join(exe_dir, "core")) {
+			update_failed_lc := gomodules.Localize("native-updater-failed")
 
-			err := os.Rename(pathJoin(exe_dir, "core"), pathJoin(exe_dir, "core_old"))
+			err = os.Rename(filepath.Join(exe_dir, "core"), filepath.Join(exe_dir, "core_old"))
 			if err != nil {
-				showFatalError(
+				gomodules.ShowFatalError(
 					update_failed_lc,
-					localize("native-updater-failed-to-prepare-to-start-update-description"),
+					gomodules.Localize("native-updater-failed-to-prepare-to-start-update-description"),
 				)
 				panic(err)
 			}
-			err = os.Remove(pathJoin(exe_dir, "update_tmp", "CORE_UPDATE_READY"))
+			err = os.Remove(filepath.Join(exe_dir, "update_tmp", "CORE_UPDATE_READY"))
 			if err != nil {
-				showFatalError(
+				gomodules.ShowFatalError(
 					update_failed_lc,
-					localize("native-updater-failed-to-prepare-to-start-update-description"),
+					gomodules.Localize("native-updater-failed-to-prepare-to-start-update-description"),
 				)
 				panic(err)
 			}
-			err = os.Rename(pathJoin(exe_dir, "update_tmp", "core"), pathJoin(exe_dir, "core"))
+			err = os.Rename(filepath.Join(exe_dir, "update_tmp", "core"), filepath.Join(exe_dir, "core"))
 			if err != nil {
-				showFatalError(
+				gomodules.ShowFatalError(
 					update_failed_lc,
-					localize("native-updater-failed-to-replace-with-new-file-description"),
+					gomodules.Localize("native-updater-failed-to-replace-with-new-file-description"),
 				)
 				panic(err)
 			}
-			err = os.RemoveAll(pathJoin(exe_dir, "core_old"))
+			err = os.RemoveAll(filepath.Join(exe_dir, "core_old"))
 			if err != nil {
-				showFatalError(
+				gomodules.ShowFatalError(
 					update_failed_lc,
-					localize("native-updater-failed-to-delete-old-file-description"),
+					gomodules.Localize("native-updater-failed-to-delete-old-file-description"),
 				)
 				panic(err)
 			}
-			file, err := os.Create(pathJoin(exe_dir, "update_tmp", "PORTABLE_RUNTIME_UPDATE_READY"))
+			err = os.RemoveAll(filepath.Join(exe_dir, "update_tmp"))
 			if err != nil {
-				showFatalError(
+				gomodules.ShowFatalError(
 					update_failed_lc,
-					localize("native-updater-failed-to-prepare-for-runtime-update-description"),
+					gomodules.Localize("native-updater-failed-to-delete-old-file-description"),
 				)
 				panic(err)
 			}
-			file.Close()
+
 			log.Println("[INFO]", "Update succeeded.")
 		} else {
 			log.Println("[INFO]", "Floorp is running.")
@@ -75,51 +76,43 @@ func main() {
 	}
 
 	if runtime.GOOS == "windows" {
-		err := exec.Command(pathJoin(exe_dir, "core", "floorp"), args...).Run()
+		cmd := exec.Command(filepath.Join(exe_dir, "core", "floorp"), args...)
+		cmd.Stdin = os.Stdin
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+		err := cmd.Run()
 		if err != nil {
-			showFatalError(
-				localize("native-runner-failed"),
-				localize("native-runner-failed-description"),
+			gomodules.ShowFatalError(
+				gomodules.Localize("native-runner-failed"),
+				gomodules.Localize("native-runner-failed-description"),
 			)
 			panic(err)
 		}
 	} else if runtime.GOOS == "linux" {
-		homedir, err := os.UserHomeDir()
-		if err != nil {
-			panic(err)
-		}
-
-		cache_dir := pathJoin(exe_dir, "cache")
-		profiles_dir := pathJoin(exe_dir, "profiles")
+		cache_dir := filepath.Join(exe_dir, "cache")
+		profiles_dir := filepath.Join(exe_dir, "profiles")
 
 		os.Mkdir(cache_dir, 0777)
 		os.Mkdir(profiles_dir, 0777)
 
-		bwrap_path := pathJoin(exe_dir, "core", "bwrap")
+		container_path := filepath.Join(exe_dir, "core", "container-linux")
 
-		args_linux := []string{
-			"--dev-bind", "/", "/",
-			"--bind", cache_dir, homedir + "/.cache",
-			"--bind", profiles_dir, homedir + "/.floorp",
-		}
+		args_linux := append([]string{"run"}, args...)
+		cmd := exec.Command(container_path, args_linux...)
 		if os.Getenv("XDG_SESSION_TYPE") == "wayland" {
-			args_linux = append(
-				args_linux,
-				"--setenv", "MOZ_ENABLE_WAYLAND", "1",
+			cmd.Env = append(
+				os.Environ(),
+				"MOZ_ENABLE_WAYLAND=1",
 			)
 		}
-		args_linux = append(
-			args_linux,
-			"--",
-			pathJoin(exe_dir, "core", "floorp"),
-		)
-		args_linux = append(args_linux, args...)
-		out, err := exec.Command(bwrap_path, args_linux...).CombinedOutput()
+		cmd.Stdin = os.Stdin
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+		err := cmd.Run()
 		if err != nil {
-			log.Println(string(out))
-			showFatalError(
-				localize("native-runner-failed"),
-				localize("native-runner-failed-description"),
+			gomodules.ShowFatalError(
+				gomodules.Localize("native-runner-failed"),
+				gomodules.Localize("native-runner-failed-description"),
 			)
 			panic(err)
 		}
