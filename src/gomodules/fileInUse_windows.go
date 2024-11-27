@@ -1,6 +1,6 @@
 //go:build windows
 
-package main
+package gomodules
 
 import (
 	"log"
@@ -19,13 +19,13 @@ func randomString(length int) string {
 	return string(buf)
 }
 
-func fileInUse(path string) bool {
+func FileInUse(path string) bool {
 	_, err := os.Stat(path)
 	if err != nil {
 		log.Println("[ERROR]", err)
 		return false
 	}
-	
+
 	parent := filepath.Dir(path)
 	tmppath := filepath.Join(parent, randomString(12))
 
@@ -36,7 +36,7 @@ func fileInUse(path string) bool {
 
 	err = os.Rename(tmppath, path)
 	if err != nil {
-		showFatalError("An unexpected error occurred", "An unexpected error occurred while renaming the file.")
+		ShowFatalError("An unexpected error occurred", "An unexpected error occurred while renaming the file.")
 		panic(err)
 	}
 

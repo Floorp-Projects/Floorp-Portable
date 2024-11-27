@@ -1,6 +1,6 @@
 //go:build linux
 
-package main
+package gomodules
 
 import (
 	"log"
@@ -8,7 +8,7 @@ import (
 	"os/exec"
 )
 
-func fileInUse(path string) bool {
+func FileInUse(path string) bool {
 	info, err := os.Stat(path)
 	if err != nil {
 		log.Printf("[ERROR] %w\n", err)
@@ -27,7 +27,7 @@ func fileInUse(path string) bool {
 			return false
 		}
 		log.Printf("[FATAL] %s\n", out)
-		showFatalError("An unexpected error occurred", "An unexpected error occurred while executing the \"lsof\" command.")
+		ShowFatalError("An unexpected error occurred", "An unexpected error occurred while executing the \"lsof\" command.")
 		panic(err)
 	}
 

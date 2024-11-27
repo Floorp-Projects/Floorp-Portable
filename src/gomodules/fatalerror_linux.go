@@ -1,10 +1,10 @@
 //go:build linux
 
-package main
+package gomodules
 
 import (
-	"os/exec"
 	"log"
+	"os/exec"
 )
 
 func getAvailableZenityCommand() string {
@@ -18,7 +18,7 @@ func getAvailableZenityCommand() string {
 	return ""
 }
 
-func showFatalError(title string, message string) {
+func ShowFatalError(title string, message string) {
 	command := getAvailableZenityCommand()
 	if command != "" {
 		err := exec.Command(command, "--error", "--title", title, "--text", message).Run()
@@ -29,7 +29,7 @@ func showFatalError(title string, message string) {
 	log.Printf("[FATAL] %s %s\n", title, message)
 }
 
-func showConfirmDialog(title string, message string) bool {
+func ShowConfirmDialog(title string, message string) bool {
 	command := getAvailableZenityCommand()
 	if command != "" {
 		err := exec.Command(command, "--question", "--title", title, "--text", message).Run()

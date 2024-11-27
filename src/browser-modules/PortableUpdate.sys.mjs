@@ -27,10 +27,6 @@ const coreUpdateReadyFilePath = PathUtils.join(
   updateTmpDirPath,
   "CORE_UPDATE_READY",
 );
-const portableRuntimeUpdateReadyFilePath = PathUtils.join(
-  updateTmpDirPath,
-  "PORTABLE_RUNTIME_UPDATE_READY",
-);
 
 const localizer = (async() => {
   const locales = await PortableI18nL10nLoader.load();
@@ -78,12 +74,6 @@ class PortableUpdateUtils {
     };
   }
   static async applyRuntimeUpdate() {
-    if (!await IOUtils.exists(portableRuntimeUpdateReadyFilePath)) {
-      if (!await IOUtils.exists(PathUtils.join(updateTmpDirPath, "REDIRECTOR_UPDATE_READY"))) { // Old version of Floorp Portable
-        return false;
-      }
-    }
-
     // Update portable runtime
     await IOUtils.remove(
       isWin
@@ -99,8 +89,6 @@ class PortableUpdateUtils {
         ? PathUtils.join(appDirParentDirPath, "floorp.exe")
         : PathUtils.join(appDirParentDirPath, "floorp"),
     );
-
-    await IOUtils.remove(portableRuntimeUpdateReadyFilePath);
 
     return true;
   }
@@ -158,22 +146,27 @@ Services.obs.addObserver(async function(optionsWrapped) {
       return;
     }
 
-    let result;
-    try {
-      result = await PortableUpdateUtils.applyRuntimeUpdate();
-    } catch (e) {
-      console.error(e);
-      AlertsService.showAlertNotification(
-        "resource:///modules/portable/icons/failed.png",
-        (await localizer).mustLocalize("bm-updater-failed-notify-title"),
-        (await localizer).mustLocalize("bm-updater-failed-runtime-message"),
-        true,
-        null,
-        null,
-      );
-      return;
+    if (await IOUtils.exists(PathUtils.join(updateTmpDirPath, "REDIRECTOR_UPDATE_READY")) /* Old version of Floorp Portable */) {
+      let result;
+      try {
+        result = await PortableUpdateUtils.applyRuntimeUpdate();
+      } catch (e) {
+        console.error(e);
+        AlertsService.showAlertNotification(
+          "resource:///modules/portable/icons/failed.png",
+          (await localizer).mustLocalize("bm-updater-failed-notify-title"),
+          (await localizer).mustLocalize("bm-updater-failed-runtime-message"),
+          true,
+          null,
+          null,
+        );
+        return;
+      } finally {
+        await IOUtils.remove(PathUtils.join(updateTmpDirPath, "REDIRECTOR_UPDATE_READY"));
+      }
     }
-    if (result) {
+
+    if (await PortableEnvironment.isUpdated()) {
       AlertsService.showAlertNotification(
         "resource:///modules/portable/icons/update-with-check.png", // Image URL
         (await localizer).mustLocalize("bm-updater-success-notify-title"), // Title
@@ -202,6 +195,7 @@ Services.obs.addObserver(async function(optionsWrapped) {
 
       try {
         await PortableUpdateUtils.doUpdate(updateInfo.url);
+        await PortableUpdateUtils.applyRuntimeUpdate();
       } catch (e) {
         console.error(e);
         AlertsService.showAlertNotification(

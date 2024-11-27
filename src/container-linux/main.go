@@ -1,10 +1,11 @@
+//go:build linux
+
 package main
 
 import (
 	"fmt"
 	"os"
 	"os/exec"
-	"path"
 	"path/filepath"
 	"strconv"
 	"syscall"
@@ -72,12 +73,12 @@ func container_child() error {
 	exe_dir := filepath.Dir(exe)
 	exe_dir_parent := filepath.Dir(exe_dir)
 
-	exe_target := path.Join(exe_dir, "floorp")
+	exe_target := filepath.Join(exe_dir, "floorp")
 
-	profile_dir := path.Join(exe_dir_parent, "profiles")
-	cache_dir := path.Join(exe_dir_parent, "cache")
-	ns_profile_dir := path.Join(homedir, ".floorp")
-	ns_cache_dir := path.Join(homedir, ".cache")
+	profile_dir := filepath.Join(exe_dir_parent, "profiles")
+	cache_dir := filepath.Join(exe_dir_parent, "cache")
+	ns_profile_dir := filepath.Join(homedir, ".floorp")
+	ns_cache_dir := filepath.Join(homedir, ".cache")
 
 	os.Mkdir(profile_dir, 0755)
 	os.Mkdir(cache_dir, 0755)
