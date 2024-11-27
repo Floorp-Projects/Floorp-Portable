@@ -40,6 +40,7 @@ function build_container_runtime () {
     cd src/container-linux
     go build -ldflags="-s -w"
     cp ./container-linux ../../dist/core/container-linux
+    cd ../..
   elif [[ "$os_name" == "MINGW64_NT"* ]]; then
     # Reserved for future use
     :
@@ -47,7 +48,7 @@ function build_container_runtime () {
     echo "Unsupported OS: $os_name"
     false
   fi
-  cd ../..
+  # cd ../..
 }
 
 function unzip_omni () {
