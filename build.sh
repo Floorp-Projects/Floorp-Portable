@@ -10,9 +10,6 @@ function copy_to_dist () {
 function prepare_gomodules () {
   echo "Preparing gomodules..."
   cd src/gomodules
-  if [[ "$os_name" == "MINGW64_NT"* ]]; then
-    go install github.com/josephspurrier/goversioninfo/cmd/goversioninfo
-  fi
   go generate
   cd ../..
 }
@@ -20,11 +17,13 @@ function prepare_gomodules () {
 function build_portable_runtime () {
   echo "Building portable runtime..."
   cd src/runtime
-  go generate
   if [[ "$os_name" == "Linux" ]]; then
+    go generate
     go build -ldflags="-s -w"
     cp ./floorp ../../dist/floorp
   elif [[ "$os_name" == "MINGW64_NT"* ]]; then
+    go generate
+    go install github.com/josephspurrier/goversioninfo/cmd/goversioninfo
     go build -ldflags="-H windowsgui -s -w"
     cp ./floorp.exe ../../dist/floorp.exe
   else
