@@ -98,6 +98,9 @@ function apply_patch () {
     jq_path="jq"
   fi
 
+  type $jq_path > /dev/null
+  type seq > /dev/null
+
   for i in `seq $(cat ./src/patches.json | $jq_path -r "length")`; do
     patch_type=$(cat ./src/patches.json | $jq_path -r ".[$(($i - 1))].type")
     patch_filename=$(cat ./src/patches.json | $jq_path -r ".[$(($i - 1))].filename")

@@ -115,8 +115,6 @@ class PortableUpdateUtils {
     } else {
       await ArchiveExtractUtils.extractTarZst(updateTarZstFilePath, updateTmpDirPath);
     }
-
-    await IOUtils.writeUTF8(coreUpdateReadyFilePath, "");
   }
 }
 
@@ -196,6 +194,7 @@ Services.obs.addObserver(async function(optionsWrapped) {
       try {
         await PortableUpdateUtils.doUpdate(updateInfo.url);
         await PortableUpdateUtils.applyRuntimeUpdate();
+        await IOUtils.writeUTF8(coreUpdateReadyFilePath, "");
       } catch (e) {
         console.error(e);
         AlertsService.showAlertNotification(

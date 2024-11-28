@@ -3,6 +3,8 @@
 package main
 
 import (
+	"crypto/md5"
+	"encoding/hex"
 	"fmt"
 	"os"
 	"os/exec"
@@ -82,6 +84,8 @@ func container_child() error {
 
 	os.Mkdir(profile_dir, 0755)
 	os.Mkdir(cache_dir, 0755)
+	os.Mkdir(ns_profile_dir, 0755)
+	os.Mkdir(ns_cache_dir, 0755)
 
 	if err := syscall.Mount(profile_dir, ns_profile_dir, "", syscall.MS_BIND, ""); err != nil {
 		return fmt.Errorf("Failed to bind mount: %v", err)
@@ -91,7 +95,14 @@ func container_child() error {
 		return fmt.Errorf("Failed to bind mount: %v", err)
 	}
 
+	install_hash := md5.Sum([]byte(exe))
+	install_hash_hex := hex.EncodeToString(install_hash[:])
+
 	cmd := exec.Command(exe_target, os.Args[2:]...)
+	cmd.Env = append(
+		os.Environ(),
+		fmt.Sprintf("MOZ_APP_REMOTINGNAME=floorp-portable-%s", install_hash_hex[:16]),
+	)
 	cmd.SysProcAttr = &syscall.SysProcAttr{
 		Cloneflags: syscall.CLONE_NEWUSER |
 			syscall.CLONE_NEWNS |
