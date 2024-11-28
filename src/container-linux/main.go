@@ -84,6 +84,8 @@ func container_child() error {
 
 	os.Mkdir(profile_dir, 0755)
 	os.Mkdir(cache_dir, 0755)
+	os.Mkdir(ns_profile_dir, 0755)
+	os.Mkdir(ns_cache_dir, 0755)
 
 	if err := syscall.Mount(profile_dir, ns_profile_dir, "", syscall.MS_BIND, ""); err != nil {
 		return fmt.Errorf("Failed to bind mount: %v", err)
