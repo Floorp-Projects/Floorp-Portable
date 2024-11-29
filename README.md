@@ -20,12 +20,12 @@
     * Architecture: x86_64
     * Memory: 8GB+
     * Disk Space: At least 2GB of free disk space.
-    * Softwares: Git, Git Bash
+    * Softwares: Git, Git Bash, Golang 1.23+
   * Linux
     * Architecture: x86_64, aarch64
     * Memory: 8GB+
     * Disk Space: At least 2GB of free disk space.
-    * Packages: bubblewrap, glibc, gtk+, libstdc++, xorg, git, unzip, zip, jq, golang 1.20+, pkg-config, gcc, meson, libcap-dev
+    * Packages: glibc, gtk+, libstdc++, xorg, git, unzip, zip, jq, golang 1.23+
 
 
 ## How to build
