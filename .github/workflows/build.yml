@@ -10,7 +10,7 @@ on:
           - "Artifact"
           - "Release"
       release-notes-url:
-        description: Release Notes (Ablog URL)
+        description: Release Notes (ABlog URL)
         type: string
       release-notes-manually:
         description: Manually Release Notes
