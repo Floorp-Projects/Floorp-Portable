@@ -55,4 +55,6 @@ jobs:
                   body: `${marker}\n${commentBody}`,
                 });
               }
+
+              throw new Error(commentBody);
             }
