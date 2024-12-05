@@ -5,6 +5,7 @@
 
 import { ExtensionParent } from "resource://gre/modules/ExtensionParent.sys.mjs";
 import { AppConstants } from "resource://gre/modules/AppConstants.sys.mjs";
+import { FileUtils } from "resource://gre/modules/FileUtils.sys.mjs";
 import ArchiveExtractUtils from "resource:///modules/portable/ArchiveExtractUtils.sys.mjs";
 import PortableEnvironment from "resource:///modules/portable/PortableEnvironment.sys.mjs";
 import { PortableI18nL10nLoader, PortableI18nLocalizer } from "resource:///modules/portable/PortableI18nUtils.sys.mjs";
