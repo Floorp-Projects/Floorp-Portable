@@ -9,6 +9,13 @@ on:
         options:
           - "Artifact"
           - "Release"
+      release-notes-url:
+        description: Release Notes (ABlog URL)
+        type: string
+      release-notes-manually:
+        description: Manually Release Notes
+        type: string
+
 #  schedule:
 #    - cron: '0 6 * * *'
 
@@ -171,17 +178,29 @@ jobs:
         mv ./linux-x86_64-artifact/floorp-portable-linux-x86_64.tar.zst ./floorp-${{ env.FLOORP_PORTABLE_VERSION }}-portable-linux-x86_64.tar.zst
         mv ./linux-aarch64-artifact/floorp-portable-linux-aarch64.tar.zst ./floorp-${{ env.FLOORP_PORTABLE_VERSION }}-portable-linux-aarch64.tar.zst
 
-    - name: Relaese
-      uses: marvinpinto/action-automatic-releases@latest
+    - name: Generate Release Notes
+      if: "${{ github.event.inputs.release-notes-url != '' }}"
+      run: |
+        git clone https://github.com/Floorp-Projects/ablog2githubrelease
+        cd ./ablog2githubrelease
+        sudo npm install -g pnpm
+        pnpm install
+        pnpm run --silent start --url '${{ github.event.inputs.release-notes-url }}' -e 'h2[data-ablog2ghr-innertext*="Download"]' -e ".wp-block-embed" > release-notes.txt
+
+    - name: Release
+      uses: softprops/action-gh-release@v2
       with:
-        repo_token: "${{ secrets.GITHUB_TOKEN }}"
-        automatic_release_tag: "${{ env.FLOORP_PORTABLE_VERSION }}-portable"
-        title: ${{ env.FLOORP_PORTABLE_VERSION }}
-        prerelease: false
+        tag_name: "${{ env.FLOORP_PORTABLE_VERSION }}-portable"
+        target_commitish: ${{ github.sha }}
+        make_latest: true
+        name: ${{ env.FLOORP_PORTABLE_VERSION }}
+        body: ${{ github.event.inputs.release-notes-manually }}
+        body_path: "./ablog2githubrelease/release-notes.txt"
         files: |
           floorp-${{ env.FLOORP_PORTABLE_VERSION }}-portable-windows-x86_64.zip
           floorp-${{ env.FLOORP_PORTABLE_VERSION }}-portable-linux-x86_64.tar.zst
           floorp-${{ env.FLOORP_PORTABLE_VERSION }}-portable-linux-aarch64.tar.zst
+        token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Update latest.json
       uses: actions/github-script@v7

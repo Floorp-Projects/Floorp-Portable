@@ -5,6 +5,7 @@
 
 import { ExtensionParent } from "resource://gre/modules/ExtensionParent.sys.mjs";
 import { AppConstants } from "resource://gre/modules/AppConstants.sys.mjs";
+import { FileUtils } from "resource://gre/modules/FileUtils.sys.mjs";
 import ArchiveExtractUtils from "resource:///modules/portable/ArchiveExtractUtils.sys.mjs";
 import PortableEnvironment from "resource:///modules/portable/PortableEnvironment.sys.mjs";
 import { PortableI18nL10nLoader, PortableI18nLocalizer } from "resource:///modules/portable/PortableI18nUtils.sys.mjs";
@@ -118,6 +119,16 @@ class PortableUpdateUtils {
   }
 }
 
+// When updating only the portable runtime, clearing the startup cache may be necessary.
+// As a precaution, if update files are detected, the application will schedule clearing the startup cache upon exit.
+Services.obs.addObserver(() => {
+  // As a precaution to ensure synchronous processing, IOUtils is not used.
+  const file = new FileUtils.File(coreUpdateReadyFilePath);
+  if (file.exists()) {
+    PortableEnvironment.clearStartupCache();
+  }
+}, "quit-application");
+
 let isRunning = false;
 Services.obs.addObserver(async function(optionsWrapped) {
   if (isRunning) {
@@ -141,6 +152,10 @@ Services.obs.addObserver(async function(optionsWrapped) {
         null,
         null,
       );
+
+      // When updating only the portable runtime, clearing the startup cache may be necessary.
+      PortableEnvironment.clearStartupCache();
+
       return;
     }
 
@@ -216,6 +231,9 @@ Services.obs.addObserver(async function(optionsWrapped) {
         null,
         null,
       );
+
+      // When updating only the portable runtime, clearing the startup cache may be necessary.
+      PortableEnvironment.clearStartupCache();
     } else if (options.latestNotify) {
       AlertsService.showAlertNotification(
         "resource:///modules/portable/icons/update-with-check.png",

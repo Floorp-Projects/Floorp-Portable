@@ -5,7 +5,6 @@
 
 export const EXPORTED_SYMBOLS = ["isFirstRun", "isUpdated", "isMainBrowser"];
 
-import { AppConstants } from "resource://gre/modules/AppConstants.sys.mjs";
 import PortableEnvironment from "resource:///modules/portable/PortableEnvironment.sys.mjs";
 
 if (PortableEnvironment.isMainBrowser) {

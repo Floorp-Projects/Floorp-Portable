@@ -35,4 +35,8 @@ export default class PortableEnvironment {
   static isMainBrowser() {
     return Services.env.get("MOZ_BROWSER_TOOLBOX_PORT") === "";
   };
+  static clearStartupCache() {
+    // The startup cache will be cleared on the next startup.
+    Services.appinfo.invalidateCachesOnRestart();
+  };
 }

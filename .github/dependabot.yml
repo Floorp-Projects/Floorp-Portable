@@ -5,6 +5,16 @@ updates:
     schedule:
       interval: "daily"
 
+  - package-ecosystem: "gomod"
+    directory: "/src/container-linux"
+    schedule:
+      interval: "daily"
+
+  - package-ecosystem: "gomod"
+    directory: "/src/gomodules"
+    schedule:
+      interval: "daily"
+
   - package-ecosystem: "npm"
     directory: "/src/floorp_downloader"
     schedule:
