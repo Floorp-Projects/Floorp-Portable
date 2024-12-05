@@ -118,6 +118,16 @@ class PortableUpdateUtils {
   }
 }
 
+// When updating only the portable runtime, clearing the startup cache may be necessary.
+// As a precaution, if update files are detected, the application will schedule clearing the startup cache upon exit.
+Services.obs.addObserver(() => {
+  // As a precaution to ensure synchronous processing, IOUtils is not used.
+  const file = new FileUtils.File(coreUpdateReadyFilePath);
+  if (file.exists()) {
+    PortableEnvironment.clearStartupCache();
+  }
+}, "quit-application");
+
 let isRunning = false;
 Services.obs.addObserver(async function(optionsWrapped) {
   if (isRunning) {
@@ -141,6 +151,10 @@ Services.obs.addObserver(async function(optionsWrapped) {
         null,
         null,
       );
+
+      // When updating only the portable runtime, clearing the startup cache may be necessary.
+      PortableEnvironment.clearStartupCache();
+
       return;
     }
 
@@ -216,6 +230,9 @@ Services.obs.addObserver(async function(optionsWrapped) {
         null,
         null,
       );
+
+      // When updating only the portable runtime, clearing the startup cache may be necessary.
+      PortableEnvironment.clearStartupCache();
     } else if (options.latestNotify) {
       AlertsService.showAlertNotification(
         "resource:///modules/portable/icons/update-with-check.png",
