@@ -116,6 +116,8 @@ function apply_patch () {
       false
     fi
   done
+
+  sed -i '1iimport "resource:///modules/portable/PortableStartup.sys.mjs";' ./omni_tmp_browser/modules/BrowserGlue.sys.mjs
 }
 
 function integration_portable_config () {
@@ -147,8 +149,6 @@ function integration_portable_modules () {
     false
   fi
 
-  sed -i '1iimport "resource:///modules/portable/PortableStartup.sys.mjs";' ./omni_tmp_browser/modules/BrowserGlue.sys.mjs
-
   mkdir -p ./omni_tmp_browser/modules/portable
   cp -r ./src/browser-modules/* ./omni_tmp_browser/modules/portable/
   mkdir -p ./omni_tmp_browser/modules/portable/l10n
@@ -159,11 +159,11 @@ function integration_portable_modules () {
 function remove_unused_files () {
   echo "Removing unused files..."
   if [[ "$os_name" == "MINGW64_NT"* ]]; then
-    rm ./dist/core/updater.exe
-    rm ./dist/core/default-browser-agent.exe
-    rm -r ./dist/core/uninstall
+    rm -f ./dist/core/updater.exe
+    rm -f ./dist/core/default-browser-agent.exe
+    rm -rf ./dist/core/uninstall
   elif [[ "$os_name" == "Linux" ]]; then
-    rm ./dist/core/updater
+    rm  -f ./dist/core/updater
   else
     echo "Unsupported OS: $os_name"
     false
@@ -178,6 +178,12 @@ if [[ "$1" == "" ]]; then
   unzip_omni root
   unzip_omni browser
   apply_patch
+  integration_portable_config
+  integration_portable_modules
+  zip_omni root
+  zip_omni browser
+  remove_unused_files
+elif [[ "$1" == "update_modules" ]]; then
   integration_portable_config
   integration_portable_modules
   zip_omni root
