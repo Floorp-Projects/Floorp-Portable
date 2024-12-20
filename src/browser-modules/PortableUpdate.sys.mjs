@@ -47,12 +47,12 @@ class PortableUpdateUtils {
     const url = `${API_BASE_URL}/browser-portable/latest.json`;
     const url_sig = `${API_BASE_URL}/browser-portable/latest.json.v1.sig`;
 
-    const result = await fetch(url);
+    const result = await fetch(url, { cache: "no-store" });
     if (!result.ok) {
       throw new Error(`${result.status} ${result.statusText}`);
     }
 
-    const result_sig = await fetch(url_sig);
+    const result_sig = await fetch(url_sig, { cache: "no-store" });
     if (!result_sig.ok) {
       console.warn("Signature file not found");
       return {};
