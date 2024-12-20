@@ -16,7 +16,10 @@ const AlertsService = Cc["@mozilla.org/alerts-service;1"].getService(
   Ci.nsIAlertsService,
 );
 
-const API_BASE_URL = "https://floorp-update.ablaze.one";
+const API_BASE_URL =
+  !Services.prefs.getBoolPref("floorp.portable.update.develop.enabled", false) ?
+    "https://floorp-update.ablaze.one" :
+    Services.prefs.getStringPref("floorp.portable.update.develop.url", "");
 
 const platformInfo = ExtensionParent.PlatformInfo;
 const isWin = platformInfo.os === "win";
