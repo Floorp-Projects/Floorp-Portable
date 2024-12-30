@@ -3,6 +3,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+import PortableEnvironment from "resource:///modules/portable/PortableEnvironment.sys.mjs";
+
 const PUBLIC_KEY_CONFIGS = [
   {
     name: "floorp-updates-portable-2024-12-19-pub.pem",
@@ -33,7 +35,7 @@ export async function verifyData(data, signature, category) {
       const pem = await (await fetch(publickey_uri)).text();
       const pem_contents = removePemHeaderAndFooter(pem);
 
-      const pem_contents_buf = await (await fetch(`data:application/octet-stream;base64,${pem_contents}`)).arrayBuffer();
+      const pem_contents_buf = await PortableEnvironment.base64ToArrayBuffer(pem_contents);
 
       const publickey = await crypto.subtle.importKey(
         "spki",
