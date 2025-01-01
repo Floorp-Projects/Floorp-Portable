@@ -51,7 +51,7 @@ class PortableUpdateUtils {
     const arch = platformInfo.arch == "arm" ? "arm64" : platformInfo.arch;
     const major_version = AppConstants.MOZ_APP_VERSION_DISPLAY.split(".")[0];
 
-    return data_json[`${os}-${arch}-v${major_version}`];
+    return `${os}-${arch}-v${major_version}`;
   }
   static async #fetchLatestInfo() {
     const url = `${API_BASE_URL}/browser-portable/latest.json`;

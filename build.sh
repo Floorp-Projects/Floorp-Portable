@@ -183,13 +183,13 @@ if [[ "$1" == "" ]]; then
   zip_omni root
   zip_omni browser
   remove_unused_files
-elif [[ "$1" == "update_modules" ]]; then
+elif [[ "$1" == "update-modules" ]]; then
   integration_portable_config
   integration_portable_modules
   zip_omni root
   zip_omni browser
   remove_unused_files
-elif [[ "$1" == "create_patch" ]]; then
+elif [[ "$1" == "create-patch" ]]; then
   unzip_omni root
   unzip_omni browser
 
