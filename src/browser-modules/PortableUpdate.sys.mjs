@@ -46,6 +46,13 @@ const localizer = (async() => {
 })();
 
 class PortableUpdateUtils {
+  static #getPlatformKey() {
+    const os = platformInfo.os;
+    const arch = platformInfo.arch == "arm" ? "arm64" : platformInfo.arch;
+    const major_version = AppConstants.MOZ_APP_VERSION_DISPLAY.split(".")[0];
+
+    return data_json[`${os}-${arch}-v${major_version}`];
+  }
   static async #fetchLatestInfo() {
     const url = `${API_BASE_URL}/browser-portable/latest.json`;
     const url_sig = `${API_BASE_URL}/browser-portable/latest.json.v1.sig`;
@@ -70,7 +77,7 @@ class PortableUpdateUtils {
 
     const data_json = JSON.parse((new TextDecoder()).decode(data));
 
-    return data_json[`${platformInfo.os}-${platformInfo.arch}`];
+    return data_json[this.#getPlatformKey()];
   }
   static async checkUpdate() {
     const result = await this.#fetchLatestInfo();
