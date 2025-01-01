@@ -8,6 +8,7 @@ import { NetUtil } from "resource://gre/modules/NetUtil.sys.mjs";
 import { ExtensionParent } from "resource://gre/modules/ExtensionParent.sys.mjs";
 import { TarReader } from "resource:///modules/portable/tarjs/index.mjs";
 import { TarFileModeParser, TarFileModeCreater } from "resource:///modules/portable/TarFileModeUtils.sys.mjs";
+import PortableEnvironment from "resource:///modules/portable/PortableEnvironment.sys.mjs";
 
 const ZipReader = Components.Constructor(
   "@mozilla.org/libjar/zip-reader;1",
@@ -43,17 +44,7 @@ export default class ArchiveExtractUtils {
       const entryPath = isWin
         ? String(entry).replaceAll("/", "\\")
         : String(entry);
-      try {
-        // Example errors
-        // PathUtils.splitRelative: PathUtils.splitRelative: Empty directory components ("") not allowed by options
-        // PathUtils.splitRelative: PathUtils.splitRelative: Parent directory components ("..") not allowed by options
-        // PathUtils.splitRelative: PathUtils.splitRelative requires a relative path
-        PathUtils.splitRelative(entryPath, {
-          allowEmpty: false,
-          allowCurrentDir: false,
-          allowParentDir: false,
-        });
-      } catch (e) {
+      if (!PortableEnvironment.isSafeFilePath(entryPath)) {
         throw new Components.Exception(`Invalid path: ${e.message}`);
       }
       const path = PathUtils.joinRelative(target, entryPath);
@@ -112,17 +103,7 @@ export default class ArchiveExtractUtils {
       const entryPath = isWin
         ? entry.name.replaceAll("/", "\\")
         : entry.name;
-      try {
-        // Example errors
-        // PathUtils.splitRelative: PathUtils.splitRelative: Empty directory components ("") not allowed by options
-        // PathUtils.splitRelative: PathUtils.splitRelative: Parent directory components ("..") not allowed by options
-        // PathUtils.splitRelative: PathUtils.splitRelative requires a relative path
-        PathUtils.splitRelative(entryPath, {
-          allowEmpty: false,
-          allowCurrentDir: false,
-          allowParentDir: false,
-        });
-      } catch (e) {
+      if (!PortableEnvironment.isSafeFilePath(entryPath)) {
         throw new Components.Exception(`Invalid path: ${e.message}`);
       }
 

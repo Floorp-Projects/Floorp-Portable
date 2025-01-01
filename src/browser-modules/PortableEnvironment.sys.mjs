@@ -3,8 +3,6 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-import { AppConstants } from "resource://gre/modules/AppConstants.sys.mjs";
-
 const appDirPath = Services.dirsvc.get("XREExeF", Ci.nsIFile).parent.path;
 
 const isFirstRun_ = !Services.prefs.getStringPref(
@@ -39,4 +37,23 @@ export default class PortableEnvironment {
     // The startup cache will be cleared on the next startup.
     Services.appinfo.invalidateCachesOnRestart();
   };
+  static isSafeFilePath(path){
+    try {
+      // Example errors
+      // PathUtils.splitRelative: PathUtils.splitRelative: Empty directory components ("") not allowed by options
+      // PathUtils.splitRelative: PathUtils.splitRelative: Parent directory components ("..") not allowed by options
+      // PathUtils.splitRelative: PathUtils.splitRelative requires a relative path
+      PathUtils.splitRelative(path, {
+        allowEmpty: false,
+        allowCurrentDir: false,
+        allowParentDir: false,
+      });
+    } catch (e) {
+      return false;
+    }
+    return true;
+  };
+  static async base64ToArrayBuffer(base64) {
+    return await (await fetch(`data:application/octet-stream;base64,${base64}`)).arrayBuffer();
+  }
 }
