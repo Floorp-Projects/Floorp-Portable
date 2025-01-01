@@ -13,7 +13,7 @@
     * Architecture: x86_64, aarch64
     * Memory: 8GB+
     * Disk Space: At least 2GB of free disk space.
-    * Packages: bubblewrap, glibc, gtk+, libstdc++, xorg
+    * Packages: glibc, gtk+, libstdc++, xorg
 * Build from source
   * Windows
     * OS Version: 10, 11
