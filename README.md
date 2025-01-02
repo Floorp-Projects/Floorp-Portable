@@ -29,6 +29,7 @@
 
 
 ## How to build
+
 ### 1. Get Floorp-Portable source code
 ```
 git clone --recursive https://github.com/Floorp-Projects/Floorp-Portable
@@ -67,3 +68,13 @@ The files or directories required to run are those in the `dist` directory.
 ## Container Runtime
 Windows: [libportable](https://github.com/adonais/libportable)
 Linux: [Bubblewrap](https://github.com/containers/bubblewrap)
+
+
+## Contributions
+
+### Translate
+#### For English (en-US)
+Please submit a pull request
+
+#### Otherwise
+Use Crowdin: https://crowdin.com/project/floorp-portable
