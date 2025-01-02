@@ -3,6 +3,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+import { AppConstants } from "resource://gre/modules/AppConstants.sys.mjs";
 import ResourceProtocolListDirUtils from "resource:///modules/portable/ResourceProtocolListDirUtils.mjs";
 
 export class PortableI18nL10nLoader {
@@ -66,6 +67,34 @@ export class PortableI18nLocalizer {
     );
   }
 
+  replacePlaceHolder(value) {
+    let result = value;
+    const placeholders = value.match(/(?<!\\){\s([0-9a-z-]+)\s(?!\\)}/g);
+    if (!placeholders) {
+      return value;
+    }
+    const placeholders_clean = Array.from(new Set(placeholders));
+    for (const placeholder of placeholders_clean) {
+      const key = placeholder.match(/{\s([0-9a-z-]+)\s}/)[1];
+
+      let target = "";
+      switch (key) {
+        case "-brand-full-name":
+          target = AppConstants.MOZ_APP_BASENAME + " Portable";
+          break;
+        case "-brand-short-name":
+          target = AppConstants.MOZ_APP_BASENAME + " Portable";
+          break;
+        case "-brand-shorter-name":
+          target = AppConstants.MOZ_APP_BASENAME;
+          break;
+      }
+
+      result = result.replaceAll(placeholder, target);
+    }
+    return result;
+  }
+
   localize(id) {
     const selectedLocales = this.selectedLocales;
     const defaultLocale = this.defaultLocale;
@@ -73,11 +102,16 @@ export class PortableI18nLocalizer {
     for (const selectedLocale of selectedLocales) {
       const value = this.localesData[selectedLocale]?.[id];
       if (value) {
-        return value;
+        return this.replacePlaceHolder(value);
       }
     }
 
-    return this.localesData[defaultLocale]?.[id];
+    const value = this.localesData[defaultLocale]?.[id];
+    if (value) {
+      return this.replacePlaceHolder(value);
+    }
+
+    return null;
   }
 
   mustLocalize(id) {
