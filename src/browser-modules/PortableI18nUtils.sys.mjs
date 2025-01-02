@@ -69,7 +69,7 @@ export class PortableI18nLocalizer {
 
   replacePlaceHolder(value) {
     let result = value;
-    const placeholders = value.match(/(?<!\\){\s([0-9a-z-]+)\s(?!\\)}/g);
+    const placeholders = value.match(/(?<!\\){\s([0-9a-z-]+)\s(?<!\\)}/g);
     if (!placeholders) {
       return value;
     }
