@@ -1,1 +1,22 @@
-{}
+{
+  "native-runner-failed": "Сталась непередбачена помилка!",
+  "native-runner-failed-description": "Не вдалося запустити { -brand-shorter-name }.\nЯкщо проблема повториться, спробуйте перевстановити.",
+  "native-updater-failed": "Не вдалося встановити оновлення.",
+  "native-updater-failed-to-prepare-to-start-update-description": "Не вдалося підготуватися до початку оновлення.",
+  "native-updater-failed-to-replace-with-new-file-description": "Не вдалося замінити новим файлом.",
+  "native-updater-failed-to-delete-old-file-description": "Не вдалося видалити старий файл.",
+  "native-updater-failed-to-prepare-for-runtime-update-description": "Не вдалося підготувати середовище виконання до оновлення.",
+  "bm-pref-floorp-portable-update-enabled": "Автоматично перевіряти оновлення до { -brand-short-name }.",
+  "bm-updater-found-notify-title": "Знайдено оновлення!",
+  "bm-updater-found-notify-message": "Завантажуємо оновлення...",
+  "bm-updater-ready-notify-title": "Оновлення готові до встановлення!",
+  "bm-updater-ready-notify-message": "{ -brand-shorter-name } буде оновлено під час наступного запуску.",
+  "bm-updater-success-notify-title": "Оновлення пройшло успішно!",
+  "bm-updater-success-notify-message": "Сподіваємося, вам сподобається нова версія { -brand-shorter-name }!",
+  "bm-updater-failed-notify-title": "Не вдалося встановити оновлення.",
+  "bm-updater-failed-runtime-message": "Перезапуск браузера може вирішити цю проблему.",
+  "bm-updater-failed-prepare-message": "Не вдалося підготувати оновлення.",
+  "bm-updater-no-updates-found-notify-title": "{ -brand-shorter-name } є актуальний!",
+  "bm-updater-no-updates-found-notify-message": "Сподіваємося, що ви продовжите насолоджуватися { -brand-shorter-name }.",
+  "bm-about-dialog-license-portable": "Ліцензійна інформація\n(портативна)"
+}
