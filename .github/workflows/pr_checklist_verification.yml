@@ -2,7 +2,7 @@ name: PR Checklist Verification
 
 on:
   pull_request_target:
-    types: [opened, reopened, edited]
+    types: [opened, reopened, edited, synchronize]
 
 concurrency:
   group: pr-checklist-verification-${{ github.event.pull_request.number }}
@@ -24,7 +24,7 @@ jobs:
             });
 
             const checklistRegex = /- \[([ xX])\] .*/g;
-            const checklistItems = pr.body.match(checklistRegex) || [];
+            const checklistItems = pr.body?.match(checklistRegex) || [];
             const allChecked = checklistItems.every(item => item.toLowerCase().includes("[x]"));
 
             const commentBody = "⚠️ Please complete all checklist items before merging. ⚠️";
