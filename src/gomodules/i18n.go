@@ -17,13 +17,16 @@ func getLocalizer() *i18n.Localizer {
 	bundle := i18n.NewBundle(language.AmericanEnglish)
 	bundle.RegisterUnmarshalFunc("json", json.Unmarshal)
 
-	_, err := bundle.LoadMessageFileFS(LocaleFS, "l10n-asset-dir/en-US.json")
+	entries, err := LocaleFS.ReadDir("l10n-asset-dir")
 	if err != nil {
 		panic(err)
 	}
-	_, err = bundle.LoadMessageFileFS(LocaleFS, "l10n-asset-dir/ja.json")
-	if err != nil {
-		panic(err)
+
+	for _, v := range entries {
+		_, err := bundle.LoadMessageFileFS(LocaleFS, "l10n-asset-dir/"+v.Name())
+		if err != nil {
+			panic(err)
+		}
 	}
 
 	locale := getSystemLocale()
