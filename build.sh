@@ -55,10 +55,10 @@ function unzip_omni () {
   echo "Unzipping omni.ja ($1) ..."
   if [[ "$1" == "root" ]]; then
     rm -rf ./omni_tmp_root
-    /bin/bash -c 'unzip -q ./dist/core/omni.ja -d ./omni_tmp_root; exit_code=$?; if [ "$exit_code" -ne 0 ] && [ "$exit_code" -ne 2 ]; then exit $exit_code; fi'
+    /bin/bash -c 'unzip -q ./core/omni.ja -d ./omni_tmp_root; exit_code=$?; if [ "$exit_code" -ne 0 ] && [ "$exit_code" -ne 2 ]; then exit $exit_code; fi'
   elif [[ "$1" == "browser" ]]; then
     rm -rf ./omni_tmp_browser
-    /bin/bash -c 'unzip -q ./dist/core/browser/omni.ja -d ./omni_tmp_browser; exit_code=$?; if [ "$exit_code" -ne 0 ] && [ "$exit_code" -ne 2 ]; then exit $exit_code; fi'
+    /bin/bash -c 'unzip -q ./core/browser/omni.ja -d ./omni_tmp_browser; exit_code=$?; if [ "$exit_code" -ne 0 ] && [ "$exit_code" -ne 2 ]; then exit $exit_code; fi'
   else
     echo "Unsupported omni type: $1"
     false
@@ -184,6 +184,9 @@ if [[ "$1" == "" ]]; then
   zip_omni browser
   remove_unused_files
 elif [[ "$1" == "update-modules" ]]; then
+  unzip_omni root
+  unzip_omni browser
+  apply_patch
   integration_portable_config
   integration_portable_modules
   zip_omni root
