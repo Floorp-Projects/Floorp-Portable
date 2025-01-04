@@ -185,6 +185,11 @@ function remove_unused_files () {
   fi
 }
 
+function remove_cache () {
+  echo "Removing caches..."
+  rm -rf ./dist/cache
+}
+
 if [[ "$1" == "" ]]; then
   copy_to_dist
   prepare_gomodules
@@ -207,6 +212,7 @@ elif [[ "$1" == "update-modules" ]]; then
   zip_omni root
   zip_omni browser
   remove_unused_files
+  remove_cache
 elif [[ "$1" == "create-patch" ]]; then
   unzip_omni root
   unzip_omni browser
