@@ -92,6 +92,8 @@ function zip_omni () {
 }
 
 function apply_patch () {
+  echo "Applying patches..."
+
   if [[ "$os_name" == "MINGW64_NT"* ]]; then
     jq_path="./src/utils/jq.exe"
   else
@@ -118,6 +120,19 @@ function apply_patch () {
   done
 
   sed -i '1iimport "resource:///modules/portable/PortableStartup.sys.mjs";' ./omni_tmp_browser/modules/BrowserGlue.sys.mjs
+
+  app_constants=$(cat ./src/AppConstants.sys.mjs)
+  app_constants_original=$(cat ./omni_tmp_root/modules/AppConstants.sys.mjs)
+  rm ./omni_tmp_root/modules/AppConstants.sys.mjs
+  while read line; do
+    if [[ "$line" == '<!-- insert AppConstants.sys.mjs code -->' ]]; then
+      while read line_orig; do
+        echo "$line_orig" >> ./omni_tmp_root/modules/AppConstants.sys.mjs
+      done <<< "$app_constants_original"
+    else
+      echo "$line" >> ./omni_tmp_root/modules/AppConstants.sys.mjs
+    fi
+  done <<< "$app_constants"
 }
 
 function integration_portable_config () {
