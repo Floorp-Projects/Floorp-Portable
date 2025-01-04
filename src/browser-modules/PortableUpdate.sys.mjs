@@ -7,6 +7,7 @@ import { ExtensionParent } from "resource://gre/modules/ExtensionParent.sys.mjs"
 import { AppConstants } from "resource://gre/modules/AppConstants.sys.mjs";
 import { FileUtils } from "resource://gre/modules/FileUtils.sys.mjs";
 import { CommonUtils } from "resource://services-common/utils.sys.mjs";
+import { clearInterval, setInterval } from "resource://gre/modules/Timer.sys.mjs";
 import ArchiveExtractUtils from "resource:///modules/portable/ArchiveExtractUtils.sys.mjs";
 import PortableEnvironment from "resource:///modules/portable/PortableEnvironment.sys.mjs";
 import { PortableI18nL10nLoader, PortableI18nLocalizer } from "resource:///modules/portable/PortableI18nUtils.sys.mjs";
@@ -45,15 +46,36 @@ const localizer = (async() => {
   );
 })();
 
-class PortableUpdateUtils {
-  static #getPlatformKey() {
+const PortableUpdateUtils = {
+  notifyUpdateInterval: -1,
+
+  init() {
+    Services.obs.addObserver(this, "quit-application");
+    Services.obs.addObserver(this, "do-portable-update");
+
+    this.notifyUpdate();
+    this.notifyUpdateInterval = setInterval(this.notifyUpdate, 1000 * 60 * 60 * 6 /* 6 hours */);
+  },
+
+  destroy() {
+    clearInterval(this.notifyUpdateInterval);
+    Services.obs.removeObserver(this, "quit-application");
+    Services.obs.removeObserver(this, "do-portable-update");
+  },
+
+  notifyUpdate() {
+    Services.obs.notifyObservers({ latestNotify: false }, "do-portable-update");
+  },
+
+  getPlatformKey() {
     const os = platformInfo.os;
     const arch = platformInfo.arch == "arm" ? "arm64" : platformInfo.arch;
     const major_version = AppConstants.MOZ_APP_VERSION_DISPLAY.split(".")[0];
 
     return `${os}-${arch}-v${major_version}`;
-  }
-  static async #fetchLatestInfo() {
+  },
+
+  async fetchLatestInfo() {
     const url = `${API_BASE_URL}/browser-portable/latest.json`;
     const url_sig = `${API_BASE_URL}/browser-portable/latest.json.v1.sig`;
 
@@ -77,10 +99,11 @@ class PortableUpdateUtils {
 
     const data_json = JSON.parse((new TextDecoder()).decode(data));
 
-    return data_json[this.#getPlatformKey()];
-  }
-  static async checkUpdate() {
-    const result = await this.#fetchLatestInfo();
+    return data_json[this.getPlatformKey()];
+  },
+
+  async checkUpdate() {
+    const result = await this.fetchLatestInfo();
     if (!result || !result.version || !result.url) {
       console.warn("invalid response data or no updates found");
       return {
@@ -109,8 +132,9 @@ class PortableUpdateUtils {
       url: isUpdateFound ? result.url : null,
       sha256: result.sha256,
     };
-  }
-  static async applyRuntimeUpdate() {
+  },
+
+  async applyRuntimeUpdate() {
     // Update portable runtime
     await IOUtils.remove(
       isWin
@@ -128,8 +152,9 @@ class PortableUpdateUtils {
     );
 
     return true;
-  }
-  static async #downloadUpdate(url, hash) {
+  },
+
+  async downloadUpdate(url, hash) {
     const result = await fetch(url);
     if (!result.ok) {
       throw new Error(`${result.status} ${result.statusText}`);
@@ -154,146 +179,149 @@ class PortableUpdateUtils {
         : updateTarZstFilePath,
       data,
     );
-  }
-  static async doUpdate(url, hash) {
-    await this.#downloadUpdate(url, hash);
+  },
 
-    if (isWin) {
-      await ArchiveExtractUtils.extractZip(updateZipFilePath, updateTmpDirPath);
-    } else {
-      await ArchiveExtractUtils.extractTarZst(updateTarZstFilePath, updateTmpDirPath);
+  async showNotification(type) {
+    let image, title, body;
+
+    switch (type) {
+      case "ready":
+        image = "resource:///modules/portable/icons/update-pending.png";
+        title = (await localizer).mustLocalize("bm-updater-ready-notify-title");
+        body = (await localizer).mustLocalize("bm-updater-ready-notify-message");
+        break;
+      case "failed-runtime":
+        image = "resource:///modules/portable/icons/failed.png";
+        title = (await localizer).mustLocalize("bm-updater-failed-notify-title");
+        message = (await localizer).mustLocalize("bm-updater-failed-runtime-message");
+        break;
+      case "failed-prepare":
+        image = "resource:///modules/portable/icons/failed.png";
+        title = (await localizer).mustLocalize("bm-updater-failed-notify-title");
+        message = (await localizer).mustLocalize("bm-updater-failed-prepare-message");
+        break;
+      case "success":
+        image = "resource:///modules/portable/icons/update-with-check.png";
+        title = (await localizer).mustLocalize("bm-updater-success-notify-title");
+        body = (await localizer).mustLocalize("bm-updater-success-notify-message");
+        break;
+      case "found":
+        image = "resource:///modules/portable/icons/download.png";
+        title = (await localizer).mustLocalize("bm-updater-found-notify-title");
+        body = (await localizer).mustLocalize("bm-updater-found-notify-message");
+        break;
+      case "not-found":
+        image = "resource:///modules/portable/icons/update-with-check.png";
+        title = (await localizer).mustLocalize("bm-updater-no-updates-found-notify-title");
+        body = (await localizer).mustLocalize("bm-updater-no-updates-found-notify-message");
+        break;
+    }
+
+    if (!image || !title || !body) {
+      return;
+    }
+
+    AlertsService.showAlertNotification(
+      image, // Image URL
+      title, // Title
+      body, // Body
+      true, // textClickable
+      null, // id
+      null, // clickCallback
+    );
+  },
+
+  isUpdating: false,
+
+  async doUpdate(options) {
+    if (this.isUpdating) {
+      return;
+    }
+    this.isUpdating = true;
+
+    try {
+      if (!Services.prefs.getBoolPref("floorp.portable.update.enabled", false)) {
+        return;
+      }
+
+      if (await IOUtils.exists(coreUpdateReadyFilePath)) {
+        this.showNotification("ready");
+
+        // When updating only the portable runtime, clearing the startup cache may be necessary.
+        PortableEnvironment.clearStartupCache();
+
+        return;
+      }
+
+      if (await IOUtils.exists(PathUtils.join(updateTmpDirPath, "REDIRECTOR_UPDATE_READY")) /* Old version of Floorp Portable */) {
+        try {
+          await this.applyRuntimeUpdate();
+        } catch (e) {
+          console.error(e);
+          this.showNotification("failed-runtime");
+          return;
+        } finally {
+          await IOUtils.remove(PathUtils.join(updateTmpDirPath, "REDIRECTOR_UPDATE_READY"));
+        }
+      }
+
+      if (await PortableEnvironment.isUpdated()) {
+        this.showNotification("success");
+      }
+
+      if (await IOUtils.exists(updateTmpDirPath)) {
+        await IOUtils.remove(updateTmpDirPath, { recursive: true });
+      }
+
+      const updateInfo = await this.checkUpdate();
+      if (updateInfo.isUpdateFound) {
+        this.showNotification("found");
+
+        try {
+          await this.downloadUpdate(updateInfo.url, updateInfo.sha256);
+          if (isWin) {
+            await ArchiveExtractUtils.extractZip(updateZipFilePath, updateTmpDirPath);
+          } else {
+            await ArchiveExtractUtils.extractTarZst(updateTarZstFilePath, updateTmpDirPath);
+          }
+          await this.applyRuntimeUpdate();
+          await IOUtils.writeUTF8(coreUpdateReadyFilePath, "");
+        } catch (e) {
+          console.error(e);
+          this.showNotification("failed-prepare")
+          return;
+        }
+
+        this.showNotification("ready");
+
+        // When updating only the portable runtime, clearing the startup cache may be necessary.
+        PortableEnvironment.clearStartupCache();
+      } else if (options.latestNotify) {
+        this.showNotification("not-found");
+      }
+    } finally {
+      this.isUpdating = false;
+    }
+  },
+
+  observe(subj, topic) {
+    switch (topic) {
+      case "do-portable-update":
+        this.doUpdate(Object.assign({}, subj?.wrappedJSObject));
+        break;
+      case "quit-application":
+        // When updating only the portable runtime, clearing the startup cache may be necessary.
+        // As a precaution, if update files are detected, the application will schedule clearing the startup cache upon exit.
+        // As a precaution to ensure synchronous processing, IOUtils is not used.
+        const file = new FileUtils.File(coreUpdateReadyFilePath);
+        if (file.exists()) {
+          PortableEnvironment.clearStartupCache();
+        }
+
+        this.destroy();
+        break;
     }
   }
 }
 
-// When updating only the portable runtime, clearing the startup cache may be necessary.
-// As a precaution, if update files are detected, the application will schedule clearing the startup cache upon exit.
-Services.obs.addObserver(() => {
-  // As a precaution to ensure synchronous processing, IOUtils is not used.
-  const file = new FileUtils.File(coreUpdateReadyFilePath);
-  if (file.exists()) {
-    PortableEnvironment.clearStartupCache();
-  }
-}, "quit-application");
-
-let isRunning = false;
-Services.obs.addObserver(async function(optionsWrapped) {
-  if (isRunning) {
-    return;
-  }
-  isRunning = true;
-
-  const options = Object.assign({}, optionsWrapped?.wrappedJSObject);
-
-  try {
-    if (!Services.prefs.getBoolPref("floorp.portable.update.enabled", false)) {
-      return;
-    }
-
-    if (await IOUtils.exists(coreUpdateReadyFilePath)) {
-      AlertsService.showAlertNotification(
-        "resource:///modules/portable/icons/update-pending.png",
-        (await localizer).mustLocalize("bm-updater-ready-notify-title"),
-        (await localizer).mustLocalize("bm-updater-ready-notify-message"),
-        true,
-        null,
-        null,
-      );
-
-      // When updating only the portable runtime, clearing the startup cache may be necessary.
-      PortableEnvironment.clearStartupCache();
-
-      return;
-    }
-
-    if (await IOUtils.exists(PathUtils.join(updateTmpDirPath, "REDIRECTOR_UPDATE_READY")) /* Old version of Floorp Portable */) {
-      let result;
-      try {
-        result = await PortableUpdateUtils.applyRuntimeUpdate();
-      } catch (e) {
-        console.error(e);
-        AlertsService.showAlertNotification(
-          "resource:///modules/portable/icons/failed.png",
-          (await localizer).mustLocalize("bm-updater-failed-notify-title"),
-          (await localizer).mustLocalize("bm-updater-failed-runtime-message"),
-          true,
-          null,
-          null,
-        );
-        return;
-      } finally {
-        await IOUtils.remove(PathUtils.join(updateTmpDirPath, "REDIRECTOR_UPDATE_READY"));
-      }
-    }
-
-    if (await PortableEnvironment.isUpdated()) {
-      AlertsService.showAlertNotification(
-        "resource:///modules/portable/icons/update-with-check.png", // Image URL
-        (await localizer).mustLocalize("bm-updater-success-notify-title"), // Title
-        (await localizer).mustLocalize("bm-updater-success-notify-message"), // Body
-        true, // textClickable
-        null, // id
-        null, // clickCallback
-      );
-    }
-
-    if (await IOUtils.exists(updateTmpDirPath)) {
-      await IOUtils.remove(updateTmpDirPath, { recursive: true });
-    }
-
-    const updateInfo = await PortableUpdateUtils.checkUpdate();
-    if (updateInfo.isUpdateFound) {
-      // do update
-      AlertsService.showAlertNotification(
-        "resource:///modules/portable/icons/download.png",
-        (await localizer).mustLocalize("bm-updater-found-notify-title"),
-        (await localizer).mustLocalize("bm-updater-found-notify-message"),
-        true,
-        null,
-        null,
-      );
-
-      try {
-        await PortableUpdateUtils.doUpdate(updateInfo.url, updateInfo.sha256);
-        await PortableUpdateUtils.applyRuntimeUpdate();
-        await IOUtils.writeUTF8(coreUpdateReadyFilePath, "");
-      } catch (e) {
-        console.error(e);
-        AlertsService.showAlertNotification(
-          "resource:///modules/portable/icons/failed.png",
-          (await localizer).mustLocalize("bm-updater-failed-notify-title"),
-          (await localizer).mustLocalize("bm-updater-failed-prepare-message"),
-          true,
-          null,
-          null,
-        );
-        return;
-      }
-
-      AlertsService.showAlertNotification(
-        "resource:///modules/portable/icons/update-pending.png",
-        (await localizer).mustLocalize("bm-updater-ready-notify-title"),
-        (await localizer).mustLocalize("bm-updater-ready-notify-message"),
-        true,
-        null,
-        null,
-      );
-
-      // When updating only the portable runtime, clearing the startup cache may be necessary.
-      PortableEnvironment.clearStartupCache();
-    } else if (options.latestNotify) {
-      AlertsService.showAlertNotification(
-        "resource:///modules/portable/icons/update-with-check.png",
-        (await localizer).mustLocalize("bm-updater-no-updates-found-notify-title"),
-        (await localizer).mustLocalize("bm-updater-no-updates-found-notify-message"),
-        true,
-        null,
-        null,
-      );
-    }
-  } finally {
-    isRunning = false;
-  }
-}, "do-portable-update");
-
-Services.obs.notifyObservers({ latestNotify: false }, "do-portable-update");
+PortableUpdateUtils.init();
