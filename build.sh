@@ -55,10 +55,10 @@ function unzip_omni () {
   echo "Unzipping omni.ja ($1) ..."
   if [[ "$1" == "root" ]]; then
     rm -rf ./omni_tmp_root
-    /bin/bash -c 'unzip -q ./dist/core/omni.ja -d ./omni_tmp_root; exit_code=$?; if [ "$exit_code" -ne 0 ] && [ "$exit_code" -ne 2 ]; then exit $exit_code; fi'
+    /bin/bash -c 'unzip -q ./core/omni.ja -d ./omni_tmp_root; exit_code=$?; if [ "$exit_code" -ne 0 ] && [ "$exit_code" -ne 2 ]; then exit $exit_code; fi'
   elif [[ "$1" == "browser" ]]; then
     rm -rf ./omni_tmp_browser
-    /bin/bash -c 'unzip -q ./dist/core/browser/omni.ja -d ./omni_tmp_browser; exit_code=$?; if [ "$exit_code" -ne 0 ] && [ "$exit_code" -ne 2 ]; then exit $exit_code; fi'
+    /bin/bash -c 'unzip -q ./core/browser/omni.ja -d ./omni_tmp_browser; exit_code=$?; if [ "$exit_code" -ne 0 ] && [ "$exit_code" -ne 2 ]; then exit $exit_code; fi'
   else
     echo "Unsupported omni type: $1"
     false
@@ -92,6 +92,8 @@ function zip_omni () {
 }
 
 function apply_patch () {
+  echo "Applying patches..."
+
   if [[ "$os_name" == "MINGW64_NT"* ]]; then
     jq_path="./src/utils/jq.exe"
   else
@@ -118,6 +120,19 @@ function apply_patch () {
   done
 
   sed -i '1iimport "resource:///modules/portable/PortableStartup.sys.mjs";' ./omni_tmp_browser/modules/BrowserGlue.sys.mjs
+
+  app_constants=$(cat ./src/AppConstants.sys.mjs)
+  app_constants_original=$(cat ./omni_tmp_root/modules/AppConstants.sys.mjs)
+  rm ./omni_tmp_root/modules/AppConstants.sys.mjs
+  while read line; do
+    if [[ "$line" == '<!-- insert AppConstants.sys.mjs code -->' ]]; then
+      while read line_orig; do
+        echo "$line_orig" >> ./omni_tmp_root/modules/AppConstants.sys.mjs
+      done <<< "$app_constants_original"
+    else
+      echo "$line" >> ./omni_tmp_root/modules/AppConstants.sys.mjs
+    fi
+  done <<< "$app_constants"
 }
 
 function integration_portable_config () {
@@ -184,6 +199,9 @@ if [[ "$1" == "" ]]; then
   zip_omni browser
   remove_unused_files
 elif [[ "$1" == "update-modules" ]]; then
+  unzip_omni root
+  unzip_omni browser
+  apply_patch
   integration_portable_config
   integration_portable_modules
   zip_omni root

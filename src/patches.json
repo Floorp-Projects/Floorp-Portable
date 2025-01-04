@@ -1,7 +1,1 @@
-[
-    {
-        "filename": "disable-some-features.diff",
-        "type": "root",
-        "platforms": ["windows", "linux"]
-    }
-]
+[]
