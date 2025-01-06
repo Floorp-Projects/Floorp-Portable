@@ -2,4 +2,4 @@
 
 package main
 
-//go:generate goversioninfo
+//go:generate goversioninfo -64
