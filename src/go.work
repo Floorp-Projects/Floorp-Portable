@@ -1,6 +1,7 @@
 go 1.23.3
 
 use (
+	./cityhash
 	./container-linux
 	./gomodules
 	./runtime

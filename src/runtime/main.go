@@ -1,13 +1,28 @@
 package main
 
 import (
+	"cityhash"
+	"fmt"
 	"gomodules"
 	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"runtime"
+
+	"golang.org/x/text/encoding/unicode"
+	"golang.org/x/text/transform"
 )
+
+func getInstallHash(path string) string {
+	encoder := unicode.UTF16(unicode.LittleEndian, unicode.IgnoreBOM).NewEncoder()
+	path_bytes, _, _ := transform.Bytes(encoder, []byte(path))
+	path_size := uint32(len(path_bytes))
+
+	hash := cityhash.WrappedCityHash64(path_bytes, path_size)
+
+	return fmt.Sprintf("%X", hash)
+}
 
 func main() {
 	if runtime.GOOS != "windows" && runtime.GOOS != "linux" {
@@ -21,6 +36,9 @@ func main() {
 		panic(err)
 	}
 	exe_dir := filepath.Dir(exe)
+
+	install_hash := getInstallHash(filepath.Join(exe_dir, "core"))
+	log.Println("[INFO]", "Install ID:", install_hash)
 
 	if _, err := os.Stat(filepath.Join(exe_dir, "update_tmp", "CORE_UPDATE_READY")); err == nil {
 		log.Println("[INFO]", "Updates found.")
