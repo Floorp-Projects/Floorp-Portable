@@ -41,6 +41,8 @@ jobs:
         ./src/utils/7za.exe x floorp-win64.installer.exe -ir!core
 
         ./build.bat
+      env:
+        GOARCH: amd64
 
     - name: Packaging
       run: |
@@ -81,6 +83,7 @@ jobs:
         ./build.sh
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GOARCH: "amd64"
 
     - name: Packaging
       run: |
@@ -102,6 +105,11 @@ jobs:
       with:
         submodules: recursive
 
+    - name: Install
+      run: |
+        sudo apt update
+        sudo apt install -y binutils-aarch64-linux-gnu gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
+
     - uses: actions/setup-go@v5
       with:
         go-version: '1.23'
@@ -122,6 +130,9 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GOARCH: arm64
+        CGO_ENABLED: 1
+        CC: aarch64-linux-gnu-gcc
+        CXX: aarch64-linux-gnu-g++
 
     - name: Packaging
       run: |
