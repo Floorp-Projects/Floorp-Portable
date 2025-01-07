@@ -19,12 +19,12 @@ function build_portable_runtime () {
   cd src/runtime
   if [[ "$os_name" == "Linux" ]]; then
     go generate
-    go build -ldflags="-s -w"
+    CGO_ENABLED=1 go build -ldflags="-s -w"
     cp ./floorp ../../dist/floorp
   elif [[ "$os_name" == "MINGW64_NT"* ]]; then
     go install github.com/josephspurrier/goversioninfo/cmd/goversioninfo
     go generate
-    go build -ldflags="-H windowsgui -s -w"
+    CGO_ENABLED=1 go build -ldflags="-H windowsgui -s -w"
     cp ./floorp.exe ../../dist/floorp.exe
   else
     echo "Unsupported OS: $os_name"
