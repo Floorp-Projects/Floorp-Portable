@@ -57,7 +57,7 @@ jobs:
           ./floorp-portable-windows-x86_64.zip
 
   build-linux-x86-64:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
 
     steps:
     - uses: actions/checkout@v4
@@ -98,7 +98,7 @@ jobs:
           ./floorp-portable-linux-x86_64.tar.zst
 
   build-linux-aarch64:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
 
     steps:
     - uses: actions/checkout@v4
@@ -147,7 +147,7 @@ jobs:
           ./floorp-portable-linux-aarch64.tar.zst
 
   release:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     if: github.event.inputs.choice == 'Release'
     needs: [build-windows-x86-64, build-linux-x86-64, build-linux-aarch64]
     environment: Release
