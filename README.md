@@ -19,8 +19,9 @@
     * OS Version: 10, 11
     * Architecture: x86_64
     * Memory: 8GB+
-    * Disk Space: At least 2GB of free disk space.
-    * Softwares: Git, Git Bash, Golang 1.23+
+    * Disk Space: At least 4GB of free disk space.
+    * Softwares: MSYS2
+    * Packages: mingw-w64-x86_64-gcc, mingw-w64-x86_64-go, git, unzip
   * Linux
     * Architecture: x86_64, aarch64
     * Memory: 8GB+

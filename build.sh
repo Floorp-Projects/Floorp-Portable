@@ -19,12 +19,12 @@ function build_portable_runtime () {
   cd src/runtime
   if [[ "$os_name" == "Linux" ]]; then
     go generate
-    go build -ldflags="-s -w"
+    CGO_ENABLED=1 go build -ldflags="-s -w"
     cp ./floorp ../../dist/floorp
   elif [[ "$os_name" == "MINGW64_NT"* ]]; then
     go install github.com/josephspurrier/goversioninfo/cmd/goversioninfo
     go generate
-    go build -ldflags="-H windowsgui -s -w"
+    CGO_ENABLED=1 go build -ldflags="-H windowsgui -s -w"
     cp ./floorp.exe ../../dist/floorp.exe
   else
     echo "Unsupported OS: $os_name"
@@ -185,6 +185,11 @@ function remove_unused_files () {
   fi
 }
 
+function remove_cache () {
+  echo "Removing caches..."
+  rm -rf ./dist/cache
+}
+
 if [[ "$1" == "" ]]; then
   copy_to_dist
   prepare_gomodules
@@ -207,6 +212,7 @@ elif [[ "$1" == "update-modules" ]]; then
   zip_omni root
   zip_omni browser
   remove_unused_files
+  remove_cache
 elif [[ "$1" == "create-patch" ]]; then
   unzip_omni root
   unzip_omni browser
