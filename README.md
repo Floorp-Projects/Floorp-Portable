@@ -68,7 +68,7 @@ The files or directories required to run are those in the `dist` directory.
 
 ## Container Runtime
 Windows: [libportable](https://github.com/adonais/libportable)
-Linux: [Bubblewrap](https://github.com/containers/bubblewrap)
+Linux: [Original](./src/container-linux)
 
 
 ## Contributions

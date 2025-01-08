@@ -57,7 +57,7 @@ jobs:
           ./floorp-portable-windows-x86_64.zip
 
   build-linux-x86-64:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
 
     steps:
     - uses: actions/checkout@v4
@@ -98,7 +98,7 @@ jobs:
           ./floorp-portable-linux-x86_64.tar.zst
 
   build-linux-aarch64:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
 
     steps:
     - uses: actions/checkout@v4
@@ -146,10 +146,54 @@ jobs:
         path: |
           ./floorp-portable-linux-aarch64.tar.zst
 
-  release:
-    runs-on: ubuntu-22.04
+  prepare-release:
+    runs-on: ubuntu-24.04
     if: github.event.inputs.choice == 'Release'
     needs: [build-windows-x86-64, build-linux-x86-64, build-linux-aarch64]
+
+    steps:
+    - uses: actions/download-artifact@v4
+      name: Download Linux x86_64 artifact 📥
+      with:
+        name: floorp-portable-linux-x86_64
+        path: linux-x86_64-artifact
+
+    - name: Get version
+      run: |
+        mkdir ./tmp
+        tar -xvf ./linux-x86_64-artifact/floorp-portable-linux-x86_64.tar.zst -C ./tmp
+
+        FLOORP_VERSION=`./tmp/core/floorp -version | awk '{ print $3 }'`
+
+        PORTABLE_VERSION=`cat ./tmp/core/portable_version.txt`
+
+        FLOORP_PORTABLE_VERSION="${FLOORP_VERSION}-${PORTABLE_VERSION}"
+        echo "FLOORP_PORTABLE_VERSION=$FLOORP_PORTABLE_VERSION" >> $GITHUB_ENV
+
+        RELEASE_TAG_NAME="${FLOORP_PORTABLE_VERSION}-portable"
+        echo "RELEASE_TAG_NAME=$RELEASE_TAG_NAME" >> $GITHUB_ENV
+
+    - name: Display version
+      run: |
+        echo "Version: ${FLOORP_PORTABLE_VERSION}"
+
+    - name: Check that the version does not already exist
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const { data: release } = await github.rest.repos.getLatestRelease({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+          });
+
+          if (release.tag_name == process.env.RELEASE_TAG_NAME) {
+            throw new Error("The version already exists!");
+          }
+
+  release:
+    runs-on: ubuntu-24.04
+    if: github.event.inputs.choice == 'Release'
+    needs: [prepare-release]
     environment: Release
 
     steps:
