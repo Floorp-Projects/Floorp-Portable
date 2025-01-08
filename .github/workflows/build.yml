@@ -173,6 +173,10 @@ jobs:
         RELEASE_TAG_NAME="${FLOORP_PORTABLE_VERSION}-portable"
         echo "RELEASE_TAG_NAME=$RELEASE_TAG_NAME" >> $GITHUB_ENV
 
+    - name: Display version
+      run: |
+        echo "Version: ${FLOORP_PORTABLE_VERSION}"
+
     - name: Check that the version does not already exist
       uses: actions/github-script@v7
       with:
