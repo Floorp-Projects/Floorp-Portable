@@ -1,8 +1,6 @@
-/floorp
-/floorp.exe
 /src/gomodules/l10n-asset-dir
-/src/runtime/floorp
-/src/runtime/floorp.exe
+/src/runtime/portable-runtime
+/src/runtime/portable-runtime.exe
 /src/runtime/l10n-asset-dir
 /src/container-linux/container-linux
 /omni_tmp_root

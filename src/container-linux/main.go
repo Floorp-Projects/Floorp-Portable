@@ -3,9 +3,8 @@
 package main
 
 import (
-	"crypto/md5"
-	"encoding/hex"
 	"fmt"
+	"gomodules"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -75,17 +74,17 @@ func container_child() error {
 	exe_dir := filepath.Dir(exe)
 	exe_dir_parent := filepath.Dir(exe_dir)
 
-	exe_target := filepath.Join(exe_dir, "floorp")
+	exe_target := filepath.Join(exe_dir, gomodules.AppName)
 
-	profile_dir := filepath.Join(exe_dir_parent, "profiles")
-	cache_dir := filepath.Join(exe_dir_parent, "cache")
-	ns_profile_dir := filepath.Join(homedir, ".floorp")
+	profile_dir := filepath.Join(exe_dir_parent, "data", "profiles")
+	cache_dir := filepath.Join(exe_dir_parent, "data", "cache")
+	ns_profile_dir := filepath.Join(homedir, "."+gomodules.AppName)
 	ns_cache_dir := filepath.Join(homedir, ".cache")
 
-	os.Mkdir(profile_dir, 0755)
-	os.Mkdir(cache_dir, 0755)
-	os.Mkdir(ns_profile_dir, 0755)
-	os.Mkdir(ns_cache_dir, 0755)
+	os.MkdirAll(profile_dir, 0755)
+	os.MkdirAll(cache_dir, 0755)
+	os.MkdirAll(ns_profile_dir, 0755)
+	os.MkdirAll(ns_cache_dir, 0755)
 
 	if err := syscall.Mount(profile_dir, ns_profile_dir, "", syscall.MS_BIND, ""); err != nil {
 		return fmt.Errorf("Failed to bind mount: %v", err)
@@ -95,13 +94,12 @@ func container_child() error {
 		return fmt.Errorf("Failed to bind mount: %v", err)
 	}
 
-	install_hash := md5.Sum([]byte(exe))
-	install_hash_hex := hex.EncodeToString(install_hash[:])
+	install_hash := gomodules.GetInstallHash(exe_dir)
 
 	cmd := exec.Command(exe_target, os.Args[2:]...)
 	cmd.Env = append(
 		os.Environ(),
-		fmt.Sprintf("MOZ_APP_REMOTINGNAME=floorp-portable-%s", install_hash_hex[:16]),
+		fmt.Sprintf("MOZ_APP_REMOTINGNAME=%s-portable-%s", gomodules.AppName, install_hash),
 	)
 	cmd.SysProcAttr = &syscall.SysProcAttr{
 		Cloneflags: syscall.CLONE_NEWUSER |

@@ -2,6 +2,11 @@
 
 os_name=$(uname)
 
+app_name="${PORTABLE_APP_NAME:-floorp}"
+app_basename="${PORTABLE_APP_BASENAME:-Floorp}"
+
+go_default_ldflags="-X 'gomodules.AppName=${app_name}' -X 'gomodules.AppBaseName=${app_basename}'"
+
 function copy_to_dist () {
   mkdir dist
   cp -r ./core ./dist/
@@ -19,13 +24,13 @@ function build_portable_runtime () {
   cd src/runtime
   if [[ "$os_name" == "Linux" ]]; then
     go generate
-    CGO_ENABLED=1 go build -ldflags="-s -w"
-    cp ./floorp ../../dist/floorp
+    CGO_ENABLED=1 go build -ldflags="${go_default_ldflags} -s -w"
+    cp ./portable-runtime "../../dist/${app_name}"
   elif [[ "$os_name" == "MINGW64_NT"* ]]; then
     go install github.com/josephspurrier/goversioninfo/cmd/goversioninfo
     go generate
-    CGO_ENABLED=1 go build -ldflags="-H windowsgui -s -w"
-    cp ./floorp.exe ../../dist/floorp.exe
+    CGO_ENABLED=1 go build -ldflags="${go_default_ldflags} -H windowsgui -s -w"
+    cp ./portable-runtime.exe "../../dist/${app_name}.exe"
   else
     echo "Unsupported OS: $os_name"
     false
@@ -38,7 +43,7 @@ function build_container_runtime () {
   echo "Building container runtime"
   if [[ "$os_name" == "Linux" ]]; then
     cd src/container-linux
-    go build -ldflags="-s -w"
+    go build -ldflags="${go_default_ldflags} -s -w"
     cp ./container-linux ../../dist/core/container-linux
     cd ../..
   elif [[ "$os_name" == "MINGW64_NT"* ]]; then

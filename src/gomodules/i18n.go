@@ -3,8 +3,6 @@ package gomodules
 import (
 	"embed"
 	"encoding/json"
-	"os"
-	"path/filepath"
 	"regexp"
 	"strings"
 
@@ -38,12 +36,6 @@ func getLocalizer() *i18n.Localizer {
 	return i18n.NewLocalizer(bundle, locale)
 }
 
-func getAppBaseName() string {
-	arg := os.Args[0]
-	name := filepath.Base(arg[:len(arg)-len(filepath.Ext(arg))])
-	return strings.Title(name)
-}
-
 func replacePlaceHolder(value string) string {
 	result := value
 
@@ -67,13 +59,13 @@ func replacePlaceHolder(value string) string {
 		target := ""
 		switch key {
 		case "-brand-full-name":
-			target = getAppBaseName() + " Portable"
+			target = AppBaseName + " Portable"
 			break
 		case "-brand-short-name":
-			target = getAppBaseName() + " Portable"
+			target = AppBaseName + " Portable"
 			break
 		case "-brand-shorter-name":
-			target = getAppBaseName()
+			target = AppBaseName
 			break
 		}
 
