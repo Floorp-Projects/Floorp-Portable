@@ -77,15 +77,15 @@ func container_child() error {
 
 	exe_target := filepath.Join(exe_dir, "floorp")
 
-	profile_dir := filepath.Join(exe_dir_parent, "profiles")
-	cache_dir := filepath.Join(exe_dir_parent, "cache")
+	profile_dir := filepath.Join(exe_dir_parent, "data", "profiles")
+	cache_dir := filepath.Join(exe_dir_parent, "data", "cache")
 	ns_profile_dir := filepath.Join(homedir, ".floorp")
 	ns_cache_dir := filepath.Join(homedir, ".cache")
 
-	os.Mkdir(profile_dir, 0755)
-	os.Mkdir(cache_dir, 0755)
-	os.Mkdir(ns_profile_dir, 0755)
-	os.Mkdir(ns_cache_dir, 0755)
+	os.MkdirAll(profile_dir, 0755)
+	os.MkdirAll(cache_dir, 0755)
+	os.MkdirAll(ns_profile_dir, 0755)
+	os.MkdirAll(ns_cache_dir, 0755)
 
 	if err := syscall.Mount(profile_dir, ns_profile_dir, "", syscall.MS_BIND, ""); err != nil {
 		return fmt.Errorf("Failed to bind mount: %v", err)

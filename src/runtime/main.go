@@ -107,12 +107,6 @@ func main() {
 			panic(err)
 		}
 	} else if runtime.GOOS == "linux" {
-		cache_dir := filepath.Join(exe_dir, "cache")
-		profiles_dir := filepath.Join(exe_dir, "profiles")
-
-		os.Mkdir(cache_dir, 0777)
-		os.Mkdir(profiles_dir, 0777)
-
 		container_path := filepath.Join(exe_dir, "core", "container-linux")
 
 		args_linux := append([]string{"run"}, args...)
