@@ -24,7 +24,7 @@ func getInstallHash(path string) string {
 	return fmt.Sprintf("%X", hash)
 }
 
-func do_update(exe_dir string) {
+func doUpdate(exe_dir string) {
 	core_path := filepath.Join(exe_dir, "core")
 	core_old_path := filepath.Join(exe_dir, "core_old")
 	update_tmp_path := filepath.Join(exe_dir, "update_tmp")
@@ -99,7 +99,7 @@ func main() {
 
 	if _, err := os.Stat(filepath.Join(exe_dir, "update_tmp", "CORE_UPDATE_READY")); err == nil {
 		log.Println("[INFO]", "Updates found.")
-		do_update(exe_dir)
+		doUpdate(exe_dir)
 	}
 
 	if runtime.GOOS == "windows" {
