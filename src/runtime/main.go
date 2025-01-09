@@ -7,6 +7,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"strings"
 )
 
 func doUpdate(exe_dir string) {
@@ -64,6 +65,62 @@ func doUpdate(exe_dir string) {
 	}
 }
 
+func replaceInstallHash(exe_dir string) error {
+	toml_path := filepath.Join(exe_dir, "data", "preferences.toml")
+
+	toml_data, err := gomodules.GetPreferences(toml_path)
+	if err != nil {
+		return err
+	}
+
+	old_install_hash := toml_data.ProfilePrefs.OldInstallHash
+	current_install_hash := gomodules.GetInstallHash(filepath.Join(exe_dir, "core"))
+	log.Println("[INFO]", "Old Install ID:", old_install_hash)
+	log.Println("[INFO]", "Current Install ID:", current_install_hash)
+	if old_install_hash == current_install_hash {
+		return nil
+	}
+
+	toml_data.ProfilePrefs.OldInstallHash = current_install_hash
+	if err := gomodules.WritePreferences(toml_path, toml_data); err != nil {
+		return err
+	}
+
+	installs_ini_path := filepath.Join(exe_dir, "data", "."+gomodules.AppName, "installs.ini")
+	profiles_ini_path := filepath.Join(exe_dir, "data", "."+gomodules.AppName, "profiles.ini")
+
+	if _, err := os.Stat(installs_ini_path); err != nil {
+		return nil
+	}
+	if _, err := os.Stat(profiles_ini_path); err != nil {
+		return nil
+	}
+
+	installs_ini_bytes, err := os.ReadFile(installs_ini_path)
+	if err != nil {
+		return err
+	}
+	profiles_ini_bytes, err := os.ReadFile(profiles_ini_path)
+	if err != nil {
+		return err
+	}
+
+	installs_ini := string(installs_ini_bytes)
+	profiles_ini := string(profiles_ini_bytes)
+
+	installs_ini = strings.ReplaceAll(installs_ini, "["+old_install_hash+"]", "["+current_install_hash+"]")
+	profiles_ini = strings.ReplaceAll(profiles_ini, "[Install"+old_install_hash+"]", "[Install"+current_install_hash+"]")
+
+	if err := os.WriteFile(installs_ini_path, []byte(installs_ini), 0755); err != nil {
+		return err
+	}
+	if err := os.WriteFile(profiles_ini_path, []byte(profiles_ini), 0755); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func main() {
 	if runtime.GOOS != "windows" && runtime.GOOS != "linux" {
 		panic("Your platform is not supported.")
@@ -79,8 +136,15 @@ func main() {
 
 	core_path := filepath.Join(exe_dir, "core")
 
-	install_hash := gomodules.GetInstallHash(core_path)
-	log.Println("[INFO]", "Install ID:", install_hash)
+	os.Mkdir(filepath.Join(exe_dir, "data"), 0755)
+
+	if err := replaceInstallHash(exe_dir); err != nil {
+		gomodules.ShowFatalError(
+			gomodules.Localize("native-runner-failed"),
+			gomodules.Localize("native-runner-failed-description"),
+		)
+		panic(err)
+	}
 
 	if _, err := os.Stat(filepath.Join(exe_dir, "update_tmp", "CORE_UPDATE_READY")); err == nil {
 		log.Println("[INFO]", "Updates found.")
