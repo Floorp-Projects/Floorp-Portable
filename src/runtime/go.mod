@@ -1,4 +1,4 @@
-module floorp
+module portable-runtime
 
 go 1.20
 

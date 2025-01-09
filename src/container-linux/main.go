@@ -6,6 +6,7 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"fmt"
+	"gomodules"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -75,11 +76,11 @@ func container_child() error {
 	exe_dir := filepath.Dir(exe)
 	exe_dir_parent := filepath.Dir(exe_dir)
 
-	exe_target := filepath.Join(exe_dir, "floorp")
+	exe_target := filepath.Join(exe_dir, gomodules.AppName)
 
 	profile_dir := filepath.Join(exe_dir_parent, "data", "profiles")
 	cache_dir := filepath.Join(exe_dir_parent, "data", "cache")
-	ns_profile_dir := filepath.Join(homedir, ".floorp")
+	ns_profile_dir := filepath.Join(homedir, "."+gomodules.AppName)
 	ns_cache_dir := filepath.Join(homedir, ".cache")
 
 	os.MkdirAll(profile_dir, 0755)
@@ -101,7 +102,7 @@ func container_child() error {
 	cmd := exec.Command(exe_target, os.Args[2:]...)
 	cmd.Env = append(
 		os.Environ(),
-		fmt.Sprintf("MOZ_APP_REMOTINGNAME=floorp-portable-%s", install_hash_hex[:16]),
+		fmt.Sprintf("MOZ_APP_REMOTINGNAME=%s-portable-%s", gomodules.AppName, install_hash_hex[:16]),
 	)
 	cmd.SysProcAttr = &syscall.SysProcAttr{
 		Cloneflags: syscall.CLONE_NEWUSER |

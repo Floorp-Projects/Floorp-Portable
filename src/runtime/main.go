@@ -75,7 +75,7 @@ func doUpdate(exe_dir string) {
 
 		log.Println("[INFO]", "Update succeeded.")
 	} else {
-		log.Println("[INFO]", "Floorp is running.")
+		log.Println("[INFO]", "core is running.")
 	}
 }
 
@@ -103,7 +103,7 @@ func main() {
 	}
 
 	if runtime.GOOS == "windows" {
-		cmd := exec.Command(filepath.Join(core_path, "floorp"), args...)
+		cmd := exec.Command(filepath.Join(core_path, gomodules.AppName), args...)
 		cmd.Stdin = os.Stdin
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
