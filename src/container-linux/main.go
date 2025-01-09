@@ -3,8 +3,6 @@
 package main
 
 import (
-	"crypto/md5"
-	"encoding/hex"
 	"fmt"
 	"gomodules"
 	"os"
@@ -96,13 +94,12 @@ func container_child() error {
 		return fmt.Errorf("Failed to bind mount: %v", err)
 	}
 
-	install_hash := md5.Sum([]byte(exe))
-	install_hash_hex := hex.EncodeToString(install_hash[:])
+	install_hash := gomodules.GetInstallHash(exe_dir)
 
 	cmd := exec.Command(exe_target, os.Args[2:]...)
 	cmd.Env = append(
 		os.Environ(),
-		fmt.Sprintf("MOZ_APP_REMOTINGNAME=%s-portable-%s", gomodules.AppName, install_hash_hex[:16]),
+		fmt.Sprintf("MOZ_APP_REMOTINGNAME=%s-portable-%s", gomodules.AppName, install_hash),
 	)
 	cmd.SysProcAttr = &syscall.SysProcAttr{
 		Cloneflags: syscall.CLONE_NEWUSER |
