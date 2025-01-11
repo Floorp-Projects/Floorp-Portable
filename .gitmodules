@@ -1,0 +1,3 @@
+[submodule "src/libportable-ng/minhook"]
+	path = src/libportable-ng/minhook
+	url = https://github.com/TsudaKageyu/minhook
