@@ -93,6 +93,7 @@ func main() {
 	exe_dir := filepath.Dir(exe)
 
 	core_path := filepath.Join(exe_dir, "core")
+	data_path := filepath.Join(exe_dir, "data")
 
 	install_hash := getInstallHash(core_path)
 	log.Println("[INFO]", "Install ID:", install_hash)
@@ -103,11 +104,16 @@ func main() {
 	}
 
 	if runtime.GOOS == "windows" {
-		cmd := exec.Command(filepath.Join(core_path, gomodules.AppName), args...)
+		cmd := gomodules.ExecOrphanProcess(filepath.Join(core_path, gomodules.AppName), args...)
 		cmd.Stdin = os.Stdin
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
-		err := cmd.Run()
+		cmd.Env = append(
+			os.Environ(),
+			"PORTABLE_ROAMINGAPPDATA="+data_path,
+			"PORTABLE_LOCALAPPDATA="+data_path,
+		)
+		err := cmd.Start()
 		if err != nil {
 			gomodules.ShowFatalError(
 				gomodules.Localize("native-runner-failed"),
