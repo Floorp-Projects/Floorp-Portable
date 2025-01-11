@@ -28,6 +28,8 @@ jobs:
       run: git config --global core.autocrlf false
 
     - uses: actions/checkout@v4
+      with:
+        submodules: recursive
 
     - uses: actions/setup-go@v5
       with:
