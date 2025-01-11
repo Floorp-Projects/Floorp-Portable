@@ -40,20 +40,20 @@ function build_portable_runtime () {
 }
 
 function build_container_runtime () {
-  echo "Building container runtime"
+  echo "Building container runtime..."
   if [[ "$os_name" == "Linux" ]]; then
     cd src/container-linux
     go build -ldflags="${go_default_ldflags} -s -w"
     cp ./container-linux ../../dist/core/container-linux
-    cd ../..
   elif [[ "$os_name" == "MINGW64_NT"* ]]; then
-    # Reserved for future use
-    :
+    cd src/libportable-ng
+    "C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\MSBuild.exe" "//p:Configuration=Release;Platform=x64" libportable-ng.sln
+    cp ./x64/Release/libportable-ng.dll ../../dist/core/libportable-ng.dll
   else
     echo "Unsupported OS: $os_name"
     false
   fi
-  # cd ../..
+  cd ../..
 }
 
 function unzip_omni () {
@@ -158,9 +158,11 @@ function integration_portable_config () {
 function integration_portable_modules () {
   echo "Integrating portable modules..."
   if [[ "$os_name" == "MINGW64_NT"* ]]; then
-    ./src/utils/setdll64.exe //d:portable64.dll ./dist/core/mozglue.dll
-    cp ./src/utils/portable64.dll ./dist/core/portable64.dll
-    cp ./src/utils/libportable_LICENSE ./dist/core/libportable_LICENSE
+    cp ./src/utils/setdll64.exe ./dist/core/setdll64.exe
+    cd ./dist/core
+    ./setdll64.exe //d:libportable-ng.dll mozglue.dll
+    rm ./setdll64.exe
+    cd ../..
   elif [[ "$os_name" == "Linux" ]]; then
     # Reserved for future use
     :

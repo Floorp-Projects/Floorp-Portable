@@ -1,0 +1,273 @@
+﻿#include "pch.h"
+#include <windows.h>
+#include <shlobj.h>
+#include <shlwapi.h>
+#include "MinHook.h"
+
+void __declspec(dllexport) DummyExport() {}
+
+
+typedef HRESULT(WINAPI* OriginalSHGetKnownFolderPath)(
+    REFKNOWNFOLDERID rfid,
+    DWORD dwFlags,
+    HANDLE hToken,
+    PWSTR* ppszPath
+);
+
+OriginalSHGetKnownFolderPath pOriginalSHGetKnownFolderPath = nullptr;
+
+HRESULT WINAPI HookedSHGetKnownFolderPath(
+    REFKNOWNFOLDERID rfid,
+    DWORD dwFlags,
+    HANDLE hToken,
+    PWSTR* ppszPath
+) {
+    if (rfid == FOLDERID_RoamingAppData) {
+        WCHAR path[MAX_PATH];
+        if (GetEnvironmentVariableW(L"PORTABLE_ROAMINGAPPDATA", path, MAX_PATH)) {
+            return SHStrDupW(path, ppszPath);
+        }
+    }
+    if (rfid == FOLDERID_LocalAppData) {
+        WCHAR path[MAX_PATH];
+        if (GetEnvironmentVariableW(L"PORTABLE_LOCALAPPDATA", path, MAX_PATH)) {
+            return SHStrDupW(path, ppszPath);
+        }
+    }
+
+    return pOriginalSHGetKnownFolderPath(rfid, dwFlags, hToken, ppszPath);
+}
+
+
+typedef LSTATUS(WINAPI* OriginalRegCreateKeyExW)(
+    HKEY hKey,
+    LPCWSTR lpSubKey,
+    DWORD Reserved,
+    LPWSTR lpClass,
+    DWORD dwOptions,
+    REGSAM samDesired,
+    const LPSECURITY_ATTRIBUTES lpSecurityAttributes,
+    PHKEY phkResult,
+    LPDWORD lpdwDisposition
+);
+
+OriginalRegCreateKeyExW pOriginalRegCreateKeyExW = nullptr;
+
+LSTATUS WINAPI HookedRegCreateKeyExW(
+    HKEY hKey,
+    LPCWSTR lpSubKey,
+    DWORD Reserved,
+    LPWSTR lpClass,
+    DWORD dwOptions,
+    REGSAM samDesired,
+    const LPSECURITY_ATTRIBUTES lpSecurityAttributes,
+    PHKEY phkResult,
+    LPDWORD lpdwDisposition
+) {
+    return ERROR_REGISTRY_IO_FAILED;
+};
+
+
+typedef LSTATUS(WINAPI* OriginalRegDeleteKeyW)(
+    HKEY    hKey,
+    LPCWSTR lpSubKey
+);
+
+OriginalRegDeleteKeyW pOriginalRegDeleteKeyW = nullptr;
+
+LSTATUS WINAPI HookedRegDeleteKeyW(
+    HKEY    hKey,
+    LPCWSTR lpSubKey
+) {
+    return ERROR_REGISTRY_IO_FAILED;
+};
+
+
+typedef LSTATUS(WINAPI* OriginalRegDeleteKeyExW)(
+    HKEY hKey,
+    LPCWSTR lpSubKey,
+    REGSAM samDesired,
+    DWORD Reserved
+);
+
+OriginalRegDeleteKeyExW pOriginalRegDeleteKeyExW = nullptr;
+
+LSTATUS WINAPI HookedRegDeleteKeyExW(
+    HKEY hKey,
+    LPCWSTR lpSubKey,
+    REGSAM samDesired,
+    DWORD Reserved
+) {
+    return ERROR_REGISTRY_IO_FAILED;
+};
+
+
+typedef LSTATUS(WINAPI* OriginalRegSetKeyValueW)(
+    HKEY hKey,
+    LPCWSTR lpSubKey,
+    LPCWSTR lpValueName,
+    DWORD dwType,
+    LPCVOID lpData,
+    DWORD cbData
+);
+
+OriginalRegSetKeyValueW pOriginalRegSetKeyValueW = nullptr;
+
+LSTATUS WINAPI HookedRegSetKeyValueW(
+    HKEY hKey,
+    LPCWSTR lpSubKey,
+    LPCWSTR lpValueName,
+    DWORD dwType,
+    LPCVOID lpData,
+    DWORD cbData
+) {
+    return ERROR_REGISTRY_IO_FAILED;
+}
+
+
+typedef LSTATUS(WINAPI* OriginalRegSetValueW)(
+    HKEY hKey,
+    LPCWSTR lpSubKey,
+    DWORD dwType,
+    LPCVOID lpData,
+    DWORD cbData
+);
+
+OriginalRegSetValueW pOriginalRegSetValueW = nullptr;
+
+LSTATUS WINAPI HookedRegSetValueW(
+    HKEY hKey,
+    LPCWSTR lpSubKey,
+    DWORD dwType,
+    LPCVOID lpData,
+    DWORD cbData
+) {
+    return ERROR_REGISTRY_IO_FAILED;
+}
+
+
+typedef LSTATUS(WINAPI* OriginalRegSetValueExW)(
+    HKEY hKey,
+    LPCWSTR lpValueName,
+    DWORD Reserved,
+    DWORD dwType,
+    const BYTE* lpData,
+    DWORD cbData
+);
+
+OriginalRegSetValueExW pOriginalRegSetValueExW = nullptr;
+
+LSTATUS WINAPI HookedRegSetValueExW(
+    HKEY hKey,
+    LPCWSTR lpValueName,
+    DWORD Reserved,
+    DWORD dwType,
+    const BYTE* lpData,
+    DWORD cbData
+) {
+    return ERROR_REGISTRY_IO_FAILED;
+};
+
+
+BOOL APIENTRY DllMain(HMODULE hModule, DWORD ulReasonForCall, LPVOID lpReserved) {
+    if (ulReasonForCall == DLL_PROCESS_ATTACH) {
+        if (MH_Initialize() != MH_OK) {
+            return FALSE;
+        }
+
+        HMODULE hShell32 = LoadLibrary(L"Shell32.dll");
+        if (!hShell32) {
+            return FALSE;
+        }
+
+        LPVOID pSHGetKnownFolderPath = GetProcAddress(hShell32, "SHGetKnownFolderPath");
+        if (!pSHGetKnownFolderPath) {
+            return FALSE;
+        }
+        if (MH_CreateHook(pSHGetKnownFolderPath, &HookedSHGetKnownFolderPath, reinterpret_cast<LPVOID*>(&pOriginalSHGetKnownFolderPath)) != MH_OK) {
+            return FALSE;
+        }
+        if (MH_EnableHook(pSHGetKnownFolderPath) != MH_OK) {
+            return FALSE;
+        }
+
+        // Registry APIs
+
+        HMODULE hAdvapi32 = LoadLibrary(L"Advapi32.dll");
+        if (!hAdvapi32) {
+            return FALSE;
+        }
+
+        LPVOID pRegCreateKeyExW = GetProcAddress(hAdvapi32, "RegCreateKeyExW");
+        if (!pRegCreateKeyExW) {
+            return FALSE;
+        }
+        if (MH_CreateHook(pRegCreateKeyExW, &HookedRegCreateKeyExW, reinterpret_cast<LPVOID*>(&pOriginalRegCreateKeyExW)) != MH_OK) {
+            return FALSE;
+        }
+        if (MH_EnableHook(pRegCreateKeyExW) != MH_OK) {
+            return FALSE;
+        }
+
+        LPVOID pRegDeleteKeyW = GetProcAddress(hAdvapi32, "RegDeleteKeyW");
+        if (!pRegDeleteKeyW) {
+            return FALSE;
+        }
+        if (MH_CreateHook(pRegDeleteKeyW, &HookedRegDeleteKeyW, reinterpret_cast<LPVOID*>(&pOriginalRegDeleteKeyW)) != MH_OK) {
+            return FALSE;
+        }
+        if (MH_EnableHook(pRegDeleteKeyW) != MH_OK) {
+            return FALSE;
+        }
+
+        LPVOID pRegDeleteKeyExW = GetProcAddress(hAdvapi32, "RegDeleteKeyExW");
+        if (!pRegDeleteKeyExW) {
+            return FALSE;
+        }
+        if (MH_CreateHook(pRegDeleteKeyExW, &HookedRegDeleteKeyExW, reinterpret_cast<LPVOID*>(&pOriginalRegDeleteKeyExW)) != MH_OK) {
+            return FALSE;
+        }
+        if (MH_EnableHook(pRegDeleteKeyExW) != MH_OK) {
+            return FALSE;
+        }
+
+        LPVOID pRegSetKeyValueW = GetProcAddress(hAdvapi32, "RegSetKeyValueW");
+        if (!pRegSetKeyValueW) {
+            return FALSE;
+        }
+        if (MH_CreateHook(pRegSetKeyValueW, &HookedRegSetKeyValueW, reinterpret_cast<LPVOID*>(&pOriginalRegSetKeyValueW)) != MH_OK) {
+            return FALSE;
+        }
+        if (MH_EnableHook(pRegSetKeyValueW) != MH_OK) {
+            return FALSE;
+        }
+
+        LPVOID pRegSetValueW = GetProcAddress(hAdvapi32, "RegSetValueW");
+        if (!pRegSetValueW) {
+            return FALSE;
+        }
+        if (MH_CreateHook(pRegSetValueW, &HookedRegSetValueW, reinterpret_cast<LPVOID*>(&pOriginalRegSetValueW)) != MH_OK) {
+            return FALSE;
+        }
+        if (MH_EnableHook(pRegSetValueW) != MH_OK) {
+            return FALSE;
+        }
+
+        LPVOID pRegSetValueExW = GetProcAddress(hAdvapi32, "RegSetValueExW");
+        if (!pRegSetValueExW) {
+            return FALSE;
+        }
+        if (MH_CreateHook(pRegSetValueExW, &HookedRegSetValueExW, reinterpret_cast<LPVOID*>(&pOriginalRegSetValueExW)) != MH_OK) {
+            return FALSE;
+        }
+        if (MH_EnableHook(pRegSetValueExW) != MH_OK) {
+            return FALSE;
+        }
+    }
+    else if (ulReasonForCall == DLL_PROCESS_DETACH) {
+        MH_DisableHook(MH_ALL_HOOKS);
+
+        MH_Uninitialize();
+    }
+    return TRUE;
+}
