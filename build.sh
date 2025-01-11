@@ -47,7 +47,7 @@ function build_container_runtime () {
     cp ./container-linux ../../dist/core/container-linux
   elif [[ "$os_name" == "MINGW64_NT"* ]]; then
     cd src/libportable-ng
-    "C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\MSBuild.exe" "//p:Configuration=Release;Platform=x64" libportable-ng.sln
+    MSBuild.exe "//p:Configuration=Release;Platform=x64" libportable-ng.sln
     cp ./x64/Release/libportable-ng.dll ../../dist/core/libportable-ng.dll
   else
     echo "Unsupported OS: $os_name"
