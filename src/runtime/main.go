@@ -86,8 +86,15 @@ func replaceInstallHash(exe_dir string) error {
 		return err
 	}
 
-	installs_ini_path := filepath.Join(exe_dir, "data", "."+gomodules.AppName, "installs.ini")
-	profiles_ini_path := filepath.Join(exe_dir, "data", "."+gomodules.AppName, "profiles.ini")
+	var installs_ini_path string
+	var profiles_ini_path string
+	if runtime.GOOS == "windows" {
+		installs_ini_path = filepath.Join(exe_dir, "data", gomodules.AppName, "installs.ini")
+		profiles_ini_path = filepath.Join(exe_dir, "data", gomodules.AppName, "profiles.ini")
+	} else if runtime.GOOS == "linux" {
+		installs_ini_path = filepath.Join(exe_dir, "data", "."+gomodules.AppName, "installs.ini")
+		profiles_ini_path = filepath.Join(exe_dir, "data", "."+gomodules.AppName, "profiles.ini")
+	}
 
 	if _, err := os.Stat(installs_ini_path); err != nil {
 		return nil
