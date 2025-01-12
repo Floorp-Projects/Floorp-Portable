@@ -6,7 +6,7 @@
   "native-updater-failed-to-replace-with-new-file-description": "Failed to replace with new file.",
   "native-updater-failed-to-delete-old-file-description": "Failed to delete old file.",
   "native-updater-failed-to-prepare-for-runtime-update-description": "Failed to prepare for runtime update.",
-  "bm-pref-floorp-portable-update-enabled": "Automatically check for updates to { -brand-short-name }.",
+  "bm-pref-floorp-portable-update-auto-enabled": "Automatically check for updates to { -brand-short-name }.",
   "bm-updater-found-notify-title": "Updates found!",
   "bm-updater-found-notify-message": "Downloading updates...",
   "bm-updater-ready-notify-title": "Ready to update!",

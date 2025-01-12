@@ -6,7 +6,7 @@
   "native-updater-failed-to-replace-with-new-file-description": "Не удалось заменить новым файлом.",
   "native-updater-failed-to-delete-old-file-description": "Не удалось удалить старый файл.",
   "native-updater-failed-to-prepare-for-runtime-update-description": "Не удалось подготовиться к запуску обновления среды выполнения.",
-  "bm-pref-floorp-portable-update-enabled": "Автоматически проверять наличие обновлений для { -brand-short-name }.",
+  "bm-pref-floorp-portable-update-auto-enabled": "Автоматически проверять наличие обновлений для { -brand-short-name }.",
   "bm-updater-found-notify-title": "Найдены обновления!",
   "bm-updater-found-notify-message": "Загружаем обновления...",
   "bm-updater-ready-notify-title": "Обновления готовы к установке!",
