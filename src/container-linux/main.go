@@ -9,6 +9,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"syscall"
 )
 
@@ -76,9 +77,9 @@ func container_child() error {
 
 	exe_target := filepath.Join(exe_dir, gomodules.AppName)
 
-	profile_dir := filepath.Join(exe_dir_parent, "data", "."+gomodules.AppName)
+	profile_dir := filepath.Join(exe_dir_parent, "data", "."+strings.ToLower(gomodules.Profile))
 	cache_dir := filepath.Join(exe_dir_parent, "data", ".cache")
-	ns_profile_dir := filepath.Join(homedir, "."+gomodules.AppName)
+	ns_profile_dir := filepath.Join(homedir, "."+strings.ToLower(gomodules.Profile))
 	ns_cache_dir := filepath.Join(homedir, ".cache")
 
 	os.MkdirAll(profile_dir, 0755)

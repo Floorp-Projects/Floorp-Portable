@@ -91,11 +91,11 @@ func replaceInstallHash(exe_dir string) error {
 	var installs_ini_path string
 	var profiles_ini_path string
 	if runtime.GOOS == "windows" {
-		installs_ini_path = filepath.Join(data_path, gomodules.AppBaseName, "installs.ini")
-		profiles_ini_path = filepath.Join(data_path, gomodules.AppBaseName, "profiles.ini")
+		installs_ini_path = filepath.Join(data_path, gomodules.Profile, "installs.ini")
+		profiles_ini_path = filepath.Join(data_path, gomodules.Profile, "profiles.ini")
 	} else if runtime.GOOS == "linux" {
-		installs_ini_path = filepath.Join(data_path, "."+gomodules.AppName, "installs.ini")
-		profiles_ini_path = filepath.Join(data_path, "."+gomodules.AppName, "profiles.ini")
+		installs_ini_path = filepath.Join(data_path, "."+strings.ToLower(gomodules.Profile), "installs.ini")
+		profiles_ini_path = filepath.Join(data_path, "."+strings.ToLower(gomodules.Profile), "profiles.ini")
 	}
 
 	if _, err := os.Stat(installs_ini_path); err != nil {
