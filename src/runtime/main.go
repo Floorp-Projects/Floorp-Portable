@@ -169,7 +169,7 @@ func main() {
 		cmd.Env = append(
 			os.Environ(),
 			"PORTABLE_ROAMINGAPPDATA="+data_path,
-			"PORTABLE_LOCALAPPDATA="+data_path,
+			"PORTABLE_LOCALAPPDATA="+filepath.Join(data_path, "Cache"),
 		)
 		err := cmd.Start()
 		if err != nil {

@@ -204,7 +204,14 @@ function remove_unused_files () {
 
 function remove_cache () {
   echo "Removing caches..."
-  rm -rf ./dist/cache
+  if [[ "$os_name" == "MINGW64_NT"* ]]; then
+    rm -rf ./dist/data/Cache
+  elif [[ "$os_name" == "Linux" ]]; then
+    rm -rf ./dist/data/.cache
+  else
+    echo "Unsupported OS: $os_name"
+    false
+  fi
 }
 
 if [[ "$1" == "" ]]; then
