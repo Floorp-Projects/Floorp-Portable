@@ -66,7 +66,9 @@ func doUpdate(exe_dir string) {
 }
 
 func replaceInstallHash(exe_dir string) error {
-	toml_path := filepath.Join(exe_dir, "data", "preferences.toml")
+	data_path := filepath.Join(exe_dir, "data")
+
+	toml_path := filepath.Join(data_path, "preferences.toml")
 
 	toml_data, err := gomodules.GetPreferences(toml_path)
 	if err != nil {
@@ -89,11 +91,11 @@ func replaceInstallHash(exe_dir string) error {
 	var installs_ini_path string
 	var profiles_ini_path string
 	if runtime.GOOS == "windows" {
-		installs_ini_path = filepath.Join(exe_dir, "data", gomodules.AppName, "installs.ini")
-		profiles_ini_path = filepath.Join(exe_dir, "data", gomodules.AppName, "profiles.ini")
+		installs_ini_path = filepath.Join(data_path, gomodules.AppBaseName, "installs.ini")
+		profiles_ini_path = filepath.Join(data_path, gomodules.AppBaseName, "profiles.ini")
 	} else if runtime.GOOS == "linux" {
-		installs_ini_path = filepath.Join(exe_dir, "data", "."+gomodules.AppName, "installs.ini")
-		profiles_ini_path = filepath.Join(exe_dir, "data", "."+gomodules.AppName, "profiles.ini")
+		installs_ini_path = filepath.Join(data_path, "."+gomodules.AppName, "installs.ini")
+		profiles_ini_path = filepath.Join(data_path, "."+gomodules.AppName, "profiles.ini")
 	}
 
 	if _, err := os.Stat(installs_ini_path); err != nil {
