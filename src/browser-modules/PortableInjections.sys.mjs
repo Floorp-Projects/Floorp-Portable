@@ -99,12 +99,12 @@ const documentObserver = {
           async () => {
             await window_.gMainPane.initialized;
 
-            const portableUpdatePref = "floorp.portable.update.enabled";
+            const portableUpdatePref = "floorp.portable.update.auto";
             const updateApp = document_.getElementById("updateApp");
             const portableUpdateOption = document_.createXULElement("checkbox");
             portableUpdateOption.setAttribute(
               "label",
-              (await localizer).mustLocalize("bm-pref-floorp-portable-update-enabled")
+              (await localizer).mustLocalize("bm-pref-floorp-portable-update-auto-enabled")
             );
             portableUpdateOption.checked = Services.prefs.getBoolPref(portableUpdatePref, false);
             Services.prefs.addObserver(portableUpdatePref, function () {

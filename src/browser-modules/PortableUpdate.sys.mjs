@@ -47,23 +47,26 @@ const localizer = (async() => {
 })();
 
 const PortableUpdateUtils = {
-  notifyUpdateInterval: -1,
+  notifyAutoUpdateInterval: -1,
 
   init() {
     Services.obs.addObserver(this, "quit-application");
     Services.obs.addObserver(this, "do-portable-update");
 
-    this.notifyUpdate();
-    this.notifyUpdateInterval = setInterval(this.notifyUpdate, 1000 * 60 * 60 * 6 /* 6 hours */);
+    this.notifyAutoUpdate();
+    this.notifyAutoUpdateInterval = setInterval(this.notifyAutoUpdate, 1000 * 60 * 60 * 6 /* 6 hours */);
   },
 
   destroy() {
-    clearInterval(this.notifyUpdateInterval);
+    clearInterval(this.notifyAutoUpdateInterval);
     Services.obs.removeObserver(this, "quit-application");
     Services.obs.removeObserver(this, "do-portable-update");
   },
 
-  notifyUpdate() {
+  notifyAutoUpdate() {
+    if (!Services.prefs.getBoolPref("floorp.portable.update.auto", false)) {
+      return;
+    }
     Services.obs.notifyObservers({ latestNotify: false }, "do-portable-update");
   },
 

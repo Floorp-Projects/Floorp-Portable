@@ -7,6 +7,16 @@ app_basename="${PORTABLE_APP_BASENAME:-Floorp}"
 
 go_default_ldflags="-X 'gomodules.AppName=${app_name}' -X 'gomodules.AppBaseName=${app_basename}'"
 
+# find MSBuild.exe
+if [[ "$os_name" == "MINGW64_NT"* ]]; then
+  suggested_msbuild_path=$("C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products '*' -requires "Microsoft.Component.MSBuild" -find 'MSBuild\**\Bin\MSBuild.exe')
+  if [ -z "$suggested_msbuild_path" ]; then
+    msbuild_path="MSBuild.exe"
+  else
+    msbuild_path="$suggested_msbuild_path"
+  fi
+fi
+
 function copy_to_dist () {
   mkdir dist
   cp -r ./core ./dist/
@@ -40,20 +50,20 @@ function build_portable_runtime () {
 }
 
 function build_container_runtime () {
-  echo "Building container runtime"
+  echo "Building container runtime..."
   if [[ "$os_name" == "Linux" ]]; then
     cd src/container-linux
     go build -ldflags="${go_default_ldflags} -s -w"
     cp ./container-linux ../../dist/core/container-linux
-    cd ../..
   elif [[ "$os_name" == "MINGW64_NT"* ]]; then
-    # Reserved for future use
-    :
+    cd src/libportable-ng
+    "$msbuild_path" "//p:Configuration=Release;Platform=x64" libportable-ng.sln
+    cp ./x64/Release/libportable-ng.dll ../../dist/core/libportable-ng.dll
   else
     echo "Unsupported OS: $os_name"
     false
   fi
-  # cd ../..
+  cd ../..
 }
 
 function unzip_omni () {
@@ -158,9 +168,11 @@ function integration_portable_config () {
 function integration_portable_modules () {
   echo "Integrating portable modules..."
   if [[ "$os_name" == "MINGW64_NT"* ]]; then
-    ./src/utils/setdll64.exe //d:portable64.dll ./dist/core/mozglue.dll
-    cp ./src/utils/portable64.dll ./dist/core/portable64.dll
-    cp ./src/utils/libportable_LICENSE ./dist/core/libportable_LICENSE
+    cp ./src/utils/setdll64.exe ./dist/core/setdll64.exe
+    cd ./dist/core
+    ./setdll64.exe //d:libportable-ng.dll mozglue.dll
+    rm ./setdll64.exe
+    cd ../..
   elif [[ "$os_name" == "Linux" ]]; then
     # Reserved for future use
     :
@@ -192,7 +204,14 @@ function remove_unused_files () {
 
 function remove_cache () {
   echo "Removing caches..."
-  rm -rf ./dist/cache
+  if [[ "$os_name" == "MINGW64_NT"* ]]; then
+    rm -rf ./dist/data/Cache
+  elif [[ "$os_name" == "Linux" ]]; then
+    rm -rf ./dist/data/.cache
+  else
+    echo "Unsupported OS: $os_name"
+    false
+  fi
 }
 
 if [[ "$1" == "" ]]; then

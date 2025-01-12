@@ -76,8 +76,8 @@ func container_child() error {
 
 	exe_target := filepath.Join(exe_dir, gomodules.AppName)
 
-	profile_dir := filepath.Join(exe_dir_parent, "data", "profiles")
-	cache_dir := filepath.Join(exe_dir_parent, "data", "cache")
+	profile_dir := filepath.Join(exe_dir_parent, "data", "."+gomodules.AppName)
+	cache_dir := filepath.Join(exe_dir_parent, "data", ".cache")
 	ns_profile_dir := filepath.Join(homedir, "."+gomodules.AppName)
 	ns_cache_dir := filepath.Join(homedir, ".cache")
 
