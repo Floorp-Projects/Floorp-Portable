@@ -37,9 +37,6 @@ jobs:
         check-latest: true
         cache-dependency-path: "**/*.sum"
 
-    - name: Add msbuild to PATH
-      uses: microsoft/setup-msbuild@v2
-
     - name: Build
       run: |
         curl.exe -L "https://github.com/Floorp-Projects/Floorp/releases/latest/download/floorp-win64.installer.exe" -o floorp-win64.installer.exe
