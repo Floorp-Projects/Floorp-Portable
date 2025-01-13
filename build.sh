@@ -4,8 +4,9 @@ os_name=$(uname)
 
 app_name="${PORTABLE_APP_NAME:-floorp}"
 app_basename="${PORTABLE_APP_BASENAME:-Floorp}"
+profile="${PORTABLE_APP_PROFLE:-Floorp}"
 
-go_default_ldflags="-X 'gomodules.AppName=${app_name}' -X 'gomodules.AppBaseName=${app_basename}'"
+go_default_ldflags="-X 'gomodules.AppName=${app_name}' -X 'gomodules.AppBaseName=${app_basename}' -X 'gomodules.Profile=${profile}'"
 
 # find MSBuild.exe
 if [[ "$os_name" == "MINGW64_NT"* ]]; then
