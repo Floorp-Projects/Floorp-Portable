@@ -66,11 +66,6 @@ Linux
 The files or directories required to run are those in the `dist` directory.
 
 
-## Container Runtime
-Windows: [libportable](https://github.com/adonais/libportable)
-Linux: [Original](./src/container-linux)
-
-
 ## Contributions
 
 ### Translate
