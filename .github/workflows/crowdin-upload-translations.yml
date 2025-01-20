@@ -5,9 +5,33 @@ on:
   push:
     branches: [ develop ]
     paths:
-      - l10n/**
-    paths-ignore:
-      - l10n/en-US.json
+      - l10n/ar.json
+      - l10n/cs.json
+      - l10n/da.json
+      - l10n/de.json
+      - l10n/el.json
+      - l10n/en-GB.json
+      - l10n/es-ES.json
+      - l10n/fr.json
+      - l10n/hu.json
+      - l10n/id.json
+      - l10n/it.json
+      - l10n/ja.json
+      - l10n/ko.json
+      - l10n/lt.json
+      - l10n/nl.json
+      - l10n/nn-NO.json
+      - l10n/pl.json
+      - l10n/pt-BR.json
+      - l10n/pt-PT.json
+      - l10n/ru.json
+      - l10n/sv-SE.json
+      - l10n/th.json
+      - l10n/tr.json
+      - l10n/uk.json
+      - l10n/vi.json
+      - l10n/zh-CN.json
+      - l10n/zh-TW.json
 
 concurrency:
   group: crowdin-gh-actions
