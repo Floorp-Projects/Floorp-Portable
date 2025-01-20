@@ -34,7 +34,7 @@ const documentObserver = {
           "pageshow",
           async function() {
             const button = document_.getElementById("checkForUpdatesButton");
-            if (Services.prefs.getBoolPref("floorp.portable.update.enabled")) {
+            if (Services.prefs.getBoolPref("portable.update.enabled")) {
               button.addEventListener("command", function() {
                 Services.obs.notifyObservers({ latestNotify: true }, "do-portable-update");
               });
@@ -99,12 +99,12 @@ const documentObserver = {
           async () => {
             await window_.gMainPane.initialized;
 
-            const portableUpdatePref = "floorp.portable.update.auto";
+            const portableUpdatePref = "portable.update.auto";
             const updateApp = document_.getElementById("updateApp");
             const portableUpdateOption = document_.createXULElement("checkbox");
             portableUpdateOption.setAttribute(
               "label",
-              (await localizer).mustLocalize("bm-pref-floorp-portable-update-auto-enabled")
+              (await localizer).mustLocalize("bm-pref-portable-update-auto-enabled")
             );
             portableUpdateOption.checked = Services.prefs.getBoolPref(portableUpdatePref, false);
             Services.prefs.addObserver(portableUpdatePref, function () {
