@@ -1,20 +1,20 @@
-name: Synchronize with Crowdin
+name: Synchronize translations to Crowdin
 
 on:
   workflow_dispatch:
   push:
     branches: [ develop ]
     paths:
+      - l10n/**
+    paths-ignore:
       - l10n/en-US.json
-    schedule:
-      - cron:  '0 */6 * * *'
 
 concurrency:
   group: crowdin-gh-actions
   cancel-in-progress: false
 
 jobs:
-  synchronize-with-crowdin:
+  synchronize-translations-to-crowdin:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
@@ -46,14 +46,11 @@ jobs:
       with:
         config: "crowdin.yml"
         upload_sources: true
-        upload_translations: false
-        download_translations: true
-        skip_untranslated_strings: true
-        export_only_approved: true
-        localization_branch_name: l10n_develop
-        create_pull_request: true
-        pull_request_title: "New Crowdin Translations"
-        pull_request_base_branch_name: "develop"
+        upload_translations: true
+        auto_approve_imported: true
+        download_sources: false
+        download_translations: false
+        create_pull_request: false
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
