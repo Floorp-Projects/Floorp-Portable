@@ -6,7 +6,6 @@
   "native-updater-failed-to-replace-with-new-file-description": "Не вдалося замінити новим файлом.",
   "native-updater-failed-to-delete-old-file-description": "Не вдалося видалити старий файл.",
   "native-updater-failed-to-prepare-for-runtime-update-description": "Не вдалося підготувати середовище виконання до оновлення.",
-  "bm-pref-floorp-portable-update-auto-enabled": "Автоматично перевіряти оновлення до { -brand-short-name }.",
   "bm-updater-found-notify-title": "Знайдено оновлення!",
   "bm-updater-found-notify-message": "Завантажуємо оновлення...",
   "bm-updater-ready-notify-title": "Оновлення готові до встановлення!",
