@@ -141,7 +141,7 @@ function apply_patch () {
   app_constants_original=$(cat ./omni_tmp_root/modules/AppConstants.sys.mjs)
   rm ./omni_tmp_root/modules/AppConstants.sys.mjs
   while read line; do
-    if [[ "$line" == '<!-- insert AppConstants.sys.mjs code -->' ]]; then
+    if [[ "$line" == '/* insert AppConstants.sys.mjs code */' ]]; then
       while read line_orig; do
         echo "$line_orig" >> ./omni_tmp_root/modules/AppConstants.sys.mjs
       done <<< "$app_constants_original"
@@ -149,6 +149,7 @@ function apply_patch () {
       echo "$line" >> ./omni_tmp_root/modules/AppConstants.sys.mjs
     fi
   done <<< "$app_constants"
+  sed -i 's/export var AppConstants/const AppConstantsOriginal/' ./omni_tmp_root/modules/AppConstants.sys.mjs
 }
 
 function integration_portable_config () {
