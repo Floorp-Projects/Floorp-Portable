@@ -5,6 +5,7 @@
 
 import { ExtensionCommon } from "resource://gre/modules/ExtensionCommon.sys.mjs";
 import { PortableI18nL10nLoader, PortableI18nLocalizer } from "resource:///modules/portable/PortableI18nUtils.sys.mjs";
+import PortableEnvironment from "resource:///modules/portable/PortableEnvironment.sys.mjs";
 
 const localizer = (async() => {
   const locales = await PortableI18nL10nLoader.load();
@@ -117,6 +118,34 @@ const documentObserver = {
           },
           { once: true },
         );
+      } else if (
+        uriWithoutQueryRef.startsWith("chrome://noraneko-settings/")
+      ) {
+        const interval = window_.setInterval(async () => {
+          if (window_.location.pathname  == "/about") {
+            const aboutSectionTitle = document_.querySelector('img[alt="logo"][src="chrome://branding/content/about-logo@2x.png"] + p');
+            const aboutSectionVersionInfo = document_.querySelector('div:has(>img[alt="logo"][src="chrome://branding/content/about-logo@2x.png"]) + p');
+            if (!aboutSectionTitle || !aboutSectionVersionInfo) {
+              return;
+            }
+
+            aboutSectionTitle.innerText = (await localizer).mustLocalize("bm-original-pref-about-section-title");
+
+            if (!document_.querySelector("#portable-version-info")) {
+              const portableVersionInfo = document_.createElement("p");
+              portableVersionInfo.id = "portable-version-info";
+
+              const version = await PortableEnvironment.getPortableVersion();
+              portableVersionInfo.innerText = (await localizer).mustLocalize("bm-original-pref-about-section-portable-version-info", { version });
+
+              aboutSectionVersionInfo.insertAdjacentElement("beforebegin", portableVersionInfo);
+            }
+          }
+        }, 1);
+
+        window_.addEventListener("unload", () => {
+          window_.clearInterval(interval);
+        });
       }
     }
   },
