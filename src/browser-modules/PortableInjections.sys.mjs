@@ -128,7 +128,9 @@ const documentObserver = {
             const cloned = aboutTabLink.cloneNode(true);
             cloned.id = "portable-tab-link";
             cloned.querySelector("div > p").innerText = "Portable Settings";
-            cloned.addEventListener("click", () => {
+            cloned.addEventListener("click", (e) => {
+              e.preventDefault();
+
               if (window_.location.pathname != "/portable") {
                 window_.history.pushState({}, "", "/portable");
                 // invoke React Router handler
