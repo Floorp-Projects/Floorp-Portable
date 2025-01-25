@@ -143,7 +143,7 @@ const documentObserver = {
 
           if (window_.location.pathname  == "/about") {
             const aboutSectionTitle = document_.querySelector('img[alt="logo"][src="chrome://branding/content/about-logo@2x.png"] + p');
-            const aboutSectionVersionInfo = document_.querySelector('div:has(>img[alt="logo"][src="chrome://branding/content/about-logo@2x.png"]) + p');
+            const aboutSectionVersionInfo = document_.querySelector('div:has(> img[alt="logo"][src="chrome://branding/content/about-logo@2x.png"]) + p');
             if (!aboutSectionTitle || !aboutSectionVersionInfo) {
               return;
             }
@@ -163,7 +163,7 @@ const documentObserver = {
 
           if (window_.location.pathname  == "/portable") {
             if (!document_.querySelector("#portable-content")) {
-              const contentParent = document_.querySelector('div:has(>div>a[href="/about"]) + div > div');
+              const contentParent = document_.querySelector('div:has(> div > a[href="/about"]) + div > div');
 
               const portableContent = document_.createElement("div");
               portableContent.id = "portable-content";
