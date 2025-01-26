@@ -180,11 +180,11 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ulReasonForCall, LPVOID lpReserved)
             return FALSE;
         }
 
-        LPVOID pSHGetKnownFolderPath = GetProcAddress(hShell32, "SHGetKnownFolderPath");
+        LPVOID pSHGetKnownFolderPath = (LPVOID) GetProcAddress(hShell32, "SHGetKnownFolderPath");
         if (!pSHGetKnownFolderPath) {
             return FALSE;
         }
-        if (MH_CreateHook(pSHGetKnownFolderPath, &HookedSHGetKnownFolderPath, reinterpret_cast<LPVOID*>(&pOriginalSHGetKnownFolderPath)) != MH_OK) {
+        if (MH_CreateHook(pSHGetKnownFolderPath, (LPVOID) &HookedSHGetKnownFolderPath, reinterpret_cast<LPVOID*>(&pOriginalSHGetKnownFolderPath)) != MH_OK) {
             return FALSE;
         }
         if (MH_EnableHook(pSHGetKnownFolderPath) != MH_OK) {
@@ -198,66 +198,66 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ulReasonForCall, LPVOID lpReserved)
             return FALSE;
         }
 
-        LPVOID pRegCreateKeyExW = GetProcAddress(hAdvapi32, "RegCreateKeyExW");
+        LPVOID pRegCreateKeyExW = (LPVOID) GetProcAddress(hAdvapi32, "RegCreateKeyExW");
         if (!pRegCreateKeyExW) {
             return FALSE;
         }
-        if (MH_CreateHook(pRegCreateKeyExW, &HookedRegCreateKeyExW, reinterpret_cast<LPVOID*>(&pOriginalRegCreateKeyExW)) != MH_OK) {
+        if (MH_CreateHook(pRegCreateKeyExW, (LPVOID) &HookedRegCreateKeyExW, reinterpret_cast<LPVOID*>(&pOriginalRegCreateKeyExW)) != MH_OK) {
             return FALSE;
         }
         if (MH_EnableHook(pRegCreateKeyExW) != MH_OK) {
             return FALSE;
         }
 
-        LPVOID pRegDeleteKeyW = GetProcAddress(hAdvapi32, "RegDeleteKeyW");
+        LPVOID pRegDeleteKeyW = (LPVOID) GetProcAddress(hAdvapi32, "RegDeleteKeyW");
         if (!pRegDeleteKeyW) {
             return FALSE;
         }
-        if (MH_CreateHook(pRegDeleteKeyW, &HookedRegDeleteKeyW, reinterpret_cast<LPVOID*>(&pOriginalRegDeleteKeyW)) != MH_OK) {
+        if (MH_CreateHook(pRegDeleteKeyW, (LPVOID) &HookedRegDeleteKeyW, reinterpret_cast<LPVOID*>(&pOriginalRegDeleteKeyW)) != MH_OK) {
             return FALSE;
         }
         if (MH_EnableHook(pRegDeleteKeyW) != MH_OK) {
             return FALSE;
         }
 
-        LPVOID pRegDeleteKeyExW = GetProcAddress(hAdvapi32, "RegDeleteKeyExW");
+        LPVOID pRegDeleteKeyExW = (LPVOID) GetProcAddress(hAdvapi32, "RegDeleteKeyExW");
         if (!pRegDeleteKeyExW) {
             return FALSE;
         }
-        if (MH_CreateHook(pRegDeleteKeyExW, &HookedRegDeleteKeyExW, reinterpret_cast<LPVOID*>(&pOriginalRegDeleteKeyExW)) != MH_OK) {
+        if (MH_CreateHook(pRegDeleteKeyExW, (LPVOID) &HookedRegDeleteKeyExW, reinterpret_cast<LPVOID*>(&pOriginalRegDeleteKeyExW)) != MH_OK) {
             return FALSE;
         }
         if (MH_EnableHook(pRegDeleteKeyExW) != MH_OK) {
             return FALSE;
         }
 
-        LPVOID pRegSetKeyValueW = GetProcAddress(hAdvapi32, "RegSetKeyValueW");
+        LPVOID pRegSetKeyValueW = (LPVOID) GetProcAddress(hAdvapi32, "RegSetKeyValueW");
         if (!pRegSetKeyValueW) {
             return FALSE;
         }
-        if (MH_CreateHook(pRegSetKeyValueW, &HookedRegSetKeyValueW, reinterpret_cast<LPVOID*>(&pOriginalRegSetKeyValueW)) != MH_OK) {
+        if (MH_CreateHook(pRegSetKeyValueW, (LPVOID) &HookedRegSetKeyValueW, reinterpret_cast<LPVOID*>(&pOriginalRegSetKeyValueW)) != MH_OK) {
             return FALSE;
         }
         if (MH_EnableHook(pRegSetKeyValueW) != MH_OK) {
             return FALSE;
         }
 
-        LPVOID pRegSetValueW = GetProcAddress(hAdvapi32, "RegSetValueW");
+        LPVOID pRegSetValueW = (LPVOID) GetProcAddress(hAdvapi32, "RegSetValueW");
         if (!pRegSetValueW) {
             return FALSE;
         }
-        if (MH_CreateHook(pRegSetValueW, &HookedRegSetValueW, reinterpret_cast<LPVOID*>(&pOriginalRegSetValueW)) != MH_OK) {
+        if (MH_CreateHook(pRegSetValueW, (LPVOID) &HookedRegSetValueW, reinterpret_cast<LPVOID*>(&pOriginalRegSetValueW)) != MH_OK) {
             return FALSE;
         }
         if (MH_EnableHook(pRegSetValueW) != MH_OK) {
             return FALSE;
         }
 
-        LPVOID pRegSetValueExW = GetProcAddress(hAdvapi32, "RegSetValueExW");
+        LPVOID pRegSetValueExW = (LPVOID) GetProcAddress(hAdvapi32, "RegSetValueExW");
         if (!pRegSetValueExW) {
             return FALSE;
         }
-        if (MH_CreateHook(pRegSetValueExW, &HookedRegSetValueExW, reinterpret_cast<LPVOID*>(&pOriginalRegSetValueExW)) != MH_OK) {
+        if (MH_CreateHook(pRegSetValueExW, (LPVOID) &HookedRegSetValueExW, reinterpret_cast<LPVOID*>(&pOriginalRegSetValueExW)) != MH_OK) {
             return FALSE;
         }
         if (MH_EnableHook(pRegSetValueExW) != MH_OK) {

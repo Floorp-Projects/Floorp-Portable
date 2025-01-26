@@ -21,7 +21,7 @@
     * Memory: 8GB+
     * Disk Space: At least 4GB of free disk space.
     * Softwares: MSYS2
-    * Packages: mingw-w64-x86_64-gcc, mingw-w64-x86_64-go, git, unzip
+    * Packages: make, mingw-w64-x86_64-gcc, mingw-w64-x86_64-go, git, unzip
   * Linux
     * Architecture: x86_64, aarch64
     * Memory: 8GB+
