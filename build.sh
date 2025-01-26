@@ -8,16 +8,6 @@ profile="${PORTABLE_APP_PROFLE:-Floorp}"
 
 go_default_ldflags="-X 'gomodules.AppName=${app_name}' -X 'gomodules.AppBaseName=${app_basename}' -X 'gomodules.Profile=${profile}'"
 
-# find MSBuild.exe
-if [[ "$os_name" == "MINGW64_NT"* ]]; then
-  suggested_msbuild_path=$("C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products '*' -requires "Microsoft.Component.MSBuild" -find 'MSBuild\**\Bin\MSBuild.exe')
-  if [ -z "$suggested_msbuild_path" ]; then
-    msbuild_path="MSBuild.exe"
-  else
-    msbuild_path="$suggested_msbuild_path"
-  fi
-fi
-
 function copy_to_dist () {
   mkdir dist
   cp -r ./core ./dist/
@@ -58,8 +48,8 @@ function build_container_runtime () {
     cp ./container-linux ../../dist/core/container-linux
   elif [[ "$os_name" == "MINGW64_NT"* ]]; then
     cd src/libportable-ng
-    "$msbuild_path" "//p:Configuration=Release;Platform=x64" libportable-ng.sln
-    cp ./x64/Release/libportable-ng.dll ../../dist/core/libportable-ng.dll
+    make
+    cp ./libportable-ng/libportable-ng.dll ../../dist/core/libportable-ng.dll
   else
     echo "Unsupported OS: $os_name"
     false
