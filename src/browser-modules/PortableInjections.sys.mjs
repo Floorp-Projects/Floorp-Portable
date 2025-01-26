@@ -180,7 +180,7 @@ const documentObserver = {
           } else {
             document_.querySelector("#portable-content")?.remove();
           }
-        }, 1);
+        }, 0);
 
         window_.addEventListener("unload", () => {
           window_.clearInterval(interval);
