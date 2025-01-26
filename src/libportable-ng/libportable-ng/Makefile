@@ -7,14 +7,14 @@ INCDIR := -I../minhook/include
 LIBDIR := -L../minhook
 LIBS := -lMinHook -lshlwapi -luuid
 CFLAGS := -DUNICODE
-LDFLAGS :=
+LDFLAGS := -s -static-libgcc
 
 all: $(TARGET)
 
 -include $(DEPS)
 
 $(TARGET): $(OBJS)
-	$(CXX) -o $@ -shared $^ $(LIBDIR) $(LIBS)
+	$(CXX) -o $@ -shared $(LDFLAGS) $^ $(LIBDIR) $(LIBS)
 
 .cpp.o:
 	$(CXX) -o $@ -c -MMD -MP $(CFLAGS) $(INCDIR) $<
