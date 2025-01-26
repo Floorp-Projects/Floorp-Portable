@@ -167,7 +167,13 @@ const documentObserver = {
 
               const portableContent = document_.createElement("div");
               portableContent.id = "portable-content";
-              portableContent.innerText = "test";
+
+              const iframe = document_.createElement("iframe");
+              iframe.src = "resource:///modules/portable/portable-settings/index.html";
+              iframe.style.width = "100%";
+              iframe.style.height = "100%";
+
+              portableContent.appendChild(iframe);
 
               contentParent.appendChild(portableContent);
             }
