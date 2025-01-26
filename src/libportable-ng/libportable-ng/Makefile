@@ -7,7 +7,7 @@ INCDIR := -I../minhook/include
 LIBDIR := -L../minhook
 LIBS := -lMinHook -lshlwapi -luuid
 CFLAGS := -DUNICODE
-LDFLAGS := -s -static-libgcc
+LDFLAGS := -s -static-libgcc -static-libstdc++
 
 all: $(TARGET)
 
