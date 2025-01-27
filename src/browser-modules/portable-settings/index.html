@@ -4,11 +4,12 @@
 
 <head>
   <link rel="stylesheet" href="resource:///modules/portable/portable-settings/index.css">
+  <script src="resource:///modules/portable/portable-settings/index.js"></script>
   <script src="resource:///modules/portable/tailwindcss/index.mjs"></script>
   <style type="text/tailwindcss">
     @layer components {
       .card {
-        @apply rounded-md border px-[20px] py-[15px] flex flex-col w-full border-[#e2e8f0] dark:border-[#ffffff]/16;
+        @apply rounded-md border px-[20px] py-[15px] flex flex-col border-[#e2e8f0] dark:border-[#ffffff]/16;
       }
       .card-header {
         @apply flex items-center gap-2 mb-2;
@@ -42,7 +43,7 @@
   <div class="w-full max-w-[700px] mx-auto flex flex-col items-center py-8 box-border">
     <p class="text-3xl mb-10 leading-normal">Portable Settings</p>
     <p class="mb-8">description</p>
-    <div class="flex flex-col gap-6">
+    <div class="flex flex-col gap-6 w-full">
       <div class="card">
         <div class="card-header">
           <p class="card-header-title">Basic Settings</p>
@@ -51,8 +52,8 @@
           <p class="card-body-subtitle">Updates</p>
           <div class="card-body-item">
             <div class="card-body-item-main">
-              <label class="card-body-item-main-title">Automatically check for updates to Floorp Portable</label>
-              <label><input type="checkbox"></label>
+              <label class="card-body-item-main-title" data-l10n-id="bm-pref-portable-update-auto-enabled"></label>
+              <label><input type="checkbox" data-preference="portable.update.auto"></label>
             </div>
             <div class="card-body-item-description">description</div>
           </div>

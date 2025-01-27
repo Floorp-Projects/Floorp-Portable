@@ -24,6 +24,10 @@ export class NoraPortableSettingsChild extends RemotePageChild {
     Cu.exportFunction(this.portableLocalize.bind(this), window, {
       defineAs: "portableLocalize",
     });
+
+    Cu.exportFunction(this.notifyBrowserObservers.bind(this), window, {
+      defineAs: "notifyBrowserObservers",
+    });
   }
 
   getBrowserPref({ prefName, prefType, prefDefaultValue }) {
@@ -63,6 +67,15 @@ export class NoraPortableSettingsChild extends RemotePageChild {
     }));
   }
 
+  #notifyBrowserObserversResolvers = [];
+
+  notifyBrowserObservers(options) {
+    return this.wrapPromise(new Promise((resolve) => {
+      this.#notifyBrowserObserversResolvers.push(resolve);
+      this.sendAsyncMessage("NotifyObservers", options);
+    }));
+  }
+
   async receiveMessage(message) {
     switch (message.name) {
       case "SetPref": {
@@ -73,6 +86,11 @@ export class NoraPortableSettingsChild extends RemotePageChild {
       case "PortableLocalize": {
         const resolver = this.#portableLocalizeResolvers.shift();
         resolver?.(message.data);
+        break;
+      }
+      case "NotifyObservers": {
+        const resolver = this.#notifyBrowserObserversResolvers.shift();
+        resolver?.();
         break;
       }
     }

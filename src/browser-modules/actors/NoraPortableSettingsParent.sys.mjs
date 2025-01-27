@@ -40,6 +40,10 @@ export class NoraPortableSettingsParent extends JSWindowActorParent {
         const localized = this.#localizer.localize(data.id, data.args);
         this.sendAsyncMessage("PortableLocalize", localized);
         break;
+      case "NotifyObservers":
+        Services.obs.notifyObservers(data.data, data.topic);
+        this.sendAsyncMessage("NotifyObservers");
+        break;
     }
   }
 }
