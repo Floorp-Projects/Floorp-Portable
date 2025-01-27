@@ -3,11 +3,30 @@
 <html>
 
 <head>
-
+  <link rel="stylesheet" href="resource:///modules/portable/portable-settings/index.css">
+  <script src="resource:///modules/portable/tailwindcss/index.mjs"></script>
 </head>
 
 <body>
-    test
+  <div class="w-full max-w-[700px] mx-auto flex flex-col items-center py-8 box-border">
+    <p class="text-3xl mb-10 leading-normal">Portable Settings</p>
+    <p class="mb-8">description</p>
+    <div class="rounded-md border px-[20px] py-[15px] flex flex-col w-full border-[#e2e8f0] dark:border-[#ffffff]/16">
+      <div class="flex items-center gap-2 mb-2">
+        <p class="leading-[1.75em] text-[1.375rem]">Basic Settings</p>
+      </div>
+      <div class="flex flex-col items-stretch gap-4 pl-[10px]">
+        <p class="text-lg">Updates</p>
+        <div class="w-full">
+          <div class="flex justify-between">
+            <label class="mr-3 mb-2 block">Automatically check for updates to Floorp Portable</label>
+            <label><input type="checkbox"></label>
+          </div>
+          <div class="text-sm leading-normal text-[#4a5568] dark:text-[#ffffff]/48">description</div>
+        </div>
+      </div>
+    </div>
+  </div>
 </body>
 
 </html>
