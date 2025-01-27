@@ -20,6 +20,10 @@ export class NoraPortableSettingsChild extends RemotePageChild {
     Cu.exportFunction(this.setBrowserPref.bind(this), window, {
       defineAs: "setBrowserPref",
     });
+
+    Cu.exportFunction(this.portableLocalize.bind(this), window, {
+      defineAs: "portableLocalize",
+    });
   }
 
   getBrowserPref({ prefName, prefType, prefDefaultValue }) {
@@ -50,12 +54,27 @@ export class NoraPortableSettingsChild extends RemotePageChild {
     }));
   }
 
+  #portableLocalizeResolvers = [];
+
+  portableLocalize(options) {
+    return this.wrapPromise(new Promise((resolve) => {
+      this.#portableLocalizeResolvers.push(resolve);
+      this.sendAsyncMessage("PortableLocalize", options);
+    }));
+  }
+
   async receiveMessage(message) {
     switch (message.name) {
-      case "SetPref":
+      case "SetPref": {
         const resolver = this.#setBrowserPrefResolvers.shift();
         resolver?.();
         break;
+      }
+      case "PortableLocalize": {
+        const resolver = this.#portableLocalizeResolvers.shift();
+        resolver?.(message.data);
+        break;
+      }
     }
   }
 }
