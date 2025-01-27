@@ -171,7 +171,10 @@ const documentObserver = {
               const iframe = document_.createElement("iframe");
               iframe.src = "resource:///modules/portable/portable-settings/index.html";
               iframe.style.width = "100%";
-              iframe.style.height = "100%";
+              // iframe.style.height = "100%";
+              iframe.addEventListener("load", () => {
+                iframe.style.height = `${iframe.contentWindow.document.body.scrollHeight}px`;
+              });
 
               portableContent.appendChild(iframe);
 
