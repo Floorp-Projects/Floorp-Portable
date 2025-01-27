@@ -37,7 +37,7 @@ export class NoraPortableSettingsParent extends JSWindowActorParent {
             locales,
           );
         }
-        const localized = this.#localizer.mustLocalize(data.id, data.args);
+        const localized = this.#localizer.localize(data.id, data.args);
         this.sendAsyncMessage("PortableLocalize", localized);
         break;
     }
