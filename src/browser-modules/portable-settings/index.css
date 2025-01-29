@@ -52,3 +52,7 @@ body {
 .toggle:has(> input:checked) > .toggle-inner-bg {
   background-color: #3182f6;
 }
+
+.toggle:has(> input:focus-visible) > .toggle-inner-bg {
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.6);
+}
