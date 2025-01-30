@@ -238,4 +238,18 @@ elif [[ "$1" == "create-patch" ]]; then
   git add .
   git commit -m "initial"
   cd ..
+elif [[ "$1" == "clean" ]]; then
+  rm -rf dist
+  if [[ "$os_name" == "Linux" ]]; then
+    rm -f ./src/runtime/portable-runtime
+    rm -f ./src/container-linux/container-linux
+  elif [[ "$os_name" == "MINGW64_NT"* ]]; then
+    rm -f ./src/runtime/portable-runtime.exe
+    cd src/libportable-ng
+    make clean
+    cd ../..
+  else
+    echo "Unsupported OS: $os_name"
+    false
+  fi
 fi
