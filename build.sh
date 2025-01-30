@@ -77,7 +77,7 @@ function zip_omni () {
     rm ./dist/core/omni.ja
     cd omni_tmp_root
     if [[ "$os_name" == "MINGW64_NT"* ]]; then
-      7z a -mx=0 -mtm- -tzip ../dist/core/omni.ja *
+      ../src/utils/7za.exe a -mx=0 -mtm- -tzip ../dist/core/omni.ja *
     else
       zip -0DXqr ../dist/core/omni.ja *
     fi
@@ -86,7 +86,7 @@ function zip_omni () {
     rm ./dist/core/browser/omni.ja
     cd omni_tmp_browser
     if [[ "$os_name" == "MINGW64_NT"* ]]; then
-      7z a -mx=0 -mtm- -tzip ../dist/core/browser/omni.ja *
+      ../src/utils/7za.exe a -mx=0 -mtm- -tzip ../dist/core/browser/omni.ja *
     else
       zip -0DXqr ../dist/core/browser/omni.ja *
     fi
@@ -100,12 +100,18 @@ function zip_omni () {
 function apply_patch () {
   echo "Applying patches..."
 
-  type jq > /dev/null
+  if [[ "$os_name" == "MINGW64_NT"* ]]; then
+    jq_path="./src/utils/jq.exe"
+  else
+    jq_path="jq"
+  fi
+
+  type $jq_path > /dev/null
   type seq > /dev/null
 
-  for i in `seq $(cat ./src/patches.json | jq -r "length")`; do
-    patch_type=$(cat ./src/patches.json | jq -r ".[$(($i - 1))].type")
-    patch_filename=$(cat ./src/patches.json | jq -r ".[$(($i - 1))].filename")
+  for i in `seq $(cat ./src/patches.json | $jq_path -r "length")`; do
+    patch_type=$(cat ./src/patches.json | $jq_path -r ".[$(($i - 1))].type")
+    patch_filename=$(cat ./src/patches.json | $jq_path -r ".[$(($i - 1))].filename")
 
     echo "Applying $patch_filename (type: $patch_type) patch..."
 
