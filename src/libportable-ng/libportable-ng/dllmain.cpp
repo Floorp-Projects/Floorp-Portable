@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include <windows.h>
 #include <shlobj.h>
 #include <shlwapi.h>
@@ -64,6 +64,9 @@ LSTATUS WINAPI HookedRegCreateKeyExW(
     PHKEY phkResult,
     LPDWORD lpdwDisposition
 ) {
+    if (wcslen(lpSubKey) == 0) {
+        return pOriginalRegCreateKeyExW(hKey, lpSubKey, Reserved, lpClass, dwOptions, samDesired, lpSecurityAttributes, phkResult, lpdwDisposition);
+    }
     return ERROR_REGISTRY_IO_FAILED;
 };
 
