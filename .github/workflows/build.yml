@@ -40,7 +40,7 @@ jobs:
     - name: Build
       run: |
         curl.exe -L "https://github.com/Floorp-Projects/Floorp/releases/latest/download/floorp-win64.installer.exe" -o floorp-win64.installer.exe
-        ./src/utils/7za.exe x floorp-win64.installer.exe -ir!core
+        7z.exe x floorp-win64.installer.exe -ir!core
 
         ./build.bat
       env:
