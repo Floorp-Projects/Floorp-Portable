@@ -100,17 +100,12 @@ jobs:
           ./floorp-portable-linux-x86_64.tar.zst
 
   build-linux-aarch64:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04-arm
 
     steps:
     - uses: actions/checkout@v4
       with:
         submodules: recursive
-
-    - name: Install
-      run: |
-        sudo apt update
-        sudo apt install -y binutils-aarch64-linux-gnu gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
 
     - uses: actions/setup-go@v5
       with:
@@ -132,9 +127,6 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GOARCH: arm64
-        CGO_ENABLED: 1
-        CC: aarch64-linux-gnu-gcc
-        CXX: aarch64-linux-gnu-g++
 
     - name: Packaging
       run: |
