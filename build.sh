@@ -180,8 +180,6 @@ function remove_unused_files () {
     rm -f ./dist/core/updater.exe
     rm -f ./dist/core/default-browser-agent.exe
     rm -rf ./dist/core/uninstall
-    rm -f ./dist/core/maintenanceservice.exe
-    rm -f ./dist/core/maintenanceservice_installer.exe
   elif [[ "$os_name" == "Linux" ]]; then
     rm  -f ./dist/core/updater
   else
