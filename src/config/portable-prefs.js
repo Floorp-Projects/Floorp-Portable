@@ -1,7 +1,7 @@
 // Optimize for portable version
-pref("floorp.portable.enabled", true);
-pref("floorp.portable.update.enabled", true);
-pref("floorp.portable.update.auto", true);
+pref("portable.enabled", true);
+pref("portable.update.enabled", true);
+pref("portable.update.auto", true);
 
 pref("app.update.auto", false, locked);
 pref("app.update.background.enabled", false, locked);

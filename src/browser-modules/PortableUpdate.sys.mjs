@@ -18,9 +18,9 @@ const AlertsService = Cc["@mozilla.org/alerts-service;1"].getService(
 );
 
 const API_BASE_URL =
-  !Services.prefs.getBoolPref("floorp.portable.update.develop.enabled", false) ?
+  !Services.prefs.getBoolPref("portable.update.develop.enabled", false) ?
     "https://floorp-update.ablaze.one" :
-    Services.prefs.getStringPref("floorp.portable.update.develop.url", "");
+    Services.prefs.getStringPref("portable.update.develop.url", "");
 
 const platformInfo = ExtensionParent.PlatformInfo;
 const isWin = platformInfo.os === "win";
@@ -64,7 +64,7 @@ const PortableUpdateUtils = {
   },
 
   notifyAutoUpdate() {
-    if (!Services.prefs.getBoolPref("floorp.portable.update.auto", false)) {
+    if (!Services.prefs.getBoolPref("portable.update.auto", false)) {
       return;
     }
     Services.obs.notifyObservers({ latestNotify: false }, "do-portable-update");
@@ -95,7 +95,7 @@ const PortableUpdateUtils = {
 
     const data = await result.arrayBuffer();
     const signature = await result_sig.arrayBuffer();
-    if (!await verifyData(data, signature, "floorp-updates")) {
+    if (!await verifyData(data, signature, "portable-updates")) {
       console.warn("Verification failed");
       return {};
     }
@@ -124,9 +124,9 @@ const PortableUpdateUtils = {
       };
     }
 
-    const current_floorp_version = AppConstants.MOZ_APP_VERSION_DISPLAY;
+    const current_browser_version = AppConstants.MOZ_APP_VERSION_DISPLAY;
     const current_portable_version = await PortableEnvironment.getPortableVersion();
-    const current_version = `${current_floorp_version}-${current_portable_version}`;
+    const current_version = `${current_browser_version}-${current_portable_version}`;
 
     const isUpdateFound = result.version !== current_version;
 
@@ -139,19 +139,22 @@ const PortableUpdateUtils = {
 
   async applyRuntimeUpdate() {
     // Update portable runtime
+
+    const app_name = AppConstants.MOZ_APP_NAME;
+
     await IOUtils.remove(
       isWin
-        ? PathUtils.join(appDirParentDirPath, "floorp.exe")
-        : PathUtils.join(appDirParentDirPath, "floorp"),
+        ? PathUtils.join(appDirParentDirPath, `${app_name}.exe`)
+        : PathUtils.join(appDirParentDirPath, app_name),
     );
 
     await IOUtils.move(
       isWin
-        ? PathUtils.join(updateTmpDirPath, "floorp.exe")
-        : PathUtils.join(updateTmpDirPath, "floorp"),
+        ? PathUtils.join(updateTmpDirPath, `${app_name}.exe`)
+        : PathUtils.join(updateTmpDirPath, app_name),
       isWin
-        ? PathUtils.join(appDirParentDirPath, "floorp.exe")
-        : PathUtils.join(appDirParentDirPath, "floorp"),
+        ? PathUtils.join(appDirParentDirPath, `${app_name}.exe`)
+        : PathUtils.join(appDirParentDirPath, app_name),
     );
 
     return true;
@@ -243,7 +246,7 @@ const PortableUpdateUtils = {
     this.isUpdating = true;
 
     try {
-      if (!Services.prefs.getBoolPref("floorp.portable.update.enabled", false)) {
+      if (!Services.prefs.getBoolPref("portable.update.enabled", false)) {
         return;
       }
 

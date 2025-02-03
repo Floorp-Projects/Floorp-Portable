@@ -67,15 +67,15 @@ export class PortableI18nLocalizer {
     );
   }
 
-  replacePlaceHolder(value) {
+  replacePlaceHolder(value, args) {
     let result = value;
-    const placeholders = value.match(/(?<!\\){\s([0-9a-z-]+)\s(?<!\\)}/g);
+    const placeholders = value.match(/(?<!\\){\s(\$?[0-9a-z-]+)\s(?<!\\)}/g);
     if (!placeholders) {
       return value;
     }
     const placeholders_clean = Array.from(new Set(placeholders));
     for (const placeholder of placeholders_clean) {
-      const key = placeholder.match(/{\s([0-9a-z-]+)\s}/)[1];
+      const key = placeholder.match(/{\s(\$?[0-9a-z-]+)\s}/)[1];
 
       let target = "";
       switch (key) {
@@ -90,32 +90,39 @@ export class PortableI18nLocalizer {
           break;
       }
 
+      if (key.slice(0, 1) == "$") {
+        const key_body = key.slice(1);
+        if (args && args[key_body]) {
+          target = args[key_body];
+        }
+      }
+
       result = result.replaceAll(placeholder, target);
     }
     return result;
   }
 
-  localize(id) {
+  localize(id, args) {
     const selectedLocales = this.selectedLocales;
     const defaultLocale = this.defaultLocale;
 
     for (const selectedLocale of selectedLocales) {
       const value = this.localesData[selectedLocale]?.[id];
       if (value) {
-        return this.replacePlaceHolder(value);
+        return this.replacePlaceHolder(value, args);
       }
     }
 
     const value = this.localesData[defaultLocale]?.[id];
     if (value) {
-      return this.replacePlaceHolder(value);
+      return this.replacePlaceHolder(value, args);
     }
 
     return null;
   }
 
-  mustLocalize(id) {
-    const result = this.localize(id);
+  mustLocalize(id, args) {
+    const result = this.localize(id, args);
 
     if (!result) {
       throw new Components.Exception(`"${id}" key is not found`);

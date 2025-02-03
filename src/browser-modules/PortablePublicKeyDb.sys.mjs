@@ -13,7 +13,7 @@ const PUBLIC_KEY_CONFIGS = [
       { name: "ECDSA", hash: "SHA-384" }
     ],
     categories: [
-      "floorp-updates",
+      "portable-updates",
     ],
   }
 ];

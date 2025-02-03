@@ -22,11 +22,11 @@ export default class PortableEnvironment {
   static async isUpdated() {
     const nowVersion = await this.getPortableVersion();
     const oldVersionPref = Services.prefs.getStringPref(
-      "floorp.portable.startup.oldVersion",
+      "portable.startup.oldVersion",
       null,
     );
 
-    Services.prefs.setStringPref("floorp.portable.startup.oldVersion", nowVersion);
+    Services.prefs.setStringPref("portable.startup.oldVersion", nowVersion);
 
     return oldVersionPref !== nowVersion && !this.isFirstRun;
   };

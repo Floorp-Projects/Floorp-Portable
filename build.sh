@@ -8,16 +8,6 @@ profile="${PORTABLE_APP_PROFLE:-Floorp}"
 
 go_default_ldflags="-X 'gomodules.AppName=${app_name}' -X 'gomodules.AppBaseName=${app_basename}' -X 'gomodules.Profile=${profile}'"
 
-# find MSBuild.exe
-if [[ "$os_name" == "MINGW64_NT"* ]]; then
-  suggested_msbuild_path=$("C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products '*' -requires "Microsoft.Component.MSBuild" -find 'MSBuild\**\Bin\MSBuild.exe')
-  if [ -z "$suggested_msbuild_path" ]; then
-    msbuild_path="MSBuild.exe"
-  else
-    msbuild_path="$suggested_msbuild_path"
-  fi
-fi
-
 function copy_to_dist () {
   mkdir dist
   cp -r ./core ./dist/
@@ -58,8 +48,8 @@ function build_container_runtime () {
     cp ./container-linux ../../dist/core/container-linux
   elif [[ "$os_name" == "MINGW64_NT"* ]]; then
     cd src/libportable-ng
-    "$msbuild_path" "//p:Configuration=Release;Platform=x64" libportable-ng.sln
-    cp ./x64/Release/libportable-ng.dll ../../dist/core/libportable-ng.dll
+    make
+    cp ./libportable-ng/libportable-ng.dll ../../dist/core/libportable-ng.dll
   else
     echo "Unsupported OS: $os_name"
     false
@@ -87,7 +77,7 @@ function zip_omni () {
     rm ./dist/core/omni.ja
     cd omni_tmp_root
     if [[ "$os_name" == "MINGW64_NT"* ]]; then
-      ../src/utils/7za.exe a -mx=0 -mtm- -tzip ../dist/core/omni.ja *
+      7z a -mx=0 -mtm- -tzip ../dist/core/omni.ja *
     else
       zip -0DXqr ../dist/core/omni.ja *
     fi
@@ -96,7 +86,7 @@ function zip_omni () {
     rm ./dist/core/browser/omni.ja
     cd omni_tmp_browser
     if [[ "$os_name" == "MINGW64_NT"* ]]; then
-      ../src/utils/7za.exe a -mx=0 -mtm- -tzip ../dist/core/browser/omni.ja *
+      7z a -mx=0 -mtm- -tzip ../dist/core/browser/omni.ja *
     else
       zip -0DXqr ../dist/core/browser/omni.ja *
     fi
@@ -110,18 +100,12 @@ function zip_omni () {
 function apply_patch () {
   echo "Applying patches..."
 
-  if [[ "$os_name" == "MINGW64_NT"* ]]; then
-    jq_path="./src/utils/jq.exe"
-  else
-    jq_path="jq"
-  fi
-
-  type $jq_path > /dev/null
+  type jq > /dev/null
   type seq > /dev/null
 
-  for i in `seq $(cat ./src/patches.json | $jq_path -r "length")`; do
-    patch_type=$(cat ./src/patches.json | $jq_path -r ".[$(($i - 1))].type")
-    patch_filename=$(cat ./src/patches.json | $jq_path -r ".[$(($i - 1))].filename")
+  for i in `seq $(cat ./src/patches.json | jq -r "length")`; do
+    patch_type=$(cat ./src/patches.json | jq -r ".[$(($i - 1))].type")
+    patch_filename=$(cat ./src/patches.json | jq -r ".[$(($i - 1))].filename")
 
     echo "Applying $patch_filename (type: $patch_type) patch..."
 
@@ -141,7 +125,7 @@ function apply_patch () {
   app_constants_original=$(cat ./omni_tmp_root/modules/AppConstants.sys.mjs)
   rm ./omni_tmp_root/modules/AppConstants.sys.mjs
   while read line; do
-    if [[ "$line" == '<!-- insert AppConstants.sys.mjs code -->' ]]; then
+    if [[ "$line" == '/* insert AppConstants.sys.mjs code */' ]]; then
       while read line_orig; do
         echo "$line_orig" >> ./omni_tmp_root/modules/AppConstants.sys.mjs
       done <<< "$app_constants_original"
@@ -149,6 +133,7 @@ function apply_patch () {
       echo "$line" >> ./omni_tmp_root/modules/AppConstants.sys.mjs
     fi
   done <<< "$app_constants"
+  sed -i 's/export var AppConstants/const AppConstantsOriginal/' ./omni_tmp_root/modules/AppConstants.sys.mjs
 }
 
 function integration_portable_config () {
@@ -195,6 +180,8 @@ function remove_unused_files () {
     rm -f ./dist/core/updater.exe
     rm -f ./dist/core/default-browser-agent.exe
     rm -rf ./dist/core/uninstall
+    rm -f ./dist/core/maintenanceservice.exe
+    rm -f ./dist/core/maintenanceservice_installer.exe
   elif [[ "$os_name" == "Linux" ]]; then
     rm  -f ./dist/core/updater
   else
@@ -253,4 +240,18 @@ elif [[ "$1" == "create-patch" ]]; then
   git add .
   git commit -m "initial"
   cd ..
+elif [[ "$1" == "clean" ]]; then
+  rm -rf dist
+  if [[ "$os_name" == "Linux" ]]; then
+    rm -f ./src/runtime/portable-runtime
+    rm -f ./src/container-linux/container-linux
+  elif [[ "$os_name" == "MINGW64_NT"* ]]; then
+    rm -f ./src/runtime/portable-runtime.exe
+    cd src/libportable-ng
+    make clean
+    cd ../..
+  else
+    echo "Unsupported OS: $os_name"
+    false
+  fi
 fi

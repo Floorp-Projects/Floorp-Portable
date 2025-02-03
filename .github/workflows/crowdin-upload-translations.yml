@@ -1,0 +1,81 @@
+name: Synchronize translations to Crowdin
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ develop ]
+    paths:
+      - l10n/ar.json
+      - l10n/cs.json
+      - l10n/da.json
+      - l10n/de.json
+      - l10n/el.json
+      - l10n/en-GB.json
+      - l10n/es-ES.json
+      - l10n/fr.json
+      - l10n/hu.json
+      - l10n/id.json
+      - l10n/it.json
+      - l10n/ja.json
+      - l10n/ko.json
+      - l10n/lt.json
+      - l10n/nl.json
+      - l10n/nn-NO.json
+      - l10n/pl.json
+      - l10n/pt-BR.json
+      - l10n/pt-PT.json
+      - l10n/ru.json
+      - l10n/sv-SE.json
+      - l10n/th.json
+      - l10n/tr.json
+      - l10n/uk.json
+      - l10n/vi.json
+      - l10n/zh-CN.json
+      - l10n/zh-TW.json
+
+concurrency:
+  group: crowdin-gh-actions
+  cancel-in-progress: false
+
+jobs:
+  synchronize-translations-to-crowdin:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Delete old branch
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const branchName = "l10n_develop";
+
+          const { data: branches } = await github.rest.repos.listBranches({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+          });
+
+          const branchExists = branches.some(branch => branch.name === branchName);
+
+          if (branchExists) {
+            await github.rest.git.deleteRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: `heads/${branchName}`,
+            });
+          }
+
+    - name: crowdin action
+      uses: crowdin/github-action@v2
+      with:
+        config: "crowdin.yml"
+        upload_sources: true
+        upload_translations: true
+        auto_approve_imported: true
+        download_sources: false
+        download_translations: false
+        create_pull_request: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
+        CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}

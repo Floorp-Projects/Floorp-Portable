@@ -14,14 +14,14 @@ if (PortableEnvironment.isMainBrowser) {
     console.error(e);
   }
 
-  if (Services.prefs.getBoolPref("floorp.portable.enabled", false)) {
+  if (Services.prefs.getBoolPref("portable.enabled", false)) {
     try {
       ChromeUtils.importESModule("resource:///modules/portable/PortableInjections.sys.mjs");
     } catch (e) {
       console.error(e);
     }
 
-    if (Services.prefs.getBoolPref("floorp.portable.update.enabled", false)) {
+    if (Services.prefs.getBoolPref("portable.update.enabled", false)) {
       try {
         ChromeUtils.importESModule("resource:///modules/portable/PortableUpdate.sys.mjs");
       } catch (e) {
