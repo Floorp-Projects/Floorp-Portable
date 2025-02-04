@@ -6,6 +6,8 @@
 import ResourceProtocolListDirUtils from "resource:///modules/portable/ResourceProtocolListDirUtils.mjs";
 import { Assert } from "resource:///modules/portable/PortableTestUtils.sys.mjs";
 
+export const name = "resource_protocol_list_dir_utils";
+
 export function doTest() {
   Assert.exceptError(() => {
     const uri = "invalid";

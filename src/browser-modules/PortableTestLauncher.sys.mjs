@@ -8,20 +8,30 @@ const TESTS = [
 ];
 
 export default class PortableTestLauncher {
-  testSuccess = false;
-  testFailed = false;
   doTests() {
-    this.testSuccess = false;
-    this.testFailed = false;
-    for (const { doTest } of TESTS) {
+    const testResults = [];
+
+    for (const { name, doTest } of TESTS) {
       try {
         doTest();
       } catch (e) {
         console.error(e);
-        this.testFailed = true;
-        return;
+        console.log(`TEST FAILED: ${name}`);
+        testResults.push({
+          passed: false,
+          name: name,
+          error: e,
+        });
+        continue;
       }
+      console.log(`TEST PASSED: ${name}`);
+      testResults.push({
+        passed: true,
+        name: name,
+        error: null,
+      });
     }
-    this.testSuccess = true;
+
+    return testResults;
   }
 }
