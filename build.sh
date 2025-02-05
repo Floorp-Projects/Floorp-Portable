@@ -154,10 +154,13 @@ function integration_portable_config () {
 function integration_portable_modules () {
   echo "Integrating portable modules..."
   if [[ "$os_name" == "MINGW64_NT"* ]]; then
-    cp ./src/utils/setdll64.exe ./dist/core/setdll64.exe
-    cd ./dist/core
-    ./setdll64.exe //d:libportable-ng.dll mozglue.dll
-    rm ./setdll64.exe
+    cd ./src/setdll
+    make
+    cp ./setdll.exe ../../dist/core/setdll.exe
+
+    cd ../../dist/core
+    ./setdll.exe //d:libportable-ng.dll mozglue.dll
+    rm ./setdll.exe
     cd ../..
   elif [[ "$os_name" == "Linux" ]]; then
     # Reserved for future use
@@ -248,6 +251,10 @@ elif [[ "$1" == "clean" ]]; then
   elif [[ "$os_name" == "MINGW64_NT"* ]]; then
     rm -f ./src/runtime/portable-runtime.exe
     cd src/libportable-ng
+    make clean
+    cd ../..
+
+    cd src/setdll
     make clean
     cd ../..
   else
