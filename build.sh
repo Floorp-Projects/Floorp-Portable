@@ -253,6 +253,10 @@ elif [[ "$1" == "clean" ]]; then
     cd src/libportable-ng
     make clean
     cd ../..
+
+    cd src/setdll
+    make clean
+    cd ../..
   else
     echo "Unsupported OS: $os_name"
     false
