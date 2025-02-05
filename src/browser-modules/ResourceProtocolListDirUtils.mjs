@@ -20,7 +20,7 @@ export default class ResourceProtocolListDirUtils {
     this.uri = uri;
   }
 
-  #parseIndexedResponse(res) {
+  parseIndexedResponse(res) {
     const list = [];
     const defines = [];
 
@@ -75,7 +75,7 @@ export default class ResourceProtocolListDirUtils {
       throw new Components.Exception("Directory not found.");
     }
 
-    const list = this.#parseIndexedResponse(await result.text());
+    const list = this.parseIndexedResponse(await result.text());
 
     return list;
   }

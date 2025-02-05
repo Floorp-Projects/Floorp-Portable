@@ -1,3 +1,7 @@
 [submodule "src/libportable-ng/minhook"]
 	path = src/libportable-ng/minhook
 	url = https://github.com/TsudaKageyu/minhook
+[submodule "src/setdll/detours"]
+	path = src/setdll/detours
+	url = https://github.com/microsoft/Detours
+	ignore = dirty
