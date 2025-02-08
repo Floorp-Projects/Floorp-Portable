@@ -31,20 +31,35 @@
 
 ## How to build
 
-### 1. Get Floorp-Portable source code
+### 1. Install requirements
+#### Windows
+1. Open MSYS2 MinGW64 Shell
+2. Install packages
+   ```
+   pacman -Syu make mingw-w64-x86_64-gcc mingw-w64-x86_64-go git unzip mingw-w64-x86_64-7zip mingw-w64-x86_64-jq
+   ```
+
+#### Linux
+1. Open Bash
+2. Install packages
+   Use the package manager of each distribution to install [packages](#requirements).
+
+### 2. Get Floorp-Portable source code
 ```
 git clone --recursive https://github.com/Floorp-Projects/Floorp-Portable
 cd Floorp-Portable
 ```
-### 2. Install Floorp
+
+### 3. Install Floorp
 Create a directory named `core` and place Floorp files in it.
 
-Windows
+#### Windows
 ```
-curl.exe -L "https://github.com/Floorp-Projects/Floorp/releases/latest/download/floorp-win64.installer.exe" -o floorp-win64.installer.exe
-.\src\utils\7za.exe x floorp-win64.installer.exe -ir!core
+curl -L "https://github.com/Floorp-Projects/Floorp/releases/latest/download/floorp-win64.installer.exe" -o floorp-win64.installer.exe
+7z x floorp-win64.installer.exe '-ir!core'
 ```
-Linux
+
+#### Linux
 ```
 export FLOORP_VERSION="{version}" # Replace "{version}" with latest floorp version, for example: `export FLOORP_VERSION="11.19.1"`
 curl -L "https://github.com/Floorp-Projects/Floorp/releases/download/v${FLOORP_VERSION}/floorp-${FLOORP_VERSION}.linux-$(uname -m).tar.bz2" -o floorp-files.tar.bz2
@@ -52,17 +67,12 @@ mkdir core
 tar -xvf floorp-files.tar.bz2 -C core --strip-components 1
 ```
 
-### 3. Build
-Windows
-```
-.\build.bat
-```
-Linux
+### 4. Build
 ```
 ./build.sh
 ```
 
-### 4. Now it is done
+### 5. Now it is done
 The files or directories required to run are those in the `dist` directory.
 
 
