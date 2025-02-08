@@ -33,15 +33,16 @@
 
 ### 1. Install requirements
 #### Windows
-1. Open MSYS2 MinGW64 Shell
+1. Run MSYS2 MinGW64 Shell
 2. Install packages
    ```
    pacman -Syu make mingw-w64-x86_64-gcc mingw-w64-x86_64-go git unzip mingw-w64-x86_64-7zip mingw-w64-x86_64-jq
    ```
 
 #### Linux
-1. Open Bash
+1. Run Bash
 2. Install packages
+
    Use the package manager of each distribution to install [packages](#requirements).
 
 ### 2. Get Floorp-Portable source code
