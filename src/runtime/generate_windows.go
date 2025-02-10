@@ -2,4 +2,4 @@
 
 package main
 
-//go:generate goversioninfo -64
+//go:generate ./generate_windows_resource.sh
