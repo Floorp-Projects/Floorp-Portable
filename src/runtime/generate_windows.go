@@ -2,4 +2,4 @@
 
 package main
 
-//go:generate ./generate_windows_resource.sh
+//go:generate bash -e ./generate_windows_resource.sh
