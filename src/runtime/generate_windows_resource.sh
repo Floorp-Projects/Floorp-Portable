@@ -12,7 +12,7 @@ goversioninfo -64 \
     -copyright="Copyright (c) 2025 Ablaze" \
     -description="Portable version of $app_basename" \
     -file-version="$portable_version" \
-    -icon="../../core/browser/chrome/icons/default/default128.png" \
+    -icon="../../core/browser/VisualElements/VisualElements_150.png" \
     -internal-name="portable-runtime" \
     -original-name="$app_name.exe" \
     -product-name="$app_basename Portable" \
