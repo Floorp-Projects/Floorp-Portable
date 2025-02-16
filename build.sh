@@ -253,8 +253,11 @@ elif [[ "$1" == "clean" ]]; then
   if [[ "$os_name" == "Linux" ]]; then
     rm -f ./src/runtime/portable-runtime
     rm -f ./src/container-linux/container-linux
+    rm -f ./src/ico-encoder/ico-encoder
   elif [[ "$os_name" == "MINGW64_NT"* ]]; then
     rm -f ./src/runtime/portable-runtime.exe
+    rm -f ./src/ico-encoder/ico-encoder.exe
+
     cd src/libportable-ng
     make clean
     cd ../..
