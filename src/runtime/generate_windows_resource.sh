@@ -11,7 +11,7 @@ portable_version=${rev_short:-null}
 
 goversioninfo -64 \
     -company="$app_vendor" \
-    -copyright="Copyright (c) 2025 Ablaze" \
+    -copyright="Copyright (c) $(date +%Y) $app_vendor" \
     -description="Portable version of $app_basename" \
     -file-version="$portable_version" \
     -icon="icon.ico" \
