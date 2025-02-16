@@ -5,3 +5,6 @@
 	path = src/setdll/detours
 	url = https://github.com/microsoft/Detours
 	ignore = dirty
+[submodule "src/ico-encoder"]
+	path = src/ico-encoder
+	url = https://github.com/Ablaze-MIRAI/ico-encoder
