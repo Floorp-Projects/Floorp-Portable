@@ -1,16 +1,7 @@
-/src/gomodules/l10n-asset-dir
-/src/runtime/portable-runtime
-/src/runtime/portable-runtime.exe
-/src/runtime/l10n-asset-dir
-/src/container-linux/container-linux
 /omni_tmp_root
 /omni_tmp_browser
 /core
 /dist
-/Profiles
-/profiles
-/Profile
-/cache
 node_modules
 *.zip
 *.tar.bz2
