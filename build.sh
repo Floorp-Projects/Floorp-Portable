@@ -8,6 +8,8 @@ profile="${PORTABLE_APP_PROFLE:-Floorp}"
 
 go_default_ldflags="-X 'gomodules.AppName=${app_name}' -X 'gomodules.AppBaseName=${app_basename}' -X 'gomodules.Profile=${profile}'"
 
+rev_short=$(git rev-parse --short HEAD)
+
 function copy_to_dist () {
   mkdir dist
   cp -r ./core ./dist/
@@ -151,7 +153,6 @@ function integration_portable_config () {
     cp ./src/config/portable.ini ./dist/core/portable.ini
   fi
 
-  rev_short=$(git rev-parse --short HEAD)
   echo "${rev_short:-null}" > ./dist/core/portable_version.txt
 }
 

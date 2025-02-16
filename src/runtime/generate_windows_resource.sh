@@ -1,10 +1,5 @@
 #!/bin/bash
 
-app_name="${PORTABLE_APP_NAME:-floorp}"
-app_basename="${PORTABLE_APP_BASENAME:-Floorp}"
-app_vendor="${PORTABLE_APP_VENDOR:-Ablaze}"
-
-rev_short=$(git rev-parse --short HEAD)
 portable_version=${rev_short:-null}
 
 ../ico-encoder/ico-encoder -i "../../core/browser/VisualElements/VisualElements_150.png" -o icon.ico
