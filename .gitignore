@@ -2,6 +2,7 @@
 /src/runtime/portable-runtime
 /src/runtime/portable-runtime.exe
 /src/runtime/l10n-asset-dir
+/src/runtime/icon.ico
 /src/container-linux/container-linux
 /omni_tmp_root
 /omni_tmp_browser

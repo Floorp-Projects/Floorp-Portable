@@ -22,12 +22,16 @@ function prepare_gomodules () {
 
 function build_portable_runtime () {
   echo "Building portable runtime..."
-  cd src/runtime
   if [[ "$os_name" == "Linux" ]]; then
+    cd src/runtime
     go generate
     CGO_ENABLED=1 go build -ldflags="${go_default_ldflags} -s -w"
     cp ./portable-runtime "../../dist/${app_name}"
   elif [[ "$os_name" == "MINGW64_NT"* ]]; then
+    cd src/ico-encoder
+    go build
+
+    cd ../runtime
     go install github.com/josephspurrier/goversioninfo/cmd/goversioninfo
     go generate
     CGO_ENABLED=1 go build -ldflags="${go_default_ldflags} -H windowsgui -s -w"
