@@ -1,6 +1,6 @@
 module gomodules
 
-go 1.20
+go 1.24
 
 require (
 	github.com/nicksnyder/go-i18n/v2 v2.4.1

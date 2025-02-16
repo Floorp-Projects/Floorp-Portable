@@ -1,6 +1,6 @@
 module portable-runtime
 
-go 1.20
+go 1.24
 
 require github.com/josephspurrier/goversioninfo v1.4.1
 
