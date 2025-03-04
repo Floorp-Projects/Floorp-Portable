@@ -19,7 +19,7 @@ async function getPublicKeys() {
   return await (await fetch("resource:///modules/portable/public-keys/config.json")).json();
 }
 
-async function convertToWebCryptoAlgorism(algorism) {
+function convertToWebCryptoAlgorism(algorism) {
   const values = algorism.split("-");
   if (values.length == 0 || values.length > 2) {
     throw new Error("Invalid algorism");
