@@ -57,11 +57,10 @@ const documentObserver = {
           { once: true }
         );
       } else if (
-        uriWithoutQueryRef == "chrome://floorp/content/preferences/preferences.xhtml" ||
         uriWithoutQueryRef == "chrome://browser/content/preferences/preferences.xhtml" ||
         uriWithoutQueryRef == "about:preferences"
       ) {
-        // Floorp Portable does not support setting nor detection of default browser
+        // does not support setting nor detection of default browser
         // https://searchfox.org/mozilla-esr128/source/browser/components/preferences/main.js#1731-1737
         window_.getShellService = function () {};
 
