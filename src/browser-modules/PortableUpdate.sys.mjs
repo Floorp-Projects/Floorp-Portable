@@ -95,7 +95,7 @@ const PortableUpdateUtils = {
 
     const data = await result.arrayBuffer();
     const signature = await result_sig.arrayBuffer();
-    if (!await verifyData(data, signature, "portable-updates")) {
+    if (!await verifyData(data, "ECDSA-SHA384", signature, "portable-updates")) {
       console.warn("Verification failed");
       return {};
     }

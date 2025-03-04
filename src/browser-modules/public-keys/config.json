@@ -1,0 +1,13 @@
+[
+  {
+    "name": "floorp-updates-portable-2024-12-19-pub.pem",
+    "algorism": {
+      "name": "ECDSA",
+      "namedCurve": "P-384",
+      "nameShort": "secp384r1"
+    },
+    "categories": [
+      "portable-updates"
+    ]
+  }
+]

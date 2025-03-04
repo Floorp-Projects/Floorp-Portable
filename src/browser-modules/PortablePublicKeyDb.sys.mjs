@@ -5,19 +5,6 @@
 
 import PortableEnvironment from "resource:///modules/portable/PortableEnvironment.sys.mjs";
 
-const PUBLIC_KEY_CONFIGS = [
-  {
-    name: "floorp-updates-portable-2024-12-19-pub.pem",
-    algorism: { name: "ECDSA", namedCurve: "P-384" }, // secp384r1
-    algorismVerifies: [
-      { name: "ECDSA", hash: "SHA-384" }
-    ],
-    categories: [
-      "portable-updates",
-    ],
-  }
-];
-
 function removePemHeaderAndFooter(pem) {
   const pem_header = "-----BEGIN PUBLIC KEY-----";
   const pem_footer = "-----END PUBLIC KEY-----";
@@ -28,8 +15,42 @@ function removePemHeaderAndFooter(pem) {
   return pem_contents.replaceAll("\n", "").replaceAll("\r", "");
 }
 
-export async function verifyData(data, signature, category) {
-  for (const publickey_config of PUBLIC_KEY_CONFIGS) {
+async function getPublicKeys() {
+  return await (await fetch("resource:///modules/portable/public-keys/config.json")).json();
+}
+
+async function convertToWebCryptoAlgorism(algorism) {
+  const values = algorism.split("-");
+  if (values.length == 0 || values.length > 2) {
+    throw new Error("Invalid algorism");
+  }
+
+  switch (values[0].toLowerCase()) {
+    case "ecdsa":
+      if (values.length != 2) {
+        throw new Error("Invalid algorism");
+      }
+      switch (values[1].toLowerCase()) {
+        case "sha256":
+          return { name: "ECDSA", hash: "SHA-256" };
+        case "sha384":
+          return { name: "ECDSA", hash: "SHA-384" };
+        case "sha512":
+          return { name: "ECDSA", hash: "SHA-512" };
+        default:
+          throw new Error(`Unsupported algorism: ${algorism}`);
+      }
+    case "ed25519":
+      return { name: "Ed25519" };
+    default:
+      throw new Error(`Unsupported algorism: ${algorism}`);
+  }
+}
+
+export async function verifyData(data, signature_algorism, signature, category) {
+  const publickey_configs = await getPublicKeys();
+
+  for (const publickey_config of publickey_configs) {
     if (publickey_config.categories.includes(category)) {
       const publickey_uri = `resource:///modules/portable/public-keys/${publickey_config.name}`;
       const pem = await (await fetch(publickey_uri)).text();
@@ -45,17 +66,15 @@ export async function verifyData(data, signature, category) {
         ["verify"],
       );
 
-      for (const algorism_verify of publickey_config.algorismVerifies) {
-        const result = await crypto.subtle.verify(
-          algorism_verify,
-          publickey,
-          signature,
-          data,
-        );
+      const result = await crypto.subtle.verify(
+        convertToWebCryptoAlgorism(signature_algorism),
+        publickey,
+        signature,
+        data,
+      );
 
-        if (result) {
-          return true;
-        }
+      if (result) {
+        return true;
       }
     }
   }
