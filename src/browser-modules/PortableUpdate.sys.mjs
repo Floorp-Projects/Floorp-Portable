@@ -70,17 +70,55 @@ const PortableUpdateUtils = {
     Services.obs.notifyObservers({ latestNotify: false }, "do-portable-update");
   },
 
-  getPlatformKey() {
-    const os = platformInfo.os;
-    const arch = platformInfo.arch == "arm" ? "arm64" : platformInfo.arch;
-    const major_version = AppConstants.MOZ_APP_VERSION_DISPLAY.split(".")[0];
+  async getCheckUpdateBaseUrl() {
+    let platform;
+    switch (platformInfo.os) {
+      case "win":
+        platform = "Windows";
+        break;
+      case "linux":
+        platform = "Linux";
+        break;
+      case "mac":
+        platform = "macOS";
+        break;
+      default:
+        throw new Error(`Unsupported OS: ${platformInfo.os}`);
+    }
 
-    return `${os}-${arch}-v${major_version}`;
+    let architecture;
+    switch (platformInfo.arch) {
+      case "arm":
+        architecture = "arm64";
+        break;
+      case "x86-32":
+        architecture = "x86";
+        break;
+      case "x86-64":
+        architecture = "x86_64";
+        break;
+      default:
+        throw new Error(`Unsupported architecture: ${platformInfo.arch}`);
+    }
+
+    const params = {
+      "Platform": platform,
+      "Architecture": architecture,
+      "Version": await PortableEnvironment.getFullVersion(),
+    }
+
+    let url = `${API_BASE_URL}/update/${AppConstants.MOZ_APP_DISPLAYNAME_DO_NOT_USE}/`;
+    for (const param of Object.entries(params)) {
+      url += `${param[0]}:${param[1]}/`;
+    }
+
+    return url;
   },
 
   async fetchLatestInfo() {
-    const url = `${API_BASE_URL}/browser-portable/latest.json`;
-    const url_sig = `${API_BASE_URL}/browser-portable/latest.json.signature.json`;
+    const base_url = await this.getCheckUpdateBaseUrl();
+    const url = base_url + "update.json";
+    const url_sig = base_url + "signature.json";
 
     const result = await fetch(url, { cache: "no-store" });
     if (!result.ok) {
@@ -107,7 +145,7 @@ const PortableUpdateUtils = {
 
     const data_json = JSON.parse((new TextDecoder()).decode(data));
 
-    return data_json[this.getPlatformKey()];
+    return data_json;
   },
 
   async checkUpdate() {
@@ -129,9 +167,7 @@ const PortableUpdateUtils = {
       };
     }
 
-    const current_browser_version = AppConstants.MOZ_APP_VERSION_DISPLAY;
-    const current_portable_version = await PortableEnvironment.getPortableVersion();
-    const current_version = `${current_browser_version}-${current_portable_version}`;
+    const current_version = await PortableEnvironment.getFullVersion();
 
     const isUpdateFound = result.version !== current_version;
 

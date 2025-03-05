@@ -15,6 +15,11 @@ export default class PortableEnvironment {
     return (await IOUtils.readUTF8(
       PathUtils.join(appDirPath, "portable_version.txt")
     )).replaceAll("\r", "").replaceAll("\n", "").replaceAll(" ", "");
+  };
+  static async getFullVersion() {
+    const current_browser_version = AppConstants.MOZ_APP_VERSION_DISPLAY;
+    const current_portable_version = await this.getPortableVersion();
+    return `${current_browser_version}-${current_portable_version}`;
   }
   static isFirstRun() {
     return isFirstRun_
