@@ -80,3 +80,29 @@ export async function verifyData(data, signature_algorism, signature, category) 
   }
   return false;
 }
+
+export async function verifyJson(data, signature_algorism, signature, category) {
+  if (typeof data === "string") {
+    data = JSON.parse(data);
+  } else if (data instanceof ArrayBuffer && data.byteLength !== undefined) {
+    data = JSON.parse((new TextDecoder()).decode(data));
+  }
+
+  function stableJSONStringify(obj) {
+    if (Array.isArray(obj)) {
+      return `[${obj.map(stableJSONStringify).join(",")}]`;
+    } else if (obj != null && typeof obj === "object") {
+      const sorted_keys = Object.keys(obj).sort();
+      const sorted_entries = sorted_keys.map(key =>
+        `"${key}":${stableJSONStringify(obj[key])}`
+      );
+      return `{${sorted_entries.join()}}`;
+    } else {
+      return JSON.stringify(obj);
+    }
+  }
+
+  const stabled_data = stableJSONStringify(data);
+
+  return await verifyData(stabled_data, signature_algorism, signature, category);
+}

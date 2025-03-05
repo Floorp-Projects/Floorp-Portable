@@ -11,7 +11,7 @@ import { clearInterval, setInterval } from "resource://gre/modules/Timer.sys.mjs
 import ArchiveExtractUtils from "resource:///modules/portable/ArchiveExtractUtils.sys.mjs";
 import PortableEnvironment from "resource:///modules/portable/PortableEnvironment.sys.mjs";
 import { PortableI18nL10nLoader, PortableI18nLocalizer } from "resource:///modules/portable/PortableI18nUtils.sys.mjs";
-import { verifyData } from "resource:///modules/portable/PortablePublicKeyDb.sys.mjs";
+import { verifyJson } from "resource:///modules/portable/PortablePublicKeyDb.sys.mjs";
 
 const AlertsService = Cc["@mozilla.org/alerts-service;1"].getService(
   Ci.nsIAlertsService,
@@ -95,7 +95,7 @@ const PortableUpdateUtils = {
 
     const data = await result.arrayBuffer();
     const signature = await result_sig.arrayBuffer();
-    if (!await verifyData(data, "ECDSA-SHA384", signature, "portable-updates")) {
+    if (!await verifyJson(data, "ECDSA-SHA384", signature, "portable-updates")) {
       console.warn("Verification failed");
       return {};
     }
