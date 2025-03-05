@@ -103,6 +103,7 @@ export async function verifyJson(data, signature_algorism, signature, category) 
   }
 
   const stabled_data = stableJSONStringify(data);
+  const stabled_data_ab = (new TextEncoder()).encode(stabled_data).buffer;
 
-  return await verifyData(stabled_data, signature_algorism, signature, category);
+  return await verifyData(stabled_data_ab, signature_algorism, signature, category);
 }
