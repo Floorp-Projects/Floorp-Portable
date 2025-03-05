@@ -53,6 +53,9 @@ export default class PortableEnvironment {
     }
     return true;
   };
+  static async validateBase64(base64) {
+    return /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/.test(base64);
+  }
   static async base64ToArrayBuffer(base64) {
     return await (await fetch(`data:application/octet-stream;base64,${base64}`)).arrayBuffer();
   }

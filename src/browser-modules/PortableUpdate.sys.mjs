@@ -80,7 +80,7 @@ const PortableUpdateUtils = {
 
   async fetchLatestInfo() {
     const url = `${API_BASE_URL}/browser-portable/latest.json`;
-    const url_sig = `${API_BASE_URL}/browser-portable/latest.json.v1.sig`;
+    const url_sig = `${API_BASE_URL}/browser-portable/latest.json.signature.json`;
 
     const result = await fetch(url, { cache: "no-store" });
     if (!result.ok) {
@@ -94,8 +94,13 @@ const PortableUpdateUtils = {
     }
 
     const data = await result.arrayBuffer();
-    const signature = await result_sig.arrayBuffer();
-    if (!await verifyJson(data, "ECDSA-SHA384", signature, "portable-updates")) {
+    const signature_detail = await result_sig.json();
+    if (!signature_detail.algorism || !signature_detail.signature || !PortableEnvironment.validateBase64(signature_detail.signature)) {
+      console.warn("Invalid signature file");
+      return {};
+    }
+    const signature = await PortableEnvironment.base64ToArrayBuffer(signature_detail.signature);
+    if (!await verifyJson(data, signature_detail.algorism, signature, "portable-updates")) {
       console.warn("Verification failed");
       return {};
     }
