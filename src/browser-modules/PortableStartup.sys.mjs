@@ -21,6 +21,12 @@ if (PortableEnvironment.isMainBrowser) {
       console.error(e);
     }
 
+    try {
+      ChromeUtils.importESModule("resource:///modules/portable/PortableActors.sys.mjs");
+    } catch (e) {
+      console.error(e);
+    }
+
     if (Services.prefs.getBoolPref("portable.update.enabled", false)) {
       try {
         ChromeUtils.importESModule("resource:///modules/portable/PortableUpdate.sys.mjs");

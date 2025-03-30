@@ -1,0 +1,58 @@
+/* -*- indent-tabs-mode: nil; js-indent-level: 2 -*-
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  line-height: 1.5;
+}
+
+.toggle {
+  width: 34px;
+  height: 20px;
+  position: relative;
+}
+
+.toggle > input {
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+  position: absolute;
+}
+
+.toggle > .toggle-inner-bg {
+  background-color: rgba(128, 128, 128, 0.2);
+  width: 34px;
+  height: 20px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 99px;
+  transition: background-color 0.15s ease;
+}
+
+.toggle > .toggle-inner-bg > .toggle-inner-potch {
+  background-color: white;
+  width: 16px;
+  height: 16px;
+  margin: 2px;
+  border-radius: 99px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: left 0.15s ease;
+}
+
+.toggle:has(> input:checked) > .toggle-inner-bg > .toggle-inner-potch {
+  left: 14px;
+}
+
+.toggle:has(> input:checked) > .toggle-inner-bg {
+  background-color: #3182f6;
+}
+
+.toggle:has(> input:focus-visible) > .toggle-inner-bg {
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.6);
+}

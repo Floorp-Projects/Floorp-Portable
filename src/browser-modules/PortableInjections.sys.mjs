@@ -121,9 +121,28 @@ const documentObserver = {
         uriWithoutQueryRef.startsWith("chrome://noraneko-settings/")
       ) {
         const interval = window_.setInterval(async () => {
+          if (!document_.querySelector("#portable-tab-link")) {
+            const aboutTabLink = document_.querySelector('a[href="/about"]');
+
+            const cloned = aboutTabLink.cloneNode(true);
+            cloned.id = "portable-tab-link";
+            cloned.querySelector("div > p").innerText = "Portable Settings";
+            cloned.addEventListener("click", (e) => {
+              e.preventDefault();
+
+              if (window_.location.pathname != "/portable") {
+                window_.history.pushState({}, "", "/portable");
+                // invoke React Router handler
+                window_.dispatchEvent(new PopStateEvent("popstate"));
+              }
+            });
+
+            aboutTabLink.insertAdjacentElement("beforebegin", cloned);
+          }
+
           if (window_.location.pathname  == "/about") {
             const aboutSectionTitle = document_.querySelector('img[alt="logo"][src="chrome://branding/content/about-logo@2x.png"] + p');
-            const aboutSectionVersionInfo = document_.querySelector('div:has(>img[alt="logo"][src="chrome://branding/content/about-logo@2x.png"]) + p');
+            const aboutSectionVersionInfo = document_.querySelector('div:has(> img[alt="logo"][src="chrome://branding/content/about-logo@2x.png"]) + p');
             if (!aboutSectionTitle || !aboutSectionVersionInfo) {
               return;
             }
@@ -140,7 +159,33 @@ const documentObserver = {
               aboutSectionVersionInfo.insertAdjacentElement("beforebegin", portableVersionInfo);
             }
           }
-        }, 1);
+
+          if (window_.location.pathname  == "/portable") {
+            if (!document_.querySelector("#portable-content")) {
+              const contentParent = document_.querySelector('div:has(> div > a[href="/about"]) + div > div');
+
+              const portableContent = document_.createElement("div");
+              portableContent.id = "portable-content";
+
+              const iframe = document_.createElement("iframe");
+              iframe.src = "resource:///modules/portable/portable-settings/index.html";
+              iframe.style.width = "100%";
+              // iframe.addEventListener("load", () => {
+              //   iframe.style.height = `${iframe.contentWindow.document.body.scrollHeight}px`;
+              // });
+              Services.obs.addObserver((subj) => {
+                const data = subj?.wrappedJSObject;
+                iframe.style.height = `${data.height}px`;
+              }, "portable-settings-on-document-size-changed");
+
+              portableContent.appendChild(iframe);
+
+              contentParent.appendChild(portableContent);
+            }
+          } else {
+            document_.querySelector("#portable-content")?.remove();
+          }
+        }, 0);
 
         window_.addEventListener("unload", () => {
           window_.clearInterval(interval);
