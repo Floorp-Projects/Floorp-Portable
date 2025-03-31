@@ -9,6 +9,6 @@
   "author": "",
   "license": "MPL2.0",
   "dependencies": {
-    "got": "^14.4.6"
+    "got": "^14.4.7"
   }
 }
