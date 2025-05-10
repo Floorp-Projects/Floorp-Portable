@@ -59,7 +59,7 @@ const PortableUpdateUtils = {
   notifyAutoUpdateInterval: -1,
 
   init() {
-    SessionStore.promiseInitialized.then(() => {
+    SessionStore.promiseAllWindowsRestored.then(() => {
       const win = Services.wm.getMostRecentWindow("navigator:browser");
       const notificationBox = win.gBrowser.getNotificationBox(
         win.gBrowser.selectedBrowser
