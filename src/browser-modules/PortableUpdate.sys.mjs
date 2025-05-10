@@ -59,7 +59,7 @@ const PortableUpdateUtils = {
   notifyAutoUpdateInterval: -1,
 
   init() {
-    SessionStore.promiseAllWindowsRestored.then(() => {
+    SessionStore.promiseInitialized.then(() => {
       const win = Services.wm.getMostRecentWindow("navigator:browser");
       const notificationBox = win.gBrowser.getNotificationBox(
         win.gBrowser.selectedBrowser
@@ -76,12 +76,15 @@ const PortableUpdateUtils = {
             label: "Learn More",
             popup: null,
             callback: () => {
-              gBrowser.addTab("https://floorp-update.ablaze.one/", {
-                triggeringPrincipal:
-                  Services.scriptSecurityManager.getSystemPrincipal(),
-                inBackground: false,
-              });
-              A.removeNotification("Floorp-Portable-end");
+              win.gBrowser.addTab(
+                "https://blog.floorp.app/notice/end-of-support-portable-v1.html",
+                {
+                  triggeringPrincipal:
+                    Services.scriptSecurityManager.getSystemPrincipal(),
+                  inBackground: false,
+                }
+              );
+              notificationBox.removeNotification("Floorp-Portable-end");
             },
           },
         ]
