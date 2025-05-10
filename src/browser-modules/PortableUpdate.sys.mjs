@@ -7,20 +7,28 @@ import { ExtensionParent } from "resource://gre/modules/ExtensionParent.sys.mjs"
 import { AppConstants } from "resource://gre/modules/AppConstants.sys.mjs";
 import { FileUtils } from "resource://gre/modules/FileUtils.sys.mjs";
 import { CommonUtils } from "resource://services-common/utils.sys.mjs";
-import { clearInterval, setInterval } from "resource://gre/modules/Timer.sys.mjs";
+import {
+  clearInterval,
+  setInterval,
+} from "resource://gre/modules/Timer.sys.mjs";
 import ArchiveExtractUtils from "resource:///modules/portable/ArchiveExtractUtils.sys.mjs";
 import PortableEnvironment from "resource:///modules/portable/PortableEnvironment.sys.mjs";
-import { PortableI18nL10nLoader, PortableI18nLocalizer } from "resource:///modules/portable/PortableI18nUtils.sys.mjs";
+import {
+  PortableI18nL10nLoader,
+  PortableI18nLocalizer,
+} from "resource:///modules/portable/PortableI18nUtils.sys.mjs";
 import { verifyJson } from "resource:///modules/portable/PortablePublicKeyDb.sys.mjs";
 
 const AlertsService = Cc["@mozilla.org/alerts-service;1"].getService(
-  Ci.nsIAlertsService,
+  Ci.nsIAlertsService
 );
 
-const API_BASE_URL =
-  !Services.prefs.getBoolPref("portable.update.develop.enabled", false) ?
-    "https://floorp-update.ablaze.one" :
-    Services.prefs.getStringPref("portable.update.develop.url", "");
+const API_BASE_URL = !Services.prefs.getBoolPref(
+  "portable.update.develop.enabled",
+  false
+)
+  ? "https://floorp-update.ablaze.one"
+  : Services.prefs.getStringPref("portable.update.develop.url", "");
 
 const platformInfo = ExtensionParent.PlatformInfo;
 const isWin = platformInfo.os === "win";
@@ -32,17 +40,17 @@ const updateZipFilePath = PathUtils.join(updateTmpDirPath, "update.zip");
 const updateTarZstFilePath = PathUtils.join(updateTmpDirPath, "update.tar.zst");
 const coreUpdateReadyFilePath = PathUtils.join(
   updateTmpDirPath,
-  "CORE_UPDATE_READY",
+  "CORE_UPDATE_READY"
 );
 
-const localizer = (async() => {
+const localizer = (async () => {
   const locales = await PortableI18nL10nLoader.load();
   const availableLocales = Object.keys(locales);
   return new PortableI18nLocalizer(
     undefined,
     availableLocales,
     undefined,
-    locales,
+    locales
   );
 })();
 
@@ -50,11 +58,42 @@ const PortableUpdateUtils = {
   notifyAutoUpdateInterval: -1,
 
   init() {
+    const win = Services.wm.getMostRecentWindow("navigator:browser");
+    const notificationBox = win.gBrowser.getNotificationBox(
+      win.gBrowser.selectedBrowser
+    );
+    notificationBox.appendNotification(
+      "Floorp-Portable-end",
+      {
+        label:
+          "End of Floorp Portable v1 Support. Please use Floorp Portable v2 for the latest version.",
+        priority: 7,
+      },
+      [
+        {
+          label: "Learn More",
+          popup: null,
+          callback: () => {
+            gBrowser.addTab("https://floorp-update.ablaze.one/", {
+              triggeringPrincipal:
+                Services.scriptSecurityManager.getSystemPrincipal(),
+              inBackground: false,
+            });
+            A.removeNotification("Floorp-Portable-end");
+          },
+        },
+      ]
+    );
+
+    return;
     Services.obs.addObserver(this, "quit-application");
     Services.obs.addObserver(this, "do-portable-update");
 
     this.notifyAutoUpdate();
-    this.notifyAutoUpdateInterval = setInterval(this.notifyAutoUpdate, 1000 * 60 * 60 * 6 /* 6 hours */);
+    this.notifyAutoUpdateInterval = setInterval(
+      this.notifyAutoUpdate,
+      1000 * 60 * 60 * 6 /* 6 hours */
+    );
   },
 
   destroy() {
@@ -102,10 +141,10 @@ const PortableUpdateUtils = {
     }
 
     const params = {
-      "Platform": platform,
-      "Architecture": architecture,
-      "Version": await PortableEnvironment.getFullVersion(),
-    }
+      Platform: platform,
+      Architecture: architecture,
+      Version: await PortableEnvironment.getFullVersion(),
+    };
 
     let url = `${API_BASE_URL}/update/${AppConstants.MOZ_APP_DISPLAYNAME_DO_NOT_USE}/`;
     for (const param of Object.entries(params)) {
@@ -133,17 +172,30 @@ const PortableUpdateUtils = {
 
     const data = await result.arrayBuffer();
     const signature_detail = await result_sig.json();
-    if (!signature_detail.algorism || !signature_detail.signature || !PortableEnvironment.validateBase64(signature_detail.signature)) {
+    if (
+      !signature_detail.algorism ||
+      !signature_detail.signature ||
+      !PortableEnvironment.validateBase64(signature_detail.signature)
+    ) {
       console.warn("Invalid signature file");
       return {};
     }
-    const signature = await PortableEnvironment.base64ToArrayBuffer(signature_detail.signature);
-    if (!await verifyJson(data, signature_detail.algorism, signature, "portable-updates")) {
+    const signature = await PortableEnvironment.base64ToArrayBuffer(
+      signature_detail.signature
+    );
+    if (
+      !(await verifyJson(
+        data,
+        signature_detail.algorism,
+        signature,
+        "portable-updates"
+      ))
+    ) {
       console.warn("Verification failed");
       return {};
     }
 
-    const data_json = JSON.parse((new TextDecoder()).decode(data));
+    const data_json = JSON.parse(new TextDecoder().decode(data));
 
     return data_json;
   },
@@ -186,7 +238,7 @@ const PortableUpdateUtils = {
     await IOUtils.remove(
       isWin
         ? PathUtils.join(appDirParentDirPath, `${app_name}.exe`)
-        : PathUtils.join(appDirParentDirPath, app_name),
+        : PathUtils.join(appDirParentDirPath, app_name)
     );
 
     await IOUtils.move(
@@ -195,7 +247,7 @@ const PortableUpdateUtils = {
         : PathUtils.join(updateTmpDirPath, app_name),
       isWin
         ? PathUtils.join(appDirParentDirPath, `${app_name}.exe`)
-        : PathUtils.join(appDirParentDirPath, app_name),
+        : PathUtils.join(appDirParentDirPath, app_name)
     );
 
     return true;
@@ -220,12 +272,7 @@ const PortableUpdateUtils = {
       throw new Error("Hash mismatch");
     }
 
-    await IOUtils.write(
-      isWin
-        ? updateZipFilePath
-        : updateTarZstFilePath,
-      data,
-    );
+    await IOUtils.write(isWin ? updateZipFilePath : updateTarZstFilePath, data);
   },
 
   async showNotification(type) {
@@ -235,32 +282,52 @@ const PortableUpdateUtils = {
       case "ready":
         image = "resource:///modules/portable/icons/update-pending.png";
         title = (await localizer).mustLocalize("bm-updater-ready-notify-title");
-        body = (await localizer).mustLocalize("bm-updater-ready-notify-message");
+        body = (await localizer).mustLocalize(
+          "bm-updater-ready-notify-message"
+        );
         break;
       case "failed-runtime":
         image = "resource:///modules/portable/icons/failed.png";
-        title = (await localizer).mustLocalize("bm-updater-failed-notify-title");
-        message = (await localizer).mustLocalize("bm-updater-failed-runtime-message");
+        title = (await localizer).mustLocalize(
+          "bm-updater-failed-notify-title"
+        );
+        message = (await localizer).mustLocalize(
+          "bm-updater-failed-runtime-message"
+        );
         break;
       case "failed-prepare":
         image = "resource:///modules/portable/icons/failed.png";
-        title = (await localizer).mustLocalize("bm-updater-failed-notify-title");
-        message = (await localizer).mustLocalize("bm-updater-failed-prepare-message");
+        title = (await localizer).mustLocalize(
+          "bm-updater-failed-notify-title"
+        );
+        message = (await localizer).mustLocalize(
+          "bm-updater-failed-prepare-message"
+        );
         break;
       case "success":
         image = "resource:///modules/portable/icons/update-with-check.png";
-        title = (await localizer).mustLocalize("bm-updater-success-notify-title");
-        body = (await localizer).mustLocalize("bm-updater-success-notify-message");
+        title = (await localizer).mustLocalize(
+          "bm-updater-success-notify-title"
+        );
+        body = (await localizer).mustLocalize(
+          "bm-updater-success-notify-message"
+        );
         break;
       case "found":
         image = "resource:///modules/portable/icons/download.png";
         title = (await localizer).mustLocalize("bm-updater-found-notify-title");
-        body = (await localizer).mustLocalize("bm-updater-found-notify-message");
+        body = (await localizer).mustLocalize(
+          "bm-updater-found-notify-message"
+        );
         break;
       case "not-found":
         image = "resource:///modules/portable/icons/update-with-check.png";
-        title = (await localizer).mustLocalize("bm-updater-no-updates-found-notify-title");
-        body = (await localizer).mustLocalize("bm-updater-no-updates-found-notify-message");
+        title = (await localizer).mustLocalize(
+          "bm-updater-no-updates-found-notify-title"
+        );
+        body = (await localizer).mustLocalize(
+          "bm-updater-no-updates-found-notify-message"
+        );
         break;
     }
 
@@ -274,7 +341,7 @@ const PortableUpdateUtils = {
       body, // Body
       true, // textClickable
       null, // id
-      null, // clickCallback
+      null // clickCallback
     );
   },
 
@@ -300,7 +367,11 @@ const PortableUpdateUtils = {
         return;
       }
 
-      if (await IOUtils.exists(PathUtils.join(updateTmpDirPath, "REDIRECTOR_UPDATE_READY")) /* Old version of Floorp Portable */) {
+      if (
+        await IOUtils.exists(
+          PathUtils.join(updateTmpDirPath, "REDIRECTOR_UPDATE_READY")
+        ) /* Old version of Floorp Portable */
+      ) {
         try {
           await this.applyRuntimeUpdate();
         } catch (e) {
@@ -308,7 +379,9 @@ const PortableUpdateUtils = {
           this.showNotification("failed-runtime");
           return;
         } finally {
-          await IOUtils.remove(PathUtils.join(updateTmpDirPath, "REDIRECTOR_UPDATE_READY"));
+          await IOUtils.remove(
+            PathUtils.join(updateTmpDirPath, "REDIRECTOR_UPDATE_READY")
+          );
         }
       }
 
@@ -327,15 +400,21 @@ const PortableUpdateUtils = {
         try {
           await this.downloadUpdate(updateInfo.url, updateInfo.sha256);
           if (isWin) {
-            await ArchiveExtractUtils.extractZip(updateZipFilePath, updateTmpDirPath);
+            await ArchiveExtractUtils.extractZip(
+              updateZipFilePath,
+              updateTmpDirPath
+            );
           } else {
-            await ArchiveExtractUtils.extractTarZst(updateTarZstFilePath, updateTmpDirPath);
+            await ArchiveExtractUtils.extractTarZst(
+              updateTarZstFilePath,
+              updateTmpDirPath
+            );
           }
           await this.applyRuntimeUpdate();
           await IOUtils.writeUTF8(coreUpdateReadyFilePath, "");
         } catch (e) {
           console.error(e);
-          this.showNotification("failed-prepare")
+          this.showNotification("failed-prepare");
           return;
         }
 
@@ -368,7 +447,7 @@ const PortableUpdateUtils = {
         this.destroy();
         break;
     }
-  }
-}
+  },
+};
 
 PortableUpdateUtils.init();
