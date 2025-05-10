@@ -18,6 +18,7 @@ import {
   PortableI18nLocalizer,
 } from "resource:///modules/portable/PortableI18nUtils.sys.mjs";
 import { verifyJson } from "resource:///modules/portable/PortablePublicKeyDb.sys.mjs";
+import { SessionStore } from "resource:///modules/sessionstore/SessionStore.sys.mjs";
 
 const AlertsService = Cc["@mozilla.org/alerts-service;1"].getService(
   Ci.nsIAlertsService
@@ -58,32 +59,34 @@ const PortableUpdateUtils = {
   notifyAutoUpdateInterval: -1,
 
   init() {
-    const win = Services.wm.getMostRecentWindow("navigator:browser");
-    const notificationBox = win.gBrowser.getNotificationBox(
-      win.gBrowser.selectedBrowser
-    );
-    notificationBox.appendNotification(
-      "Floorp-Portable-end",
-      {
-        label:
-          "End of Floorp Portable v1 Support. Please use Floorp Portable v2 for the latest version.",
-        priority: 7,
-      },
-      [
+    SessionStore.promiseAllWindowsRestored.then(() => {
+      const win = Services.wm.getMostRecentWindow("navigator:browser");
+      const notificationBox = win.gBrowser.getNotificationBox(
+        win.gBrowser.selectedBrowser
+      );
+      notificationBox.appendNotification(
+        "Floorp-Portable-end",
         {
-          label: "Learn More",
-          popup: null,
-          callback: () => {
-            gBrowser.addTab("https://floorp-update.ablaze.one/", {
-              triggeringPrincipal:
-                Services.scriptSecurityManager.getSystemPrincipal(),
-              inBackground: false,
-            });
-            A.removeNotification("Floorp-Portable-end");
-          },
+          label:
+            "End of Floorp Portable v1 Support. Please use Floorp Portable v2 for the latest version.",
+          priority: 7,
         },
-      ]
-    );
+        [
+          {
+            label: "Learn More",
+            popup: null,
+            callback: () => {
+              gBrowser.addTab("https://floorp-update.ablaze.one/", {
+                triggeringPrincipal:
+                  Services.scriptSecurityManager.getSystemPrincipal(),
+                inBackground: false,
+              });
+              A.removeNotification("Floorp-Portable-end");
+            },
+          },
+        ]
+      );
+    });
 
     return;
     Services.obs.addObserver(this, "quit-application");
