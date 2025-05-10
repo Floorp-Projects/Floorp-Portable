@@ -59,38 +59,6 @@ const PortableUpdateUtils = {
   notifyAutoUpdateInterval: -1,
 
   init() {
-    setTimeout(() => {
-      const win = Services.wm.getMostRecentWindow("navigator:browser");
-      const notificationBox = win.gBrowser.getNotificationBox(
-        win.gBrowser.selectedBrowser
-      );
-      notificationBox.appendNotification(
-        "Floorp-Portable-end",
-        {
-          label:
-            "End of Floorp Portable v1 Support. Please use Floorp Portable v2 for the latest version.",
-          priority: 7,
-        },
-        [
-          {
-            label: "Learn More",
-            popup: null,
-            callback: () => {
-              win.gBrowser.addTab(
-                "https://blog.floorp.app/notice/end-of-support-portable-v1.html",
-                {
-                  triggeringPrincipal:
-                    Services.scriptSecurityManager.getSystemPrincipal(),
-                  inBackground: false,
-                }
-              );
-              notificationBox.removeNotification("Floorp-Portable-end");
-            },
-          },
-        ]
-      );
-    }, 1000 * 10);
-
     return;
     Services.obs.addObserver(this, "quit-application");
     Services.obs.addObserver(this, "do-portable-update");
