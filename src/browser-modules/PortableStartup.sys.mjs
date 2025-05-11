@@ -6,6 +6,7 @@
 export const EXPORTED_SYMBOLS = ["isFirstRun", "isUpdated", "isMainBrowser"];
 
 import PortableEnvironment from "resource:///modules/portable/PortableEnvironment.sys.mjs";
+import SessionStore from "resource:///modules/sessionstore/SessionStore.sys.mjs";
 
 if (PortableEnvironment.isMainBrowser) {
   SessionStore.promiseAllWindowsRestored.then(() => {
